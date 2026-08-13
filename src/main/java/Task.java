@@ -43,4 +43,14 @@ public class Task {
     public String toString() {
         return (isDone ? "[X] " : "[ ] ") + description;
     }
+
+    /** Returns the task type marker used in the list view. */
+    protected String getTypeMarker() {
+        return "[-]";
+    }
+
+    /** Returns the complete display text for this task. */
+    public String displayText() {
+        return getTypeMarker();
+    }
 }

@@ -40,9 +40,18 @@ public class Megatron {
             } else if (command.startsWith("unmark ")) {
                 taskCount = markTask(tasks, taskCount, command, false);
             } else if (!command.isBlank() && taskCount < MAX_TASKS) {
-                tasks[taskCount] = new Task(command);
+                Task newTask = createTask(command);
+                if (newTask == null) {
+                    System.out.println("     Please use: todo <description>, deadline <description> /by <date>, "
+                            + "or event <description> /from <start> /to <end>.");
+                    System.out.println(divider);
+                    continue;
+                }
+                tasks[taskCount] = newTask;
                 taskCount++;
-                System.out.println("     added: " + command);
+                System.out.println("     Got it. I've added this task:");
+                System.out.println("       " + newTask.displayText());
+                System.out.println("     Now you have " + taskCount + " tasks in the list.");
             }
             System.out.println(divider);
         }
@@ -57,8 +66,28 @@ public class Megatron {
      */
     private static void printTasks(Task[] tasks, int taskCount) {
         for (int i = 0; i < taskCount; i++) {
-            System.out.println("     " + (i + 1) + ". " + tasks[i]);
+            System.out.println("     " + (i + 1) + "." + tasks[i].displayText());
         }
+    }
+
+    /** Converts a user command into the matching task subtype. */
+    private static Task createTask(String command) {
+        if (command.startsWith("todo ")) {
+            return new Todo(command.substring(5).trim());
+        }
+        if (command.startsWith("deadline ")) {
+            String[] parts = command.substring(9).split(" /by ", 2);
+            return parts.length == 2 ? new Deadline(parts[0].trim(), parts[1].trim()) : null;
+        }
+        if (command.startsWith("event ")) {
+            String[] parts = command.substring(6).split(" /from ", 2);
+            if (parts.length != 2) {
+                return null;
+            }
+            String[] times = parts[1].split(" /to ", 2);
+            return times.length == 2 ? new Event(parts[0].trim(), times[0].trim(), times[1].trim()) : null;
+        }
+        return new Todo(command);
     }
 
     /**
@@ -86,7 +115,7 @@ public class Megatron {
                 task.markAsNotDone();
                 System.out.println("     OK, I've marked this task as not done yet:");
             }
-            System.out.println("       " + task);
+            System.out.println("       " + task.displayText());
         } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
             System.out.println("     Please provide a valid task number.");
         }
