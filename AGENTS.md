@@ -9,8 +9,8 @@ Unless the user says otherwise, assume that you are assisting a student working 
 # Student profile
 
 * Prior knowledge: Basic Java and OOP concepts.
-* Level of programming experience: [to be filled]
-* IDE and level of expertise: [to be filled]
+* Level of programming experience: Basic, trivial
+* IDE and level of expertise: IntelliJ IDEA, basic
 
 # Guidance for interacting with users
 
@@ -26,10 +26,14 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 ## Java version:
 
-Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
+Ensure that Java 25 is used when running the application or build tasks.]
 
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+## Documentation
+
+Unless otherwise stated, you are to respond in and write all documentation adhering to ASD-STE100 Simplified Technical English. For complex queries and responses, you are to ask the user if using more technical langauge is ok.
