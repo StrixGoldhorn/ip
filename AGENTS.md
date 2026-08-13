@@ -26,7 +26,7 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 ## Java version:
 
-Ensure that Java 25 is used when running the application or build tasks.]
+Ensure that Java 25 is used when running the application or build tasks.
 
 ## Git
 
@@ -36,4 +36,9 @@ Do not commit or push unless explicitly asked.
 
 ## Documentation
 
-Unless otherwise stated, you are to respond in and write all documentation adhering to ASD-STE100 Simplified Technical English. For complex queries and responses, you are to ask the user if using more technical langauge is ok.
+Unless otherwise stated, you are to respond in and write all documentation adhering to ASD-STE100 Simplified Technical English. For complex queries and responses, you are to ask the user if using more technical language is ok.
+
+## SWE Practices
+
+You are to OOP-ify where needed. You have to justify whether something needs to be OOP, or not.
+Follow all good SWE practices.
