@@ -21,7 +21,7 @@ public class Megatron {
         System.out.println(divider);
 
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -35,8 +35,12 @@ public class Megatron {
 
             if (command.equals("list")) {
                 printTasks(tasks, taskCount);
+            } else if (command.startsWith("mark ")) {
+                taskCount = markTask(tasks, taskCount, command, true);
+            } else if (command.startsWith("unmark ")) {
+                taskCount = markTask(tasks, taskCount, command, false);
             } else if (!command.isBlank() && taskCount < MAX_TASKS) {
-                tasks[taskCount] = command;
+                tasks[taskCount] = new Task(command);
                 taskCount++;
                 System.out.println("     added: " + command);
             }
@@ -51,10 +55,42 @@ public class Megatron {
      * @param tasks the array containing the stored tasks
      * @param taskCount the number of stored tasks
      */
-    private static void printTasks(String[] tasks, int taskCount) {
+    private static void printTasks(Task[] tasks, int taskCount) {
         for (int i = 0; i < taskCount; i++) {
             System.out.println("     " + (i + 1) + ". " + tasks[i]);
         }
+    }
+
+    /**
+     * Changes the completion status of a task selected by its list number.
+     *
+     * @param tasks the array containing the stored tasks
+     * @param taskCount the number of stored tasks
+     * @param command the mark or unmark command
+     * @param shouldMarkDone whether the task should be marked as done
+     * @return the unchanged number of tasks
+     */
+    private static int markTask(Task[] tasks, int taskCount, String command, boolean shouldMarkDone) {
+        try {
+            int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
+            if (taskNumber < 1 || taskNumber > taskCount) {
+                System.out.println("     That task number does not exist.");
+                return taskCount;
+            }
+
+            Task task = tasks[taskNumber - 1];
+            if (shouldMarkDone) {
+                task.markAsDone();
+                System.out.println("     Nice! I've marked this task as done:");
+            } else {
+                task.markAsNotDone();
+                System.out.println("     OK, I've marked this task as not done yet:");
+            }
+            System.out.println("       " + task);
+        } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
+            System.out.println("     Please provide a valid task number.");
+        }
+        return taskCount;
     }
 
 }
