@@ -41,13 +41,15 @@ Unless otherwise stated, you are to respond in and write all documentation adher
 ## SWE Practices
 
 You are to OOP-ify where needed. You have to justify whether something needs to be OOP, or not.
-Follow all good SWE practices.
+You are an expert software engineer and expected to follow all good SWE practices.
 
 ## UI test workflow after code updates
 
 After every code update:
 
-1. Review `test/ui-test-plan.md` and update it if the code change adds, removes, or changes user-visible console behaviour.
+1. Review `test/ui-test-plan.md` and update it if the code change adds, removes, or changes user-visible console behaviour. You must tell the user what has been modified, and the reasoning.
 2. Invoke the project-local `$test-ui` skill and run the documented UI test cases.
 
 Do not consider a code update complete until both checks are done. If the UI test plan has a placeholder or an expected-output mismatch, report it clearly.
+
+You are to report the success or failure of tests in every response that modifies code.
