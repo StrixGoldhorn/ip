@@ -49,8 +49,8 @@ public class Task {
         return "[-]";
     }
 
-    /** Returns the complete display text for this task. */
+    /** Returns the type marker, status, and description for this task. */
     public String displayText() {
-        return getTypeMarker();
+        return getTypeMarker() + toString();
     }
 }
