@@ -1,3 +1,5 @@
+import java.util.List;
+
 /** Base class for input errors reported by the Megatron chatbot. */
 public class MegatronException extends Exception {
     /** Creates an exception with a message that can be shown to the user. */
@@ -18,8 +20,18 @@ class EmptyCommandException extends MegatronException {
 
 /** Reports that the user entered a command that Megatron does not support. */
 class UnknownCommandException extends MegatronException {
-    UnknownCommandException() {
-        super("I do not recognise that command. Try todo, deadline, event, list, mark, or unmark.");
+    /** Creates an error that lists the commands currently supported by Megatron. */
+    UnknownCommandException(List<String> availableCommands) {
+        super("I do not recognise that command. Try " + formatCommands(availableCommands) + ".");
+    }
+
+    /** Formats command names as a readable list with "or" before the final command. */
+    private static String formatCommands(List<String> availableCommands) {
+        if (availableCommands.size() == 1) {
+            return availableCommands.get(0);
+        }
+        String firstCommands = String.join(", ", availableCommands.subList(0, availableCommands.size() - 1));
+        return firstCommands + ", or " + availableCommands.get(availableCommands.size() - 1);
     }
 }
 

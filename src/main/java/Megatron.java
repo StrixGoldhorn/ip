@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -5,6 +7,8 @@ import java.util.Scanner;
  */
 public class Megatron {
     private static final int MAX_TASKS = 100;
+    private static final List<String> AVAILABLE_COMMANDS = new ArrayList<>(List.of(
+            "todo", "deadline", "event", "list", "mark", "unmark", "delete"));
 
     public static void main(String[] args) {
         String banner = "   __  ___              __              \n"
@@ -21,8 +25,7 @@ public class Megatron {
         System.out.println(divider);
 
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        List<Task> tasks = new ArrayList<>();
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
             System.out.println(divider);
@@ -35,21 +38,22 @@ public class Megatron {
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks, taskCount);
+                    printTasks(tasks);
                 } else if (command.startsWith("mark ")) {
-                    markTask(tasks, taskCount, command, true);
+                    markTask(tasks, command, true);
                 } else if (command.startsWith("unmark ")) {
-                    markTask(tasks, taskCount, command, false);
+                    markTask(tasks, command, false);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    deleteTask(tasks, command);
                 } else if (!command.isBlank()) {
-                    if (taskCount == MAX_TASKS) {
+                    if (tasks.size() == MAX_TASKS) {
                         throw new TaskListFullException();
                     }
                     Task newTask = createTask(command);
-                    tasks[taskCount] = newTask;
-                    taskCount++;
+                    tasks.add(newTask);
                     System.out.println("     Got it. I've added this task:");
                     System.out.println("       " + newTask.displayText());
-                    System.out.println("     Now you have " + taskCount + " tasks in the list.");
+                    System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
                 } else {
                     throw new EmptyCommandException();
                 }
@@ -64,12 +68,11 @@ public class Megatron {
     /**
      * Prints all stored tasks in the order in which the user entered them.
      *
-     * @param tasks the array containing the stored tasks
-     * @param taskCount the number of stored tasks
+     * @param tasks the collection containing the stored tasks
      */
-    private static void printTasks(Task[] tasks, int taskCount) {
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println("     " + (i + 1) + "." + tasks[i].displayText());
+    private static void printTasks(List<Task> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println("     " + (i + 1) + "." + tasks.get(i).displayText());
         }
     }
 
@@ -104,26 +107,25 @@ public class Megatron {
             }
             return new Event(parts[0].trim(), times[0].trim(), times[1].trim());
         }
-        throw new UnknownCommandException();
+                    throw new UnknownCommandException(AVAILABLE_COMMANDS);
     }
 
     /**
      * Changes the completion status of a task selected by its list number.
      *
-     * @param tasks the array containing the stored tasks
-     * @param taskCount the number of stored tasks
+     * @param tasks the collection containing the stored tasks
      * @param command the mark or unmark command
      * @param shouldMarkDone whether the task should be marked as done
      */
-    private static void markTask(Task[] tasks, int taskCount, String command, boolean shouldMarkDone)
+    private static void markTask(List<Task> tasks, String command, boolean shouldMarkDone)
             throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
-            if (taskNumber < 1 || taskNumber > taskCount) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
                 throw new TaskNotFoundException();
             }
 
-            Task task = tasks[taskNumber - 1];
+            Task task = tasks.get(taskNumber - 1);
             if (shouldMarkDone) {
                 task.markAsDone();
                 System.out.println("     Nice! I've marked this task as done:");
@@ -132,6 +134,29 @@ public class Megatron {
                 System.out.println("     OK, I've marked this task as not done yet:");
             }
             System.out.println("       " + task.displayText());
+        } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
+            throw new InvalidTaskNumberException();
+        }
+    }
+
+    /**
+     * Removes a task selected by its list number.
+     *
+     * @param tasks the collection containing the stored tasks
+     * @param command the delete command
+     * @throws MegatronException if the command does not contain a valid task number
+     */
+    private static void deleteTask(List<Task> tasks, String command) throws MegatronException {
+        try {
+            int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
+                throw new TaskNotFoundException();
+            }
+
+            Task removedTask = tasks.remove(taskNumber - 1);
+            System.out.println("     Noted. I've removed this task:");
+            System.out.println("       " + removedTask.displayText());
+            System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
         } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
             throw new InvalidTaskNumberException();
         }
