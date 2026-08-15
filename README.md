@@ -2,6 +2,13 @@
 
 Megatron is a Java chatbot application. Given below are instructions on how to use it.
 
+## AI Usage Disclaimer
+- Codex used to generate code for test cases (test objectives were written by human).
+- Codex also used to generate code from human descriptive language of issue and software architecture.
+- Approx. AI-4 as defined in [CS2103T site](https://nus-cs2103-ay2627-s1.github.io/website/admin/courseExpectations.html)
+
+AI- 4: `Visualize and compare: Think of how you would do the task manually. Get AI to do it. Compare the solution you 'imagined' with the one AI produced.`
+
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.
