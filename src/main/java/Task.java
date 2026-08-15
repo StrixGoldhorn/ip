@@ -3,7 +3,8 @@
  */
 public class Task {
     private final String description;
-    private boolean isDone;
+    private final TaskType type;
+    private TaskStatus status;
 
     /**
      * Creates a new task that is not done.
@@ -11,18 +12,24 @@ public class Task {
      * @param description the task description
      */
     public Task(String description) {
+        this(description, TaskType.TASK);
+    }
+
+    /** Creates a task with the given type and an initial not-done status. */
+    protected Task(String description, TaskType type) {
         this.description = description;
-        this.isDone = false;
+        this.type = type;
+        this.status = TaskStatus.NOT_DONE;
     }
 
     /** Marks this task as done. */
     public void markAsDone() {
-        isDone = true;
+        status = TaskStatus.DONE;
     }
 
     /** Marks this task as not done. */
     public void markAsNotDone() {
-        isDone = false;
+        status = TaskStatus.NOT_DONE;
     }
 
     /**
@@ -31,7 +38,7 @@ public class Task {
      * @return true if the task is done
      */
     public boolean isDone() {
-        return isDone;
+        return status == TaskStatus.DONE;
     }
 
     /**
@@ -41,12 +48,12 @@ public class Task {
      */
     @Override
     public String toString() {
-        return (isDone ? "[X] " : "[ ] ") + description;
+        return status.getMarker() + " " + description;
     }
 
     /** Returns the task type marker used in the list view. */
     protected String getTypeMarker() {
-        return "[-]";
+        return type.getMarker();
     }
 
     /** Returns the type marker, status, and description for this task. */
