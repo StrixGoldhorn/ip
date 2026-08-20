@@ -42,12 +42,16 @@ def main():
         if command[-1:] == ["Megatron"]:
             command.append(str(TEST_DATA_FILE))
         TEST_DATA_FILE.unlink(missing_ok=True)
+        if case.get("initial_data") is not None:
+            TEST_DATA_FILE.write_text(case["initial_data"], encoding="utf-8")
         result = subprocess.run(command, input=case.get("input", ""), text=True, capture_output=True, shell=False)
         TEST_DATA_FILE.unlink(missing_ok=True)
         actual, expected = result.stdout, case["expected_output"]
         print(f"\n=== Test {number}: {case['name']} ===\nAim: {case['aim']}\n$ {' '.join(command)}")
         print(f"Input:\n{case.get('input', '')}\nOutput:\n{actual}")
-        if result.returncode or actual != expected:
+        expected_matches = (case.get("expected_contains") in actual
+                            if case.get("expected_contains") else actual == expected)
+        if result.returncode or not expected_matches:
             print(f"RESULT: FAIL\nExpected output:\n{expected}")
             if result.stderr: print(f"stderr:\n{result.stderr}")
             print(f"Stopped after {passed} passed test(s)."); return 1
