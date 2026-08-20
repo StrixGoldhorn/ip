@@ -27,6 +27,7 @@ test. This keeps the cases independent. The production default remains
 | Empty list | Check that listing before adding tasks is safe. | `list` | Show no task entries. |
 | Maximum list capacity | Check that the 101st task is rejected. | 101 todo commands | Print the full-list error and keep 100 tasks. |
 | Whitespace handling | Check that surrounding task whitespace is removed. | `todo    buy milk    ` | Store `buy milk`. |
+| Corrupted data file | Check that malformed rows do not stop valid rows from loading. | Start with valid and malformed CSV rows, then `list`. | Display only the valid task. |
 | Persistence | Check that saved tasks are loaded by a new process. | Add a task, exit, restart, then `list`. | Display the saved task. |
 | Bye | Check that the chatbot exits after the extended checks. | `bye` | Display the exit message. |
 
@@ -138,6 +139,15 @@ The expected output below includes the final newline.
     "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
     "input": "todo    buy milk    \nlist\nbye\n",
     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n     Got it. I've added this task:\n       [T][ ] buy milk\n     Now you have 1 tasks in the list.\n____________________________________________________________\n____________________________________________________________\n     1.[T][ ] buy milk\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
+  },
+  {
+    "name": "Corrupted data file",
+    "aim": "Check that malformed rows are ignored while valid rows are loaded.",
+    "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
+    "initial_data": "type,done,description,extra\nT,0,valid task,\ninvalid,row\nD,maybe,bad task,Friday\n",
+    "input": "list\nbye\n",
+    "expected_contains": "[T][ ] valid task",
+    "expected_output": ""
   },
   {
     "name": "Persistence",

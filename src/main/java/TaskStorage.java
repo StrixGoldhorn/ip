@@ -29,6 +29,9 @@ public final class TaskStorage {
                 if (fields.size() < 4 || fields.get(0).equals("type")) {
                     continue;
                 }
+                if (!isValid(fields)) {
+                    continue;
+                }
                 Task task = createTask(fields);
                 if (task != null) {
                     if ("1".equals(fields.get(1))) {
@@ -73,6 +76,23 @@ public final class TaskStorage {
             return times.length == 2 ? new Event(fields.get(2), times[0], times[1]) : null;
         }
         return null;
+    }
+
+    /** Checks a row before converting it into a task. Invalid rows are ignored. */
+    private static boolean isValid(List<String> fields) {
+        if (fields.size() != 4 || !(fields.get(1).equals("0") || fields.get(1).equals("1"))
+                || fields.get(2).isBlank()) {
+            return false;
+        }
+        if (fields.get(0).equals("T")) {
+            return fields.get(3).isEmpty();
+        } else if (fields.get(0).equals("D")) {
+            return !fields.get(3).isBlank();
+        } else if (fields.get(0).equals("E")) {
+            String[] times = fields.get(3).split("\\|", 2);
+            return times.length == 2 && !times[0].isBlank() && !times[1].isBlank();
+        }
+        return false;
     }
 
     private static String csv(String value) {
