@@ -25,7 +25,8 @@ public class Megatron {
         System.out.println(divider);
 
         Scanner scanner = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<>();
+        TaskStorage storage = new TaskStorage(args.length > 0 ? args[0] : "data/megatron.csv");
+        List<Task> tasks = storage.load();
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
             System.out.println(divider);
@@ -40,17 +41,18 @@ public class Megatron {
                 if (command.equals("list")) {
                     printTasks(tasks);
                 } else if (command.startsWith("mark ")) {
-                    markTask(tasks, command, true);
+                    markTask(tasks, command, true, storage);
                 } else if (command.startsWith("unmark ")) {
-                    markTask(tasks, command, false);
+                    markTask(tasks, command, false, storage);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    deleteTask(tasks, command);
+                    deleteTask(tasks, command, storage);
                 } else if (!command.isBlank()) {
                     if (tasks.size() == MAX_TASKS) {
                         throw new TaskListFullException();
                     }
                     Task newTask = createTask(command);
                     tasks.add(newTask);
+                    storage.save(tasks);
                     System.out.println("     Got it. I've added this task:");
                     System.out.println("       " + newTask.displayText());
                     System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
@@ -117,7 +119,7 @@ public class Megatron {
      * @param command the mark or unmark command
      * @param shouldMarkDone whether the task should be marked as done
      */
-    private static void markTask(List<Task> tasks, String command, boolean shouldMarkDone)
+    private static void markTask(List<Task> tasks, String command, boolean shouldMarkDone, TaskStorage storage)
             throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
@@ -133,6 +135,7 @@ public class Megatron {
                 task.markAsNotDone();
                 System.out.println("     OK, I've marked this task as not done yet:");
             }
+            storage.save(tasks);
             System.out.println("       " + task.displayText());
         } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
             throw new InvalidTaskNumberException();
@@ -146,7 +149,7 @@ public class Megatron {
      * @param command the delete command
      * @throws MegatronException if the command does not contain a valid task number
      */
-    private static void deleteTask(List<Task> tasks, String command) throws MegatronException {
+    private static void deleteTask(List<Task> tasks, String command, TaskStorage storage) throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -154,6 +157,7 @@ public class Megatron {
             }
 
             Task removedTask = tasks.remove(taskNumber - 1);
+            storage.save(tasks);
             System.out.println("     Noted. I've removed this task:");
             System.out.println("       " + removedTask.displayText());
             System.out.println("     Now you have " + tasks.size() + " tasks in the list.");

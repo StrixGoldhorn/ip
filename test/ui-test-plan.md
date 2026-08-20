@@ -6,6 +6,10 @@ Run cases in order with `test-ui`. Use JDK 25 and compile first. Default launch 
 java -cp out/production/ip_project Megatron
 ```
 
+The test runner passes `temp.csv` to Megatron and deletes it before and after every
+test. This keeps the cases independent. The production default remains
+`data/megatron.csv`.
+
 | Case | Aim | Inputs | Expected output |
 |---|---|---|---|
 | Exit command | Check that the program accepts the exit command and terminates. | `bye` | Display the banner, prompt, and exit message, then terminate. See the exact output in the JSON case below. |
@@ -23,6 +27,7 @@ java -cp out/production/ip_project Megatron
 | Empty list | Check that listing before adding tasks is safe. | `list` | Show no task entries. |
 | Maximum list capacity | Check that the 101st task is rejected. | 101 todo commands | Print the full-list error and keep 100 tasks. |
 | Whitespace handling | Check that surrounding task whitespace is removed. | `todo    buy milk    ` | Store `buy milk`. |
+| Persistence | Check that saved tasks are loaded by a new process. | Add a task, exit, restart, then `list`. | Display the saved task. |
 | Bye | Check that the chatbot exits after the extended checks. | `bye` | Display the exit message. |
 
 The expected output below includes the final newline.
@@ -133,6 +138,15 @@ The expected output below includes the final newline.
     "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
     "input": "todo    buy milk    \nlist\nbye\n",
     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n     Got it. I've added this task:\n       [T][ ] buy milk\n     Now you have 1 tasks in the list.\n____________________________________________________________\n____________________________________________________________\n     1.[T][ ] buy milk\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
+  },
+  {
+    "name": "Persistence",
+    "aim": "Check that a task saved by one Megatron process is loaded by the next process.",
+    "persistence": true,
+    "save_input": "todo saved task\nbye\n",
+    "load_input": "list\nbye\n",
+    "expected_contains": "[T][ ] saved task",
+    "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n____________________________________________________________\n     1.[T][ ] saved task\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
   },
   {
     "name": "Bye",
