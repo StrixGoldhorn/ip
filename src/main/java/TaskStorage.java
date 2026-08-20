@@ -9,18 +9,20 @@ import java.util.List;
 
 /** Stores and restores Megatron tasks in a CSV file. */
 public final class TaskStorage {
-    private static final Path FILE = Paths.get("data", "megatron.csv");
+    private final Path file;
 
-    private TaskStorage() {
+    /** Creates storage that reads and writes the given relative or absolute path. */
+    public TaskStorage(String fileName) {
+        file = Paths.get(fileName);
     }
 
     /** Loads all valid tasks. A missing file is treated as an empty task list. */
-    public static List<Task> load() {
+    public List<Task> load() {
         List<Task> tasks = new ArrayList<>();
-        if (!Files.exists(FILE)) {
+        if (!Files.exists(file)) {
             return tasks;
         }
-        try (BufferedReader reader = Files.newBufferedReader(FILE)) {
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 List<String> fields = parseCsvLine(line);
@@ -42,10 +44,12 @@ public final class TaskStorage {
     }
 
     /** Saves all tasks and creates the data folder when needed. */
-    public static void save(List<Task> tasks) {
+    public void save(List<Task> tasks) {
         try {
-            Files.createDirectories(FILE.getParent());
-            try (BufferedWriter writer = Files.newBufferedWriter(FILE)) {
+            if (file.getParent() != null) {
+                Files.createDirectories(file.getParent());
+            }
+            try (BufferedWriter writer = Files.newBufferedWriter(file)) {
                 writer.write("type,done,description,extra");
                 writer.newLine();
                 for (Task task : tasks) {
