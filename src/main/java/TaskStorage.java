@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,10 +71,15 @@ public final class TaskStorage {
         if (fields.get(0).equals("T")) {
             return new Todo(fields.get(2));
         } else if (fields.get(0).equals("D")) {
-            return new Deadline(fields.get(2), fields.get(3));
+            try {
+                return new Deadline(fields.get(2), LocalDateTime.parse(fields.get(3)));
+            } catch (IllegalArgumentException exception) { return null; }
         } else if (fields.get(0).equals("E")) {
             String[] times = fields.get(3).split("\\|", 2);
-            return times.length == 2 ? new Event(fields.get(2), times[0], times[1]) : null;
+            try {
+                return times.length == 2 ? new Event(fields.get(2), LocalDateTime.parse(times[0]),
+                        LocalDateTime.parse(times[1])) : null;
+            } catch (IllegalArgumentException exception) { return null; }
         }
         return null;
     }
