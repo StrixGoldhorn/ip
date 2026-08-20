@@ -14,7 +14,7 @@ test. This keeps the cases independent. The production default remains
 |---|---|---|---|
 | Exit command | Check that the program accepts the exit command and terminates. | `bye` | Display the banner, prompt, and exit message, then terminate. See the exact output in the JSON case below. |
 | Empty todo | Check that an empty todo is rejected without adding a task. | `todo` | Print `OOPS! A todo description cannot be empty.` and continue running. |
-| Unknown command | Check that unsupported input is rejected. | `blah` | Print `OOPS! I do not recognise that command. Try todo, deadline, event, list, mark, unmark, or delete.` and continue running. |
+| Unknown command | Check that unsupported input is rejected. | `blah` | Print `OOPS! I do not recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or datetime-help.` and continue running. |
 | Invalid mark number | Check that a non-numeric task number is rejected. | `mark abc` | Print `OOPS! Please provide a valid task number.` and continue running. |
 | Display task details | Check that added tasks retain their type, status, and description when displayed. | `todo abc`, then `list` | Display `[T][ ] abc` in the confirmation and in the list. |
 | Empty deadline | Check that a deadline without a description is rejected. | `deadline /by Friday` | Print the deadline format error. |
@@ -25,6 +25,7 @@ test. This keeps the cases independent. The production default remains
 | Mark and unmark | Check that a task can be marked done and restored to not done. | `todo study`, `mark 1`, `unmark 1` | Show `[T][X] study`, then `[T][ ] study`. |
 | Delete task | Check that a selected task is removed and the remaining tasks are renumbered. | `todo read book`, `deadline return book /by 2026-06-06`, `event project meeting /from 2026-08-06 1400 /to 2026-08-06 1600`, `delete 2`, `list` | Show the removed deadline, report that 2 tasks remain, and display the event as task 2 with normalized dates. |
 | Date/time parsing | Check that explicit dates and times are parsed and displayed in normalized 24-hour form. | `deadline return book /by 2/12/2019 1800`, `event project /from 2020-01-02 1400 /to 2020-01-02 1600`, `list` | Display `02 Dec 19, 1800hrs`, `02 Jan 20, 1400hrs`, and `02 Jan 20, 1600hrs`. |
+| Datetime information | Check that the datetime-help command documents supported inputs and interpretation rules. | `datetime-help` | Print date formats, time formats, weekday names, defaults, output format, and LocalDateTime storage information. |
 | Empty list | Check that listing before adding tasks is safe. | `list` | Show no task entries. |
 | Text date/time and event end | Check that explicit text dates, 24-hour text times, and time-only event ends are accepted. | `deadline launch /by Aug 6 2026 2pm`, `event review /from August 6 2026 14:00 /to 4:00pm` | Display normalized deadline and event date/times. |
 | Day-month-year date/time | Check that short and full month names are accepted after the day. | `deadline launch /by 6 Aug 2026 2pm`, `event review /from 6 August 2026 14:00 /to 16:00` | Display normalized deadline and event date/times. |
@@ -61,7 +62,7 @@ The expected output below includes the final newline.
     "aim": "Check that unsupported input is rejected.",
     "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
     "input": "blah\nbye\n",
-     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n     OOPS! I do not recognise that command. Try todo, deadline, event, list, mark, unmark, or delete.\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
+     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n     OOPS! I do not recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or datetime-help.\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
   },
   {
     "name": "Invalid mark number",
@@ -96,7 +97,7 @@ The expected output below includes the final newline.
     "aim": "Check that an unsupported todo keyword is rejected.",
     "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
     "input": "tod buy milk\nbye\n",
-     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n     OOPS! I do not recognise that command. Try todo, deadline, event, list, mark, unmark, or delete.\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
+     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \n     Rawr! I'm Megatron.\n     What can I do for you?\n____________________________________________________________\n____________________________________________________________\n     OOPS! I do not recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or datetime-help.\n____________________________________________________________\n____________________________________________________________\n     Bye. Hope to see you again soon!\n____________________________________________________________\n"
   },
   {
     "name": "Incorrect deadline format",
@@ -136,11 +137,19 @@ The expected output below includes the final newline.
     "expected_output": ""
   },
   {
+    "name": "Datetime information",
+    "aim": "Check that the datetime-help command documents supported inputs and interpretation rules.",
+    "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
+    "input": "datetime-help\nbye\n",
+    "expected_contains": "Supported date/time formats:",
+    "expected_output": ""
+  },
+  {
     "name": "Weekday and invalid date handling",
     "aim": "Check that weekday names resolve to the next matching day and invalid dates do not terminate the chatbot.",
     "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
     "input": "deadline meeting /by monday\ndeadline broken /by not-a-date\nbye\n",
-    "expected_contains": "OOPS! Use: deadline <description> /by <valid date/time>.",
+    "expected_contains": "OOPS! Use: deadline <description> /by <valid date/time>. Use datetime-help to view supported date/time formats.",
     "expected_output": ""
   },
   {
@@ -172,7 +181,7 @@ The expected output below includes the final newline.
     "aim": "Check that impossible calendar dates and times are rejected without terminating the chatbot.",
     "command": ["java", "-cp", "out/production/ip_project", "Megatron"],
     "input": "deadline invalid day /by 31/04/2019\ndeadline invalid time /by 2019-01-01 2560\nbye\n",
-    "expected_contains": "OOPS! Use: deadline <description> /by <valid date/time>.",
+    "expected_contains": "OOPS! Use: deadline <description> /by <valid date/time>. Use datetime-help to view supported date/time formats.",
     "expected_output": ""
   },
   {

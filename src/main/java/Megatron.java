@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Megatron {
     private static final int MAX_TASKS = 100;
     private static final List<String> AVAILABLE_COMMANDS = new ArrayList<>(List.of(
-            "todo", "deadline", "event", "list", "mark", "unmark", "delete"));
+            "todo", "deadline", "event", "list", "mark", "unmark", "delete", "datetime-help"));
 
     public static void main(String[] args) {
         String banner = "   __  ___              __              \n"
@@ -40,6 +40,8 @@ public class Megatron {
             try {
                 if (command.equals("list")) {
                     printTasks(tasks);
+                } else if (command.equals("datetime-help")) {
+                    printDatetimeInformation();
                 } else if (command.startsWith("mark ")) {
                     markTask(tasks, command, true, storage);
                 } else if (command.startsWith("unmark ")) {
@@ -78,6 +80,26 @@ public class Megatron {
         }
     }
 
+    /** Prints the supported date/time inputs and the rules used to interpret them. */
+    private static void printDatetimeInformation() {
+        System.out.println("     Supported date/time formats:");
+        System.out.println("     Dates with a year: yyyy-MM-dd, d/M/yyyy");
+        System.out.println("       MMM d yyyy, MMMM d yyyy");
+        System.out.println("       d MMM yyyy, d MMMM yyyy");
+        System.out.println("     Dates without a year: MMM d, MMMM d");
+        System.out.println("       d MMM, d MMMM (current year is used)");
+        System.out.println("     Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]");
+        System.out.println("       Examples: 2145, 21:45, 9pm, 9:45pm");
+        System.out.println("     Weekdays: mon/tue/wed/thu/fri/sat/sun");
+        System.out.println("       Full names are also accepted, for example monday 6pm.");
+        System.out.println("     Missing times default to 0000 (midnight).");
+        System.out.println("     A weekday resolves to its next available occurrence.");
+        System.out.println("     A time-only event end uses the event start date.");
+        System.out.println("       Example: event Exam /from 6 Jul 26 1200 /to 1400");
+        System.out.println("       The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs");
+        System.out.println("     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)");
+    }
+
     /** Converts a user command into the matching task subtype. */
     private static Task createTask(String command) throws MegatronException {
         if (command.equals("todo")) {
@@ -98,7 +120,8 @@ public class Megatron {
             try {
                 return new Deadline(parts[0].trim(), parts[1].trim());
             } catch (IllegalArgumentException exception) {
-                throw new InvalidTaskFormatException("deadline <description> /by <valid date/time>.");
+                throw new InvalidTaskFormatException("deadline <description> /by <valid date/time>. "
+                        + "Use datetime-help to view supported date/time formats.");
             }
         }
         if (command.startsWith("event ")) {
@@ -114,7 +137,8 @@ public class Megatron {
             try {
                 return new Event(parts[0].trim(), times[0].trim(), times[1].trim());
             } catch (IllegalArgumentException exception) {
-                throw new InvalidTaskFormatException("event <description> /from <valid start> /to <valid end>.");
+                throw new InvalidTaskFormatException("event <description> /from <valid start> /to <valid end>. "
+                        + "Use datetime-help to view supported date/time formats.");
             }
         }
                     throw new UnknownCommandException(AVAILABLE_COMMANDS);

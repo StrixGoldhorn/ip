@@ -212,7 +212,8 @@ public final class DatetimeValidator {
     }
 
     private static IllegalArgumentException invalidDateTime() {
-        return new IllegalArgumentException("Invalid date/time. Use yyyy-mm-dd or d/M/Aug 6 2026 2pmy HHmm.");
+        return new IllegalArgumentException("Invalid date/time. Use datetime-help to view supported "
+                + "date/time formats.");
     }
 
     /** Holds the parsed value and whether the user supplied a time. */
