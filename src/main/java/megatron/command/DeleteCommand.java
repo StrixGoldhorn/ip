@@ -1,3 +1,11 @@
+package megatron.command;
+
+import megatron.exception.MegatronException;
+import megatron.storage.TaskStorage;
+import megatron.task.Task;
+import megatron.task.TaskList;
+import megatron.ui.Ui;
+
 /** Deletes one task from the task list. */
 public final class DeleteCommand extends Command {
     private final int taskNumber;

@@ -1,6 +1,19 @@
+package megatron.command;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import megatron.exception.EmptyCommandException;
+import megatron.exception.EmptyDescriptionException;
+import megatron.exception.InvalidTaskFormatException;
+import megatron.exception.InvalidTaskNumberException;
+import megatron.exception.MegatronException;
+import megatron.exception.UnknownCommandException;
+import megatron.task.Deadline;
+import megatron.task.Event;
+import megatron.task.Task;
+import megatron.task.Todo;
 
 /** Interprets user commands and creates tasks from add commands. */
 public final class Parser {

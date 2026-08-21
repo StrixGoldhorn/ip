@@ -1,3 +1,12 @@
+package megatron;
+
+import megatron.command.Command;
+import megatron.command.Parser;
+import megatron.exception.MegatronException;
+import megatron.storage.TaskStorage;
+import megatron.task.TaskList;
+import megatron.ui.Ui;
+
 /**
  * Starts the Megatron chatbot application.
  */

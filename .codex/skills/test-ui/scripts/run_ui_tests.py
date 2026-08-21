@@ -3,6 +3,7 @@ import argparse, json, subprocess, sys
 from pathlib import Path
 
 TEST_DATA_FILE = Path("temp.csv")
+MAIN_CLASS = "megatron.Megatron"
 
 def load_cases(path):
     text = path.read_text(encoding="utf-8")
@@ -19,7 +20,7 @@ def main():
     for number, case in enumerate(load_cases(args.plan or args.cases), 1):
         if case.get("persistence"):
             TEST_DATA_FILE.unlink(missing_ok=True)
-            command = ["java", "-cp", "out/production/ip_project", "Megatron", str(TEST_DATA_FILE)]
+            command = ["java", "-cp", "out/production/ip_project", MAIN_CLASS, str(TEST_DATA_FILE)]
             first = subprocess.run(command, input=case["save_input"], text=True,
                                    capture_output=True, shell=False)
             second = subprocess.run(command, input=case["load_input"], text=True,
@@ -39,7 +40,7 @@ def main():
             passed += 1
             continue
         command = case["command"] if isinstance(case["command"], list) else case["command"].split()
-        if command[-1:] == ["Megatron"]:
+        if command[-1:] == [MAIN_CLASS]:
             command.append(str(TEST_DATA_FILE))
         TEST_DATA_FILE.unlink(missing_ok=True)
         if case.get("initial_data") is not None:

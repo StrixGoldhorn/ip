@@ -1,3 +1,9 @@
+package megatron.command;
+
+import megatron.storage.TaskStorage;
+import megatron.task.TaskList;
+import megatron.ui.Ui;
+
 /** Executes the user's request to exit Megatron. */
 public final class ExitCommand extends Command {
     /** Displays the existing goodbye message. */

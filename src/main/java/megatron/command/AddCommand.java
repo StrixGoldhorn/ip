@@ -1,4 +1,13 @@
+package megatron.command;
+
 import java.util.Objects;
+
+import megatron.exception.MegatronException;
+import megatron.exception.TaskListFullException;
+import megatron.storage.TaskStorage;
+import megatron.task.Task;
+import megatron.task.TaskList;
+import megatron.ui.Ui;
 
 /** Adds one task to the task list. */
 public final class AddCommand extends Command {

@@ -1,3 +1,5 @@
+package megatron.storage;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,6 +9,12 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import megatron.task.Deadline;
+import megatron.task.Event;
+import megatron.task.Task;
+import megatron.task.TaskList;
+import megatron.task.Todo;
 
 /** Stores and restores Megatron tasks in a CSV file. */
 public final class TaskStorage {

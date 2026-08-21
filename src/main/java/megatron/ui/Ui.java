@@ -1,6 +1,12 @@
+package megatron.ui;
+
 import java.io.PrintStream;
 import java.util.Objects;
 import java.util.Scanner;
+
+import megatron.exception.MegatronException;
+import megatron.task.Task;
+import megatron.task.TaskList;
 
 /**
  * Handles all console input and output used by Megatron.

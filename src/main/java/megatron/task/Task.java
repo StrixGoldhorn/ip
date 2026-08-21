@@ -1,3 +1,5 @@
+package megatron.task;
+
 /**
  * Represents one task in Megatron's task list.
  */

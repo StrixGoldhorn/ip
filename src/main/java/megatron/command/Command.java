@@ -1,3 +1,10 @@
+package megatron.command;
+
+import megatron.exception.MegatronException;
+import megatron.storage.TaskStorage;
+import megatron.task.TaskList;
+import megatron.ui.Ui;
+
 /** Represents an executable user command. */
 public abstract class Command {
     /** Executes this command using the application objects. */
