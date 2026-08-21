@@ -1,3 +1,5 @@
+package megatron.task;
+
 /** Represents the completion status of a task. */
 public enum TaskStatus {
     NOT_DONE("[ ]"),

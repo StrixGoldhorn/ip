@@ -1,3 +1,5 @@
+package megatron.task;
+
 import java.time.LocalDateTime;
 
 /** A task with a specified start and end date or time. */

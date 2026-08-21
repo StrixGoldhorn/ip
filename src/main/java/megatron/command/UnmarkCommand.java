@@ -1,3 +1,11 @@
+package megatron.command;
+
+import megatron.exception.MegatronException;
+import megatron.storage.TaskStorage;
+import megatron.task.Task;
+import megatron.task.TaskList;
+import megatron.ui.Ui;
+
 /** Marks one task as not done. */
 public final class UnmarkCommand extends Command {
     private final int taskNumber;

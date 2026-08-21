@@ -1,3 +1,5 @@
+package megatron.task;
+
 /** Identifies the kind of task stored in Megatron. */
 public enum TaskType {
     TODO("[T]"),

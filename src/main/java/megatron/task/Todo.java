@@ -1,3 +1,5 @@
+package megatron.task;
+
 /** A task with no date or time attached to it. */
 public class Todo extends Task {
     public Todo(String description) {
