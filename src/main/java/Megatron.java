@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Starts the Megatron chatbot application.
@@ -11,43 +10,31 @@ public class Megatron {
             "todo", "deadline", "event", "list", "mark", "unmark", "delete", "datetime-help"));
 
     public static void main(String[] args) {
-        String banner = "   __  ___              __              \n"
-                + "  /  |/  /__ ___ ____ _/ /________  ___ \n"
-                + " / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n"
-                + "/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n"
-                + "           /___/                        ";
-        String divider = "____________________________________________________________";
+        Ui ui = new Ui();
+        ui.showWelcome();
 
-        System.out.println(divider);
-        System.out.println(banner);
-        System.out.println("     Rawr! I'm Megatron.");
-        System.out.println("     What can I do for you?");
-        System.out.println(divider);
-
-        Scanner scanner = new Scanner(System.in);
         TaskStorage storage = new TaskStorage(args.length > 0 ? args[0] : "data/megatron.csv");
         List<Task> tasks = storage.load();
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            System.out.println(divider);
+        while (ui.hasNextCommand()) {
+            String command = ui.readCommand();
+            ui.showDivider();
 
             if (command.equals("bye")) {
-                System.out.println("     Bye. Hope to see you again soon!");
-                System.out.println(divider);
+                ui.showGoodbye();
                 break;
             }
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks);
+                    ui.showTasks(tasks);
                 } else if (command.equals("datetime-help")) {
-                    printDatetimeInformation();
+                    ui.showDatetimeInformation();
                 } else if (command.startsWith("mark ")) {
-                    markTask(tasks, command, true, storage);
+                    markTask(tasks, command, true, storage, ui);
                 } else if (command.startsWith("unmark ")) {
-                    markTask(tasks, command, false, storage);
+                    markTask(tasks, command, false, storage, ui);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    deleteTask(tasks, command, storage);
+                    deleteTask(tasks, command, storage, ui);
                 } else if (!command.isBlank()) {
                     if (tasks.size() == MAX_TASKS) {
                         throw new TaskListFullException();
@@ -55,49 +42,16 @@ public class Megatron {
                     Task newTask = createTask(command);
                     tasks.add(newTask);
                     storage.save(tasks);
-                    System.out.println("     Got it. I've added this task:");
-                    System.out.println("       " + newTask.displayText());
-                    System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+                    ui.showTaskAdded(newTask, tasks.size());
                 } else {
                     throw new EmptyCommandException();
                 }
             } catch (MegatronException exception) {
-                System.out.println("     OOPS! " + exception.getMessage());
+                ui.showError(exception);
             }
-            System.out.println(divider);
+            ui.showDivider();
         }
-        scanner.close();
-    }
-
-    /**
-     * Prints all stored tasks in the order in which the user entered them.
-     *
-     * @param tasks the collection containing the stored tasks
-     */
-    private static void printTasks(List<Task> tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println("     " + (i + 1) + "." + tasks.get(i).displayText());
-        }
-    }
-
-    /** Prints the supported date/time inputs and the rules used to interpret them. */
-    private static void printDatetimeInformation() {
-        System.out.println("     Supported date/time formats:");
-        System.out.println("     Dates with a year: yyyy-MM-dd, d/M/yyyy");
-        System.out.println("       MMM d yyyy, MMMM d yyyy");
-        System.out.println("       d MMM yyyy, d MMMM yyyy");
-        System.out.println("     Dates without a year: MMM d, MMMM d");
-        System.out.println("       d MMM, d MMMM (current year is used)");
-        System.out.println("     Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]");
-        System.out.println("       Examples: 2145, 21:45, 9pm, 9:45pm");
-        System.out.println("     Weekdays: mon/tue/wed/thu/fri/sat/sun");
-        System.out.println("       Full names are also accepted, for example monday 6pm.");
-        System.out.println("     Missing times default to 0000 (midnight).");
-        System.out.println("     A weekday resolves to its next available occurrence.");
-        System.out.println("     A time-only event end uses the event start date.");
-        System.out.println("       Example: event Exam /from 6 Jul 26 1200 /to 1400");
-        System.out.println("       The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs");
-        System.out.println("     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)");
+        ui.close();
     }
 
     /** Converts a user command into the matching task subtype. */
@@ -151,8 +105,8 @@ public class Megatron {
      * @param command the mark or unmark command
      * @param shouldMarkDone whether the task should be marked as done
      */
-    private static void markTask(List<Task> tasks, String command, boolean shouldMarkDone, TaskStorage storage)
-            throws MegatronException {
+    private static void markTask(List<Task> tasks, String command, boolean shouldMarkDone, TaskStorage storage,
+            Ui ui) throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -162,13 +116,11 @@ public class Megatron {
             Task task = tasks.get(taskNumber - 1);
             if (shouldMarkDone) {
                 task.markAsDone();
-                System.out.println("     Nice! I've marked this task as done:");
             } else {
                 task.markAsNotDone();
-                System.out.println("     OK, I've marked this task as not done yet:");
             }
             storage.save(tasks);
-            System.out.println("       " + task.displayText());
+            ui.showTaskMarked(task, shouldMarkDone);
         } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
             throw new InvalidTaskNumberException();
         }
@@ -181,7 +133,8 @@ public class Megatron {
      * @param command the delete command
      * @throws MegatronException if the command does not contain a valid task number
      */
-    private static void deleteTask(List<Task> tasks, String command, TaskStorage storage) throws MegatronException {
+    private static void deleteTask(List<Task> tasks, String command, TaskStorage storage, Ui ui)
+            throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
             if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -190,9 +143,7 @@ public class Megatron {
 
             Task removedTask = tasks.remove(taskNumber - 1);
             storage.save(tasks);
-            System.out.println("     Noted. I've removed this task:");
-            System.out.println("       " + removedTask.displayText());
-            System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+            ui.showTaskDeleted(removedTask, tasks.size());
         } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
             throw new InvalidTaskNumberException();
         }
