@@ -18,10 +18,10 @@ public final class TaskStorage {
     }
 
     /** Loads all valid tasks. A missing file is treated as an empty task list. */
-    public List<Task> load() {
+    public TaskList load() {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(file)) {
-            return tasks;
+            return new TaskList(tasks);
         }
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             String line;
@@ -44,11 +44,11 @@ public final class TaskStorage {
         } catch (IOException | RuntimeException exception) {
             // Keep the application usable when the data file is unreadable or malformed.
         }
-        return tasks;
+        return new TaskList(tasks);
     }
 
     /** Saves all tasks and creates the data folder when needed. */
-    public void save(List<Task> tasks) {
+    public void save(TaskList tasks) {
         try {
             if (file.getParent() != null) {
                 Files.createDirectories(file.getParent());

@@ -1,5 +1,4 @@
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -63,9 +62,11 @@ public final class Ui {
     }
 
     /** Displays every stored task in the order in which it was added. */
-    public void showTasks(List<Task> tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
-            output.println("     " + (i + 1) + "." + tasks.get(i).displayText());
+    public void showTasks(TaskList tasks) {
+        int taskNumber = 1;
+        for (Task task : tasks) {
+            output.println("     " + taskNumber + "." + task.displayText());
+            taskNumber++;
         }
     }
 

@@ -14,7 +14,7 @@ public class Megatron {
         ui.showWelcome();
 
         TaskStorage storage = new TaskStorage(args.length > 0 ? args[0] : "data/megatron.csv");
-        List<Task> tasks = storage.load();
+        TaskList tasks = storage.load();
         while (ui.hasNextCommand()) {
             String command = ui.readCommand();
             ui.showDivider();
@@ -105,19 +105,15 @@ public class Megatron {
      * @param command the mark or unmark command
      * @param shouldMarkDone whether the task should be marked as done
      */
-    private static void markTask(List<Task> tasks, String command, boolean shouldMarkDone, TaskStorage storage,
+    private static void markTask(TaskList tasks, String command, boolean shouldMarkDone, TaskStorage storage,
             Ui ui) throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
-            if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new TaskNotFoundException();
-            }
-
-            Task task = tasks.get(taskNumber - 1);
+            Task task;
             if (shouldMarkDone) {
-                task.markAsDone();
+                task = tasks.setDone(taskNumber);
             } else {
-                task.markAsNotDone();
+                task = tasks.setNotDone(taskNumber);
             }
             storage.save(tasks);
             ui.showTaskMarked(task, shouldMarkDone);
@@ -133,15 +129,11 @@ public class Megatron {
      * @param command the delete command
      * @throws MegatronException if the command does not contain a valid task number
      */
-    private static void deleteTask(List<Task> tasks, String command, TaskStorage storage, Ui ui)
+    private static void deleteTask(TaskList tasks, String command, TaskStorage storage, Ui ui)
             throws MegatronException {
         try {
             int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1).trim());
-            if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new TaskNotFoundException();
-            }
-
-            Task removedTask = tasks.remove(taskNumber - 1);
+            Task removedTask = tasks.removeTask(taskNumber);
             storage.save(tasks);
             ui.showTaskDeleted(removedTask, tasks.size());
         } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
