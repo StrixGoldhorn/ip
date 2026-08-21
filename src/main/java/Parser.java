@@ -7,79 +7,53 @@ public final class Parser {
     private static final List<String> AVAILABLE_COMMANDS = new ArrayList<>(List.of(
             "todo", "deadline", "event", "list", "mark", "unmark", "delete", "datetime-help"));
 
-    /** The kinds of commands that the application supports. */
-    public enum CommandType {
-        BYE,
-        LIST,
-        DATETIME_HELP,
-        ADD,
-        MARK,
-        UNMARK,
-        DELETE
-    }
-
-    /** Immutable result of parsing one user command. */
-    public static final class Command {
-        private final CommandType type;
-        private final String originalText;
-        private final Integer taskNumber;
-
-        private Command(CommandType type, String originalText, Integer taskNumber) {
-            this.type = type;
-            this.originalText = originalText;
-            this.taskNumber = taskNumber;
-        }
-
-        /** Returns the category of this command. */
-        public CommandType getType() {
-            return type;
-        }
-
-        /** Returns the original text for an add command. */
-        public String getOriginalText() {
-            return originalText;
-        }
-
-        /** Returns the task number, or null when the command has no number. */
-        public Integer getTaskNumber() {
-            return taskNumber;
-        }
-    }
-
-    /** Converts raw input into an immutable command. */
+    /** Converts raw input into an executable command. */
     public Command parse(String input) throws MegatronException {
         Objects.requireNonNull(input);
-        if (input.equals("bye")) {
-            return new Command(CommandType.BYE, null, null);
+        int firstSpace = input.indexOf(' ');
+        String commandWord = firstSpace == -1 ? input : input.substring(0, firstSpace);
+
+        switch (commandWord) {
+        case "bye":
+            if (input.equals("bye")) {
+                return new ExitCommand();
+            }
+            break;
+        case "list":
+            if (input.equals("list")) {
+                return new ListCommand();
+            }
+            break;
+        case "datetime-help":
+            if (input.equals("datetime-help")) {
+                return new DatetimeHelpCommand();
+            }
+            break;
+        case "mark":
+            if (input.startsWith("mark ")) {
+                return new MarkCommand(parseTaskNumber(input));
+            }
+            break;
+        case "unmark":
+            if (input.startsWith("unmark ")) {
+                return new UnmarkCommand(parseTaskNumber(input));
+            }
+            break;
+        case "delete":
+            return new DeleteCommand(parseTaskNumber(input));
+        default:
+            break;
         }
-        if (input.equals("list")) {
-            return new Command(CommandType.LIST, null, null);
-        }
-        if (input.equals("datetime-help")) {
-            return new Command(CommandType.DATETIME_HELP, null, null);
-        }
-        if (input.startsWith("mark ")) {
-            return new Command(CommandType.MARK, null, parseTaskNumber(input));
-        }
-        if (input.startsWith("unmark ")) {
-            return new Command(CommandType.UNMARK, null, parseTaskNumber(input));
-        }
-        if (input.equals("delete")) {
-            return new Command(CommandType.DELETE, null, null);
-        }
-        if (input.startsWith("delete ")) {
-            return new Command(CommandType.DELETE, null, parseTaskNumber(input));
-        }
+
         if (input.isBlank()) {
             throw new EmptyCommandException();
         }
-        return new Command(CommandType.ADD, input, null);
+        return new AddCommand(input, this);
     }
 
     /** Creates the task described by an add command. */
-    public Task createTask(Command command) throws MegatronException {
-        Objects.requireNonNull(command);
-        String text = command.getOriginalText();
+    public Task createTask(String text) throws MegatronException {
+        Objects.requireNonNull(text);
         if (text.equals("todo")) {
             throw new EmptyDescriptionException();
         }
