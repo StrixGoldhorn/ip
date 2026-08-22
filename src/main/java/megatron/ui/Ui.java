@@ -31,18 +31,28 @@ public final class Ui {
         this(new Scanner(System.in), System.out);
     }
 
-    /** Creates a UI using the supplied input and output streams. */
+    /** Creates a UI using the supplied input and output streams.
+     *
+     * @param scanner The input scanner.
+     * @param output The output stream.
+     */
     public Ui(Scanner scanner, PrintStream output) {
         this.scanner = Objects.requireNonNull(scanner);
         this.output = Objects.requireNonNull(output);
     }
 
-    /** Returns whether another complete command is available. */
+    /** Returns whether another complete command is available.
+     *
+     * @return True if another command line is available.
+     */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
     }
 
-    /** Reads and returns the next complete command line. */
+    /** Reads and returns the next complete command line.
+     *
+     * @return The next command line.
+     */
     public String readCommand() {
         return scanner.nextLine();
     }
@@ -67,7 +77,10 @@ public final class Ui {
         showDivider();
     }
 
-    /** Displays every stored task in the order in which it was added. */
+    /** Displays every stored task in the order in which it was added.
+     *
+     * @param tasks The tasks to display.
+     */
     public void showTasks(TaskList tasks) {
         int taskNumber = 1;
         for (Task task : tasks) {
@@ -96,14 +109,22 @@ public final class Ui {
         output.println("     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)");
     }
 
-    /** Displays confirmation after a task is added. */
+    /** Displays confirmation after a task is added.
+     *
+     * @param task The added task.
+     * @param taskCount The current number of tasks.
+     */
     public void showTaskAdded(Task task, int taskCount) {
         output.println("     Got it. I've added this task:");
         output.println("       " + task.displayText());
         output.println("     Now you have " + taskCount + " tasks in the list.");
     }
 
-    /** Displays confirmation after a task's completion status changes. */
+    /** Displays confirmation after a task's completion status changes.
+     *
+     * @param task The task whose status changed.
+     * @param markedDone Whether the task is now done.
+     */
     public void showTaskMarked(Task task, boolean markedDone) {
         if (markedDone) {
             output.println("     Nice! I've marked this task as done:");
@@ -113,14 +134,21 @@ public final class Ui {
         output.println("       " + task.displayText());
     }
 
-    /** Displays confirmation after a task is deleted. */
+    /** Displays confirmation after a task is deleted.
+     *
+     * @param task The deleted task.
+     * @param taskCount The current number of tasks.
+     */
     public void showTaskDeleted(Task task, int taskCount) {
         output.println("     Noted. I've removed this task:");
         output.println("       " + task.displayText());
         output.println("     Now you have " + taskCount + " tasks in the list.");
     }
 
-    /** Displays an error message for a rejected command. */
+    /** Displays an error message for a rejected command.
+     *
+     * @param exception The command error to display.
+     */
     public void showError(MegatronException exception) {
         output.println("     OOPS! " + exception.getMessage());
     }

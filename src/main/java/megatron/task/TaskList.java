@@ -16,52 +16,89 @@ public final class TaskList implements Iterable<Task> {
         this.tasks = new ArrayList<>();
     }
 
-    /** Creates a task list containing a copy of the supplied tasks. */
+    /** Creates a task list containing a copy of the supplied tasks.
+     *
+     * @param initialTasks The tasks to copy.
+     */
     public TaskList(List<Task> initialTasks) {
         this.tasks = new ArrayList<>(Objects.requireNonNull(initialTasks));
     }
 
-    /** Returns the number of tasks in this list. */
+    /** Returns the number of tasks in this list.
+     *
+     * @return The number of tasks.
+     */
     public int size() {
         return tasks.size();
     }
 
-    /** Adds a task to the end of this list. */
+    /** Adds a task to the end of this list.
+     *
+     * @param task The task to add.
+     */
     public void add(Task task) {
         tasks.add(Objects.requireNonNull(task));
     }
 
-    /** Returns the task at a one-based list number. */
+    /** Returns the task at a one-based list number.
+     *
+     * @param taskNumber The one-based task number.
+     * @return The selected task.
+     * @throws TaskNotFoundException If the task number is outside the list.
+     */
     public Task getTask(int taskNumber) throws TaskNotFoundException {
         return tasks.get(toIndex(taskNumber));
     }
 
-    /** Removes and returns the task at a one-based list number. */
+    /** Removes and returns the task at a one-based list number.
+     *
+     * @param taskNumber The one-based task number.
+     * @return The removed task.
+     * @throws TaskNotFoundException If the task number is outside the list.
+     */
     public Task removeTask(int taskNumber) throws TaskNotFoundException {
         return tasks.remove(toIndex(taskNumber));
     }
 
-    /** Marks and returns the task at a one-based list number as done. */
+    /** Marks and returns the task at a one-based list number as done.
+     *
+     * @param taskNumber The one-based task number.
+     * @return The marked task.
+     * @throws TaskNotFoundException If the task number is outside the list.
+     */
     public Task setDone(int taskNumber) throws TaskNotFoundException {
         Task task = getTask(taskNumber);
         task.markAsDone();
         return task;
     }
 
-    /** Marks and returns the task at a one-based list number as not done. */
+    /** Marks and returns the task at a one-based list number as not done.
+     *
+     * @param taskNumber The one-based task number.
+     * @return The unmarked task.
+     * @throws TaskNotFoundException If the task number is outside the list.
+     */
     public Task setNotDone(int taskNumber) throws TaskNotFoundException {
         Task task = getTask(taskNumber);
         task.markAsNotDone();
         return task;
     }
 
-    /** Returns an iterator over the tasks in list order. */
+    /** Returns an iterator over the tasks in list order.
+     *
+     * @return An iterator over the tasks.
+     */
     @Override
     public Iterator<Task> iterator() {
         return tasks.iterator();
     }
 
-    /** Converts a one-based task number to an internal zero-based index. */
+    /** Converts a one-based task number to an internal zero-based index.
+     *
+     * @param taskNumber The one-based task number.
+     * @return The zero-based index.
+     * @throws TaskNotFoundException If the task number is outside the list.
+     */
     private int toIndex(int taskNumber) throws TaskNotFoundException {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new TaskNotFoundException();

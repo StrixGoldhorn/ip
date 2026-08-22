@@ -16,13 +16,23 @@ public final class AddCommand extends Command {
     private final String input;
     private final Parser parser;
 
-    /** Creates an add command from the original user input. */
+    /** Creates an add command from the original user input.
+     *
+     * @param input The original user input.
+     * @param parser The parser used to create the task.
+     */
     public AddCommand(String input, Parser parser) {
         this.input = Objects.requireNonNull(input);
         this.parser = Objects.requireNonNull(parser);
     }
 
-    /** Validates, adds, saves, and displays the new task. */
+    /** Validates, adds, saves, and displays the new task.
+     *
+     * @param tasks The current task list.
+     * @param ui The user interface used for output.
+     * @param storage The task storage used for persistence.
+     * @throws MegatronException If the task cannot be created or the list is full.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, TaskStorage storage) throws MegatronException {
         if (tasks.size() == MAX_TASKS) {

@@ -68,27 +68,51 @@ public final class DatetimeValidator {
     private DatetimeValidator() {
     }
 
-    /** Converts a supported date/time string to a local date/time value. */
+    /** Converts a supported date/time string to a local date/time value.
+     *
+     * @param input The supported date/time string.
+     * @return The parsed local date/time value.
+     * @throws IllegalArgumentException If the input is invalid.
+     */
     public static LocalDateTime parseToLocalDateTime(String input) {
         return parse(input).value;
     }
 
-    /** Returns whether the input explicitly included a time. */
+    /** Returns whether the input explicitly included a time.
+     *
+     * @param input The supported date/time string.
+     * @return True if the input includes a time.
+     * @throws IllegalArgumentException If the input is invalid.
+     */
     public static boolean hasExplicitTime(String input) {
         return parse(input).timeSpecified;
     }
 
-    /** Formats a local date/time using the supplied DateTimeFormatter pattern. */
+    /** Formats a local date/time using the supplied DateTimeFormatter pattern.
+     *
+     * @param value The local date/time value.
+     * @param pattern The DateTimeFormatter pattern.
+     * @return The formatted date/time string.
+     */
     public static String format(LocalDateTime value, String pattern) {
         return value.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
     }
 
-    /** Formats a local date/time using the chatbot's default numeric 24-hour format. */
+    /** Formats a local date/time using the chatbot's default numeric 24-hour format.
+     *
+     * @param value The local date/time value.
+     * @return The formatted date/time string.
+     */
     public static String formatForUser(LocalDateTime value) {
         return format(value, DEFAULT_OUTPUT_PATTERN);
     }
 
-    /** Parses a user input and records whether its time was explicitly supplied. */
+    /** Parses a user input and records whether its time was explicitly supplied.
+     *
+     * @param input The user date/time input.
+     * @return The parsed date/time and time-presence flag.
+     * @throws IllegalArgumentException If the input is invalid.
+     */
     private static ParsedDateTime parse(String input) {
         if (input == null || input.isBlank()) {
             throw invalidDateTime();
@@ -117,7 +141,11 @@ public final class DatetimeValidator {
         throw invalidDateTime();
     }
 
-    /** Tries the supported date/time and date-only formatters. */
+    /** Tries the supported date/time and date-only formatters.
+     *
+     * @param value The normalised date/time input.
+     * @return The parsed date/time, or null if no formatter matches.
+     */
     private static ParsedDateTime tryParseDateTime(String value) {
         ParsedDateTime isoDateTime = tryParseIsoDateTime(value);
         if (isoDateTime != null) {
@@ -143,7 +171,11 @@ public final class DatetimeValidator {
         }
     }
 
-    /** Parses an ISO date followed by one of the supported time formats. */
+    /** Parses an ISO date followed by one of the supported time formats.
+     *
+     * @param value The normalised ISO date/time input.
+     * @return The parsed date/time, or null if the input is not ISO date/time.
+     */
     private static ParsedDateTime tryParseIsoDateTime(String value) {
         if (value.length() <= 10 || value.charAt(10) != ' ') {
             return null;
@@ -156,7 +188,11 @@ public final class DatetimeValidator {
         }
     }
 
-    /** Adds the current year only to a text-month input that does not have a year. */
+    /** Adds the current year only to a text-month input that does not have a year.
+     *
+     * @param value The normalised date/time input.
+     * @return The input with a year, or null if a year is already present.
+     */
     private static String addCurrentYearIfMissing(String value) {
         Matcher matcher = TEXT_MONTH_WITHOUT_YEAR.matcher(value);
         if (!matcher.matches()) {
@@ -167,7 +203,12 @@ public final class DatetimeValidator {
                 + (time == null ? "" : " " + time);
     }
 
-    /** Resolves a weekday to its next occurrence. A missing time means midnight. */
+    /** Resolves a weekday to its next occurrence. A missing time means midnight.
+     *
+     * @param value The weekday input, with an optional time.
+     * @return The next matching date/time, or null if the input is not a weekday.
+     * @throws IllegalArgumentException If the weekday time is invalid.
+     */
     private static ParsedDateTime parseWeekday(String value) {
         String[] parts = value.toLowerCase(Locale.ENGLISH).split("\\s+", 2);
         DayOfWeek weekday = WEEKDAYS.get(parts[0]);
@@ -189,7 +230,12 @@ public final class DatetimeValidator {
         return new ParsedDateTime(today.plusDays(daysUntil).atTime(time), timeSpecified);
     }
 
-    /** Parses one of the supported time formats. */
+    /** Parses one of the supported time formats.
+     *
+     * @param value The time input.
+     * @return The parsed local time.
+     * @throws IllegalArgumentException If the time is invalid.
+     */
     private static LocalTime parseTime(String value) {
         String normalised = value.trim().replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
         for (DateTimeFormatter formatter : TIME_FORMATTERS) {
@@ -201,22 +247,40 @@ public final class DatetimeValidator {
         throw invalidDateTime();
     }
 
-    /** Normalises whitespace, ordinal day suffixes, and spaces before am/pm. */
+    /** Normalises whitespace, ordinal day suffixes, and spaces before am/pm.
+     *
+     * @param input The raw date/time input.
+     * @return The normalised date/time input.
+     */
     private static String normaliseInput(String input) {
         String value = input.trim().replaceAll("\\s+", " ")
                 .replaceAll("(?i)(\\d+)(st|nd|rd|th)\\b", "$1");
         return value.replaceAll("(?i)(\\d{1,2}(?::\\d{2})?)\\s+(am|pm)\\b", "$1$2");
     }
 
+    /** Creates a case-insensitive formatter that rejects invalid dates and times.
+     *
+     * @param pattern The DateTimeFormatter pattern.
+     * @return The strict date/time formatter.
+     */
     private static DateTimeFormatter strictFormatter(String pattern) {
         return new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(pattern)
                 .toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT);
     }
 
+    /** Creates a strict formatter for a pattern that contains month text.
+     *
+     * @param pattern The DateTimeFormatter pattern.
+     * @return The strict text-month formatter.
+     */
     private static DateTimeFormatter textFormatter(String pattern) {
         return strictFormatter(pattern);
     }
 
+    /** Creates the standard exception for unsupported or invalid date/time input.
+     *
+     * @return The invalid date/time exception.
+     */
     private static IllegalArgumentException invalidDateTime() {
         return new IllegalArgumentException("Invalid date/time. Use datetime-help to view supported "
                 + "date/time formats.");
@@ -227,6 +291,11 @@ public final class DatetimeValidator {
         private final LocalDateTime value;
         private final boolean timeSpecified;
 
+        /** Creates parsed date/time information.
+         *
+         * @param value The parsed local date/time value.
+         * @param timeSpecified Whether the input explicitly included a time.
+         */
         private ParsedDateTime(LocalDateTime value, boolean timeSpecified) {
             this.value = value;
             this.timeSpecified = timeSpecified;
