@@ -30,6 +30,13 @@ Ensure that Java 25 is used when running the application or build tasks.
 
 ## Git
 
+Before preparing, reviewing, proposing, or creating any commit or branch in this
+project, use `$seedu-git-standard` and follow
+`.codex/skills/seedu-git-standard/SKILL.md`. This project-specific skill is
+mandatory for all future commits and branch names. It is based on the SE-EDU Git
+conventions and is the source of truth for Git message and branch style in this
+repository.
+
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
@@ -40,6 +47,13 @@ Unless otherwise stated, you are to respond in and write all documentation adher
 For documentation style, you are to follow the Google developer documentation style guide.
 
 ## Java Coding Standard
+
+Before modifying or reviewing any Java code in this project, use
+`$seedu-java-coding-standard` and follow
+`.codex/skills/seedu-java-coding-standard/SKILL.md`. This project-specific skill
+is mandatory for production and test Java code. It is based on the SE-EDU
+intermediate Java coding conventions and is the source of truth for Java style
+rules in this repository.
 
 Use the Google Java Style Guide for topics not covered here.
 
