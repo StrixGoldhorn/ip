@@ -30,3 +30,30 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## Creating and running the fat JAR
+
+The fat JAR contains Megatron and all of its runtime dependencies. Use JDK 25 to build and run it.
+
+1. Open a terminal in the project root directory.
+1. Create the fat JAR:
+
+   ```powershell
+   .\gradlew.bat shadowJar
+   ```
+
+   On macOS or Linux, use `./gradlew shadowJar`.
+
+1. Find the generated JAR at `build/libs/megatron.jar`.
+1. Run the JAR from the project root directory:
+
+   ```powershell
+   java -jar build/libs/megatron.jar
+   ```
+
+Megatron stores its data in `data/megatron.csv` by default. To use a different data file, give its path as
+the first argument:
+
+```powershell
+java -jar build/libs/megatron.jar data/another-file.csv
+```
