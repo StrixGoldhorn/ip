@@ -31,6 +31,21 @@ class ParserTest {
     }
 
     @Test
+    void parse_findWithKeyword_returnsFindCommand() throws MegatronException {
+        assertInstanceOf(FindCommand.class, parser.parse("find book"));
+    }
+
+    @Test
+    void parse_findWithoutKeyword_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.parse("find"));
+    }
+
+    @Test
+    void parse_findWithBlankKeyword_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.parse("find   "));
+    }
+
+    @Test
     void parse_datetimeHelp_returnsDatetimeHelpCommand() throws MegatronException {
         assertInstanceOf(DatetimeHelpCommand.class, parser.parse("datetime-help"));
     }

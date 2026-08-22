@@ -76,6 +76,12 @@ public final class Ui {
         }
     }
 
+    /** Displays tasks that match a find command. */
+    public void showMatchingTasks(TaskList matchingTasks) {
+        output.println("     Here are the matching tasks in your list:");
+        showTasks(matchingTasks);
+    }
+
     /** Displays the supported date/time inputs and interpretation rules. */
     public void showDatetimeInformation() {
         output.println("     Supported date/time formats:");

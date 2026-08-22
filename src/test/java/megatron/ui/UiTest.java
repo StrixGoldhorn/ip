@@ -114,6 +114,18 @@ class UiTest {
     }
 
     @Test
+    void showMatchingTasks_populatedList_printsHeadingAndNumberedTasks() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Ui ui = createUi(output);
+
+        ui.showMatchingTasks(new TaskList(List.of(new Todo("read book"))));
+
+        assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
+                + "     1.[T][ ] read book" + System.lineSeparator(),
+                output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
     void showDatetimeInformation_printsSupportedFormats() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Ui ui = createUi(output);

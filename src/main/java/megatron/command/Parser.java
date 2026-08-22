@@ -18,7 +18,7 @@ import megatron.task.Todo;
 /** Interprets user commands and creates tasks from add commands. */
 public final class Parser {
     private static final List<String> AVAILABLE_COMMANDS = new ArrayList<>(List.of(
-            "todo", "deadline", "event", "list", "mark", "unmark", "delete", "datetime-help"));
+            "todo", "deadline", "event", "list", "find", "mark", "unmark", "delete", "datetime-help"));
 
     /** Converts raw input into an executable command. */
     public Command parse(String input) throws MegatronException {
@@ -37,6 +37,14 @@ public final class Parser {
                 return new ListCommand();
             }
             break;
+        case "find":
+            if (input.startsWith("find ")) {
+                String keyword = input.substring(5).trim();
+                if (!keyword.isEmpty()) {
+                    return new FindCommand(keyword);
+                }
+            }
+            throw new InvalidTaskFormatException("find <keyword>.");
         case "datetime-help":
             if (input.equals("datetime-help")) {
                 return new DatetimeHelpCommand();
@@ -102,8 +110,9 @@ public final class Parser {
             try {
                 return new Event(parts[0].trim(), times[0].trim(), times[1].trim());
             } catch (IllegalArgumentException exception) {
-                throw new InvalidTaskFormatException("event <description> /from <valid start> /to <valid end>. "
-                        + "Use datetime-help to view supported date/time formats.");
+                throw new InvalidTaskFormatException(
+                        "event <description> /from <valid start> /to <valid end>. "
+                                + "Use datetime-help to view supported date/time formats.");
             }
         }
         throw new UnknownCommandException(AVAILABLE_COMMANDS);
