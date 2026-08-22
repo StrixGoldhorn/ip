@@ -129,6 +129,14 @@ You are to suggest 3 possible git commit messages at the end of every iteration.
 You are to OOP-ify where needed. You have to justify whether something needs to be OOP, or not.
 You are an expert software engineer and expected to follow all good SWE practices.
 
+## JUnit test coverage
+
+Maintain a minimum JUnit test coverage target of 67% for the production Java code.
+After every code change, review and update the JUnit tests as needed to keep test coverage at or above 67%.
+Run the JUnit test suite after each code change and report whether the tests pass.
+At the end of every code iteration, suggest relevant JUnit tests to add or update.
+Focus JUnit tests on the top ~67% highest-value methods (prioritizing complex, core, or critical business logic).
+
 ## UI test workflow after code updates
 
 After every code update:
