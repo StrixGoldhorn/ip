@@ -126,6 +126,17 @@ class UiTest {
     }
 
     @Test
+    void showMatchingTasks_emptyList_printsNoMatchMessage() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Ui ui = createUi(output);
+
+        ui.showMatchingTasks(new TaskList());
+
+        assertEquals("     No tasks found matching that description." + System.lineSeparator(),
+                output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
     void showDatetimeInformation_printsSupportedFormats() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Ui ui = createUi(output);

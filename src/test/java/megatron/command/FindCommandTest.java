@@ -47,14 +47,14 @@ class FindCommandTest {
     }
 
     @Test
-    void execute_noMatchingKeyword_displaysHeadingOnly() {
+    void execute_noMatchingKeyword_displaysNoMatchMessage() {
         TaskList tasks = new TaskList(List.of(new Todo("read book")));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         new FindCommand("movie").execute(tasks, createUi(output),
                 new TaskStorage(tempDirectory.resolve("tasks.csv").toString()));
 
-        assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator(),
+        assertEquals("     No tasks found matching that description." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
