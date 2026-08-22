@@ -20,7 +20,15 @@ public final class Parser {
     private static final List<String> AVAILABLE_COMMANDS = new ArrayList<>(List.of(
             "todo", "deadline", "event", "list", "mark", "unmark", "delete", "datetime-help"));
 
-    /** Converts raw input into an executable command. */
+    /** Creates a parser for Megatron commands. */
+    public Parser() { }
+
+    /** Converts raw input into an executable command.
+     *
+     * @param input The raw user input.
+     * @return The executable command.
+     * @throws MegatronException If the input is empty or has an invalid task number.
+     */
     public Command parse(String input) throws MegatronException {
         Objects.requireNonNull(input);
         int firstSpace = input.indexOf(' ');
@@ -64,7 +72,12 @@ public final class Parser {
         return new AddCommand(input, this);
     }
 
-    /** Creates the task described by an add command. */
+    /** Creates the task described by an add command.
+     *
+     * @param text The add command text.
+     * @return The created task.
+     * @throws MegatronException If the task description or format is invalid.
+     */
     public Task createTask(String text) throws MegatronException {
         Objects.requireNonNull(text);
         if (text.equals("todo")) {
@@ -109,7 +122,12 @@ public final class Parser {
         throw new UnknownCommandException(AVAILABLE_COMMANDS);
     }
 
-    /** Extracts a task number from a mark, unmark, or delete command. */
+    /** Extracts a task number from a mark, unmark, or delete command.
+     *
+     * @param input The complete command text.
+     * @return The parsed one-based task number.
+     * @throws InvalidTaskNumberException If the command does not contain a valid number.
+     */
     private static int parseTaskNumber(String input) throws InvalidTaskNumberException {
         try {
             return Integer.parseInt(input.substring(input.indexOf(' ') + 1).trim());

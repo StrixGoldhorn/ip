@@ -20,12 +20,18 @@ import megatron.task.Todo;
 public final class TaskStorage {
     private final Path file;
 
-    /** Creates storage that reads and writes the given relative or absolute path. */
+    /** Creates storage that reads and writes the given relative or absolute path.
+     *
+     * @param fileName The relative or absolute storage path.
+     */
     public TaskStorage(String fileName) {
         file = Paths.get(fileName);
     }
 
-    /** Loads all valid tasks. A missing file is treated as an empty task list. */
+    /** Loads all valid tasks. A missing file is treated as an empty task list.
+     *
+     * @return A task list containing all valid stored tasks.
+     */
     public TaskList load() {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(file)) {
@@ -55,7 +61,10 @@ public final class TaskStorage {
         return new TaskList(tasks);
     }
 
-    /** Saves all tasks and creates the data folder when needed. */
+    /** Saves all tasks and creates the data folder when needed.
+     *
+     * @param tasks The tasks to save.
+     */
     public void save(TaskList tasks) {
         try {
             if (file.getParent() != null) {
@@ -75,6 +84,11 @@ public final class TaskStorage {
         }
     }
 
+    /** Creates a task from the fields in a valid storage row.
+     *
+     * @param fields The fields in a valid storage row.
+     * @return The created task, or null for an unsupported row.
+     */
     private static Task createTask(List<String> fields) {
         if (fields.get(0).equals("T")) {
             return new Todo(fields.get(2));
@@ -92,7 +106,11 @@ public final class TaskStorage {
         return null;
     }
 
-    /** Checks a row before converting it into a task. Invalid rows are ignored. */
+    /** Checks a row before converting it into a task. Invalid rows are ignored.
+     *
+     * @param fields The fields in a storage row.
+     * @return True if the fields describe a valid task.
+     */
     private static boolean isValid(List<String> fields) {
         if (fields.size() != 4 || !(fields.get(1).equals("0") || fields.get(1).equals("1"))
                 || fields.get(2).isBlank()) {
@@ -109,10 +127,20 @@ public final class TaskStorage {
         return false;
     }
 
+    /** Escapes and quotes a value for storage in one CSV field.
+     *
+     * @param value The value to escape.
+     * @return The escaped CSV field.
+     */
     private static String csv(String value) {
         return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
+    /** Splits one CSV row while preserving commas and escaped quotes in quoted fields.
+     *
+     * @param line The CSV row.
+     * @return The parsed CSV fields.
+     */
     private static List<String> parseCsvLine(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();

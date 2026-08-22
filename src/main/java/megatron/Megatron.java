@@ -16,7 +16,10 @@ public class Megatron {
     private final TaskList tasks;
     private final Parser parser;
 
-    /** Creates a Megatron application that stores tasks at the given path. */
+    /** Creates a Megatron application that stores tasks at the given path.
+     *
+     * @param filePath The path to the task storage file.
+     */
     public Megatron(String filePath) {
         ui = new Ui();
         storage = new TaskStorage(filePath);
@@ -52,7 +55,10 @@ public class Megatron {
         ui.close();
     }
 
-    /** Starts Megatron using a path supplied as the first command-line argument. */
+    /** Starts Megatron using a path supplied as the first command-line argument.
+     *
+     * @param args The command-line arguments.
+     */
     public static void main(String[] args) {
         new Megatron(args.length > 0 ? args[0] : "data/megatron.csv").run();
     }
