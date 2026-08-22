@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class Deadline extends Task {
     private final LocalDateTime by;
 
+    /** Creates a deadline by parsing its due date/time value. */
     public Deadline(String description, String by) {
         super(description, TaskType.DEADLINE);
         this.by = DatetimeValidator.parseToLocalDateTime(by);
@@ -18,7 +19,9 @@ public class Deadline extends Task {
     }
 
     @Override
-    public String getExtra() { return by.toString(); }
+    public String getExtra() {
+        return by.toString();
+    }
 
     @Override
     public String toString() {
