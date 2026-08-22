@@ -1,0 +1,96 @@
+package megatron.command;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Scanner;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import megatron.exception.MegatronException;
+import megatron.exception.TaskNotFoundException;
+import megatron.storage.TaskStorage;
+import megatron.task.TaskList;
+import megatron.task.Todo;
+import megatron.ui.Ui;
+
+/** Tests task selection, persistence, and display by {@link MarkCommand}. */
+class MarkCommandTest {
+    @TempDir
+    private Path tempDirectory;
+
+    @Test
+    void execute_validTask_marksSelectedTaskSavesAndDisplaysIt() throws MegatronException {
+        TaskList tasks = new TaskList(List.of(new Todo("first"), new Todo("second")));
+        Path storageFile = tempDirectory.resolve("tasks.csv");
+        TaskStorage storage = new TaskStorage(storageFile.toString());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        new MarkCommand(2).execute(tasks, createUi(output), storage);
+
+        TaskList savedTasks = storage.load();
+        assertAll(
+                () -> assertFalse(tasks.getTask(1).isDone()),
+                () -> assertTrue(tasks.getTask(2).isDone()),
+                () -> assertFalse(savedTasks.getTask(1).isDone()),
+                () -> assertTrue(savedTasks.getTask(2).isDone()),
+                () -> assertEquals(expectedMarkedOutput("[T][X] second"),
+                        output.toString(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    void execute_alreadyDoneTask_remainsDoneAndDisplaysIt() throws MegatronException {
+        Todo task = new Todo("already done");
+        task.markAsDone();
+        TaskList tasks = new TaskList(List.of(task));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        new MarkCommand(1).execute(tasks, createUi(output),
+                new TaskStorage(tempDirectory.resolve("tasks.csv").toString()));
+
+        assertAll(
+                () -> assertTrue(task.isDone()),
+                () -> assertEquals(expectedMarkedOutput("[T][X] already done"),
+                        output.toString(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    void execute_invalidTaskNumber_throwsWithoutSavingOrDisplaying() {
+        TaskList tasks = new TaskList(List.of(new Todo("task")));
+        Path storageFile = tempDirectory.resolve("tasks.csv");
+        TaskStorage storage = new TaskStorage(storageFile.toString());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        assertAll(
+                () -> assertThrows(TaskNotFoundException.class,
+                        () -> new MarkCommand(0).execute(tasks, createUi(output), storage)),
+                () -> assertThrows(TaskNotFoundException.class,
+                        () -> new MarkCommand(-1).execute(tasks, createUi(output), storage)),
+                () -> assertThrows(TaskNotFoundException.class,
+                        () -> new MarkCommand(2).execute(tasks, createUi(output), storage)));
+
+        assertAll(
+                () -> assertFalse(tasks.getTask(1).isDone()),
+                () -> assertFalse(Files.exists(storageFile)),
+                () -> assertEquals("", output.toString(StandardCharsets.UTF_8)));
+    }
+
+    private static Ui createUi(ByteArrayOutputStream output) {
+        return new Ui(new Scanner(""), new PrintStream(output, true, StandardCharsets.UTF_8));
+    }
+
+    private static String expectedMarkedOutput(String taskText) {
+        return "     Nice! I've marked this task as done:" + System.lineSeparator()
+                + "       " + taskText + System.lineSeparator();
+    }
+}
