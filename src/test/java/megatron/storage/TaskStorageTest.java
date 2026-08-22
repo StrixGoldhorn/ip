@@ -1,6 +1,5 @@
 package megatron.storage;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -58,23 +57,23 @@ class TaskStorageTest {
         Task loadedTodo = loadedTasks.getTask(1);
         Task loadedDeadline = loadedTasks.getTask(2);
         Task loadedEvent = loadedTasks.getTask(3);
-        assertAll(
-                () -> assertEquals(3, loadedTasks.size()),
-                () -> assertInstanceOf(Todo.class, loadedTodo),
-                () -> assertEquals("buy, \"fresh\" milk", loadedTodo.getDescription()),
-                () -> assertTrue(loadedTodo.isDone()),
-                () -> assertInstanceOf(Deadline.class, loadedDeadline),
-                () -> assertEquals("submit report", loadedDeadline.getDescription()),
-                () -> assertEquals("2026-08-06T14:00", loadedDeadline.getExtra()),
-                () -> assertFalse(loadedDeadline.isDone()),
-                () -> assertInstanceOf(Event.class, loadedEvent),
-                () -> assertEquals("review", loadedEvent.getDescription()),
-                () -> assertEquals("2026-08-07T15:00|2026-08-07T16:30", loadedEvent.getExtra()),
-                () -> assertFalse(loadedEvent.isDone()));
+        assertEquals(3, loadedTasks.size());
+        assertInstanceOf(Todo.class, loadedTodo);
+        assertEquals("buy, \"fresh\" milk", loadedTodo.getDescription());
+        assertTrue(loadedTodo.isDone());
+        assertInstanceOf(Deadline.class, loadedDeadline);
+        assertEquals("submit report", loadedDeadline.getDescription());
+        assertEquals("2026-08-06T14:00", loadedDeadline.getExtra());
+        assertFalse(loadedDeadline.isDone());
+        assertInstanceOf(Event.class, loadedEvent);
+        assertEquals("review", loadedEvent.getDescription());
+        assertEquals("2026-08-07T15:00|2026-08-07T16:30", loadedEvent.getExtra());
+        assertFalse(loadedEvent.isDone());
     }
 
     @Test
-    void load_malformedRows_skipsInvalidRowsAndLoadsValidRows() throws IOException {
+    void load_malformedRows_skipsInvalidRowsAndLoadsValidRows()
+            throws IOException, TaskNotFoundException {
         Path file = tempDirectory.resolve("tasks.csv");
         Files.write(file, List.of(
                 "type,done,description,extra",
@@ -94,12 +93,11 @@ class TaskStorageTest {
 
         TaskList loadedTasks = storage.load();
 
-        assertAll(
-                () -> assertEquals(3, loadedTasks.size()),
-                () -> assertEquals("valid todo", loadedTasks.getTask(1).getDescription()),
-                () -> assertEquals("valid deadline", loadedTasks.getTask(2).getDescription()),
-                () -> assertTrue(loadedTasks.getTask(2).isDone()),
-                () -> assertEquals("valid event", loadedTasks.getTask(3).getDescription()));
+        assertEquals(3, loadedTasks.size());
+        assertEquals("valid todo", loadedTasks.getTask(1).getDescription());
+        assertEquals("valid deadline", loadedTasks.getTask(2).getDescription());
+        assertTrue(loadedTasks.getTask(2).isDone());
+        assertEquals("valid event", loadedTasks.getTask(3).getDescription());
     }
 
     @Test
@@ -107,8 +105,7 @@ class TaskStorageTest {
         Path directory = Files.createDirectory(tempDirectory.resolve("data"));
         TaskStorage storage = new TaskStorage(directory.toString());
 
-        assertAll(
-                () -> assertDoesNotThrow(storage::load),
-                () -> assertDoesNotThrow(() -> storage.save(new TaskList())));
+        assertDoesNotThrow(storage::load);
+        assertDoesNotThrow(() -> storage.save(new TaskList()));
     }
 }

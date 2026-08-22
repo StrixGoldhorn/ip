@@ -1,6 +1,5 @@
 package megatron.command;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,13 +42,11 @@ class UnmarkCommandTest {
         new UnmarkCommand(2).execute(tasks, createUi(output), storage);
 
         TaskList savedTasks = storage.load();
-        assertAll(
-                () -> assertTrue(tasks.getTask(1).isDone()),
-                () -> assertFalse(tasks.getTask(2).isDone()),
-                () -> assertTrue(savedTasks.getTask(1).isDone()),
-                () -> assertFalse(savedTasks.getTask(2).isDone()),
-                () -> assertEquals(expectedUnmarkedOutput("[T][ ] second"),
-                        output.toString(StandardCharsets.UTF_8)));
+        assertTrue(tasks.getTask(1).isDone());
+        assertFalse(tasks.getTask(2).isDone());
+        assertTrue(savedTasks.getTask(1).isDone());
+        assertFalse(savedTasks.getTask(2).isDone());
+        assertEquals(expectedUnmarkedOutput("[T][ ] second"), output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -60,31 +57,38 @@ class UnmarkCommandTest {
         new UnmarkCommand(1).execute(tasks, createUi(output),
                 new TaskStorage(tempDirectory.resolve("tasks.csv").toString()));
 
-        assertAll(
-                () -> assertFalse(tasks.getTask(1).isDone()),
-                () -> assertEquals(expectedUnmarkedOutput("[T][ ] already not done"),
-                        output.toString(StandardCharsets.UTF_8)));
+        assertFalse(tasks.getTask(1).isDone());
+        assertEquals(expectedUnmarkedOutput("[T][ ] already not done"),
+                output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
-    void execute_invalidTaskNumber_throwsWithoutSavingOrDisplaying() {
+    void execute_zeroTaskNumber_throwsWithoutSavingOrDisplaying() throws MegatronException {
+        assertInvalidTaskNumber(0);
+    }
+
+    @Test
+    void execute_negativeTaskNumber_throwsWithoutSavingOrDisplaying() throws MegatronException {
+        assertInvalidTaskNumber(-1);
+    }
+
+    @Test
+    void execute_taskNumberAboveSize_throwsWithoutSavingOrDisplaying() throws MegatronException {
+        assertInvalidTaskNumber(2);
+    }
+
+    private void assertInvalidTaskNumber(int taskNumber) throws MegatronException {
         TaskList tasks = new TaskList(List.of(new Todo("task")));
         Path storageFile = tempDirectory.resolve("tasks.csv");
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertAll(
-                () -> assertThrows(TaskNotFoundException.class,
-                        () -> new UnmarkCommand(0).execute(tasks, createUi(output), storage)),
-                () -> assertThrows(TaskNotFoundException.class,
-                        () -> new UnmarkCommand(-1).execute(tasks, createUi(output), storage)),
-                () -> assertThrows(TaskNotFoundException.class,
-                        () -> new UnmarkCommand(2).execute(tasks, createUi(output), storage)));
+        assertThrows(TaskNotFoundException.class,
+                () -> new UnmarkCommand(taskNumber).execute(tasks, createUi(output), storage));
 
-        assertAll(
-                () -> assertFalse(tasks.getTask(1).isDone()),
-                () -> assertFalse(Files.exists(storageFile)),
-                () -> assertEquals("", output.toString(StandardCharsets.UTF_8)));
+        assertFalse(tasks.getTask(1).isDone());
+        assertFalse(Files.exists(storageFile));
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 
     private static Ui createUi(ByteArrayOutputStream output) {

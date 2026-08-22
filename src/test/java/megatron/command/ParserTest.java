@@ -1,6 +1,5 @@
 package megatron.command;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,61 +21,98 @@ class ParserTest {
     private final Parser parser = new Parser();
 
     @Test
-    void parse_exactCommands_returnsMatchingCommandTypes() throws MegatronException {
-        assertAll(
-                () -> assertInstanceOf(ExitCommand.class, parser.parse("bye")),
-                () -> assertInstanceOf(ListCommand.class, parser.parse("list")),
-                () -> assertInstanceOf(DatetimeHelpCommand.class, parser.parse("datetime-help")));
+    void parse_bye_returnsExitCommand() throws MegatronException {
+        assertInstanceOf(ExitCommand.class, parser.parse("bye"));
     }
 
     @Test
-    void parse_numberedCommands_returnsMatchingCommandTypes() throws MegatronException {
-        assertAll(
-                () -> assertInstanceOf(MarkCommand.class, parser.parse("mark 2")),
-                () -> assertInstanceOf(UnmarkCommand.class, parser.parse("unmark   2")),
-                () -> assertInstanceOf(DeleteCommand.class, parser.parse("delete 2")));
+    void parse_list_returnsListCommand() throws MegatronException {
+        assertInstanceOf(ListCommand.class, parser.parse("list"));
     }
 
     @Test
-    void parse_addTaskInput_returnsAddCommand() throws MegatronException {
-        assertAll(
-                () -> assertInstanceOf(AddCommand.class, parser.parse("todo buy milk")),
-                () -> assertInstanceOf(AddCommand.class,
-                        parser.parse("deadline submit report /by 2026-08-06")),
-                () -> assertInstanceOf(AddCommand.class,
-                        parser.parse("event meeting /from 1400 /to 1600")));
+    void parse_datetimeHelp_returnsDatetimeHelpCommand() throws MegatronException {
+        assertInstanceOf(DatetimeHelpCommand.class, parser.parse("datetime-help"));
     }
 
     @Test
-    void parse_blankInput_throwsEmptyCommandException() {
-        assertAll(
-                () -> assertThrows(EmptyCommandException.class,
-                        () -> parser.parse("")),
-                () -> assertThrows(EmptyCommandException.class,
-                        () -> parser.parse("   ")));
+    void parse_mark_returnsMarkCommand() throws MegatronException {
+        assertInstanceOf(MarkCommand.class, parser.parse("mark 2"));
     }
 
     @Test
-    void parse_invalidTaskNumber_throwsInvalidTaskNumberException() {
-        assertAll(
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> parser.parse("mark abc")),
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> parser.parse("mark ")),
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> parser.parse("unmark 1.5")),
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> parser.parse("delete")),
-                () -> assertThrows(InvalidTaskNumberException.class,
-                        () -> parser.parse("delete ")));
+    void parse_unmark_returnsUnmarkCommand() throws MegatronException {
+        assertInstanceOf(UnmarkCommand.class, parser.parse("unmark   2"));
     }
 
     @Test
-    void parse_exactCommandWithUnexpectedSuffix_returnsAddCommand() throws MegatronException {
-        assertAll(
-                () -> assertInstanceOf(AddCommand.class, parser.parse("bye now")),
-                () -> assertInstanceOf(AddCommand.class, parser.parse("list now")),
-                () -> assertInstanceOf(AddCommand.class, parser.parse("datetime-help now")));
+    void parse_delete_returnsDeleteCommand() throws MegatronException {
+        assertInstanceOf(DeleteCommand.class, parser.parse("delete 2"));
+    }
+
+    @Test
+    void parse_todoInput_returnsAddCommand() throws MegatronException {
+        assertInstanceOf(AddCommand.class, parser.parse("todo buy milk"));
+    }
+
+    @Test
+    void parse_deadlineInput_returnsAddCommand() throws MegatronException {
+        assertInstanceOf(AddCommand.class, parser.parse("deadline submit report /by 2026-08-06"));
+    }
+
+    @Test
+    void parse_eventInput_returnsAddCommand() throws MegatronException {
+        assertInstanceOf(AddCommand.class, parser.parse("event meeting /from 1400 /to 1600"));
+    }
+
+    @Test
+    void parse_emptyInput_throwsEmptyCommandException() {
+        assertThrows(EmptyCommandException.class, () -> parser.parse(""));
+    }
+
+    @Test
+    void parse_whitespaceInput_throwsEmptyCommandException() {
+        assertThrows(EmptyCommandException.class, () -> parser.parse("   "));
+    }
+
+    @Test
+    void parse_markWithTextNumber_throwsInvalidTaskNumberException() {
+        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("mark abc"));
+    }
+
+    @Test
+    void parse_markWithoutNumber_throwsInvalidTaskNumberException() {
+        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("mark "));
+    }
+
+    @Test
+    void parse_unmarkWithDecimalNumber_throwsInvalidTaskNumberException() {
+        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("unmark 1.5"));
+    }
+
+    @Test
+    void parse_deleteWithoutNumber_throwsInvalidTaskNumberException() {
+        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("delete"));
+    }
+
+    @Test
+    void parse_deleteWithBlankNumber_throwsInvalidTaskNumberException() {
+        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("delete "));
+    }
+
+    @Test
+    void parse_byeWithSuffix_returnsAddCommand() throws MegatronException {
+        assertInstanceOf(AddCommand.class, parser.parse("bye now"));
+    }
+
+    @Test
+    void parse_listWithSuffix_returnsAddCommand() throws MegatronException {
+        assertInstanceOf(AddCommand.class, parser.parse("list now"));
+    }
+
+    @Test
+    void parse_datetimeHelpWithSuffix_returnsAddCommand() throws MegatronException {
+        assertInstanceOf(AddCommand.class, parser.parse("datetime-help now"));
     }
 
     @Test
@@ -88,10 +124,9 @@ class ParserTest {
     void createTask_validTodo_createsTodoWithTrimmedDescription() throws MegatronException {
         Todo todo = assertInstanceOf(Todo.class, parser.createTask("todo    buy milk   "));
 
-        assertAll(
-                () -> assertEquals("buy milk", todo.getDescription()),
-                () -> assertEquals("T", todo.getTypeCode()),
-                () -> assertEquals("", todo.getExtra()));
+        assertEquals("buy milk", todo.getDescription());
+        assertEquals("T", todo.getTypeCode());
+        assertEquals("", todo.getExtra());
     }
 
     @Test
@@ -99,10 +134,9 @@ class ParserTest {
         Deadline deadline = assertInstanceOf(Deadline.class,
                 parser.createTask("deadline submit report /by 2026-08-06 1400"));
 
-        assertAll(
-                () -> assertEquals("submit report", deadline.getDescription()),
-                () -> assertEquals("D", deadline.getTypeCode()),
-                () -> assertEquals("2026-08-06T14:00", deadline.getExtra()));
+        assertEquals("submit report", deadline.getDescription());
+        assertEquals("D", deadline.getTypeCode());
+        assertEquals("2026-08-06T14:00", deadline.getExtra());
     }
 
     @Test
@@ -110,49 +144,76 @@ class ParserTest {
         Event event = assertInstanceOf(Event.class,
                 parser.createTask("event review /from 2026-08-06 1400 /to 4:30pm"));
 
-        assertAll(
-                () -> assertEquals("review", event.getDescription()),
-                () -> assertEquals("E", event.getTypeCode()),
-                () -> assertEquals("2026-08-06T14:00|2026-08-06T16:30", event.getExtra()));
+        assertEquals("review", event.getDescription());
+        assertEquals("E", event.getTypeCode());
+        assertEquals("2026-08-06T14:00|2026-08-06T16:30", event.getExtra());
     }
 
     @Test
-    void createTask_emptyTodoDescription_throwsEmptyDescriptionException() {
-        assertAll(
-                () -> assertThrows(EmptyDescriptionException.class,
-                        () -> parser.createTask("todo")),
-                () -> assertThrows(EmptyDescriptionException.class,
-                        () -> parser.createTask("todo   ")));
+    void createTask_todoWithoutDescription_throwsEmptyDescriptionException() {
+        assertThrows(EmptyDescriptionException.class, () -> parser.createTask("todo"));
     }
 
     @Test
-    void createTask_invalidDeadline_throwsInvalidTaskFormatException() {
-        assertAll(
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("deadline report")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("deadline  /by 2026-08-06")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("deadline report /by ")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("deadline report /by 31/2/2026")));
+    void createTask_whitespaceOnlyTodoDescription_throwsEmptyDescriptionException() {
+        assertThrows(EmptyDescriptionException.class, () -> parser.createTask("todo   "));
     }
 
     @Test
-    void createTask_invalidEvent_throwsInvalidTaskFormatException() {
-        assertAll(
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("event review")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("event review /from 2026-08-06 1400")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("event  /from 2026-08-06 1400 /to 1600")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("event review /from /to 1600")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("event review /from 2026-08-06 1400 /to ")),
-                () -> assertThrows(InvalidTaskFormatException.class,
-                        () -> parser.createTask("event review /from invalid /to 1600")));
+    void createTask_deadlineWithoutDate_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("deadline report"));
+    }
+
+    @Test
+    void createTask_deadlineWithoutDescription_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("deadline  /by 2026-08-06"));
+    }
+
+    @Test
+    void createTask_deadlineWithoutDateAfterMarker_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("deadline report /by "));
+    }
+
+    @Test
+    void createTask_deadlineWithInvalidDate_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("deadline report /by 31/2/2026"));
+    }
+
+    @Test
+    void createTask_eventWithoutFromMarker_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event review"));
+    }
+
+    @Test
+    void createTask_eventWithoutToMarker_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("event review /from 2026-08-06 1400"));
+    }
+
+    @Test
+    void createTask_eventWithoutDescription_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("event  /from 2026-08-06 1400 /to 1600"));
+    }
+
+    @Test
+    void createTask_eventWithoutStart_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("event review /from /to 1600"));
+    }
+
+    @Test
+    void createTask_eventWithoutEnd_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("event review /from 2026-08-06 1400 /to "));
+    }
+
+    @Test
+    void createTask_eventWithInvalidStart_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class,
+                () -> parser.createTask("event review /from invalid /to 1600"));
     }
 
     @Test

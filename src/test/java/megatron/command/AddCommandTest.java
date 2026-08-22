@@ -1,6 +1,5 @@
 package megatron.command;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -47,12 +46,11 @@ class AddCommandTest {
 
         Todo addedTask = assertInstanceOf(Todo.class, tasks.getTask(1));
         TaskList savedTasks = storage.load();
-        assertAll(
-                () -> assertEquals(1, tasks.size()),
-                () -> assertEquals("buy milk", addedTask.getDescription()),
-                () -> assertEquals(1, savedTasks.size()),
-                () -> assertEquals("buy milk", savedTasks.getTask(1).getDescription()),
-                () -> assertEquals(expectedAddedOutput("[T][ ] buy milk", 1), output.toString(StandardCharsets.UTF_8)));
+        assertEquals(1, tasks.size());
+        assertEquals("buy milk", addedTask.getDescription());
+        assertEquals(1, savedTasks.size());
+        assertEquals("buy milk", savedTasks.getTask(1).getDescription());
+        assertEquals(expectedAddedOutput("[T][ ] buy milk", 1), output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -64,12 +62,10 @@ class AddCommandTest {
 
         new AddCommand("todo final task", new Parser()).execute(tasks, createUi(output), storage);
 
-        assertAll(
-                () -> assertEquals(MAX_TASKS, tasks.size()),
-                () -> assertEquals("final task", tasks.getTask(MAX_TASKS).getDescription()),
-                () -> assertEquals(MAX_TASKS, storage.load().size()),
-                () -> assertTrue(output.toString(StandardCharsets.UTF_8)
-                        .contains("Now you have 100 tasks in the list.")));
+        assertEquals(MAX_TASKS, tasks.size());
+        assertEquals("final task", tasks.getTask(MAX_TASKS).getDescription());
+        assertEquals(MAX_TASKS, storage.load().size());
+        assertTrue(output.toString(StandardCharsets.UTF_8).contains("Now you have 100 tasks in the list."));
     }
 
     @Test
@@ -83,10 +79,9 @@ class AddCommandTest {
                 () -> new AddCommand("todo extra task", new Parser())
                         .execute(tasks, createUi(output), storage));
 
-        assertAll(
-                () -> assertEquals(MAX_TASKS, tasks.size()),
-                () -> assertFalse(Files.exists(storageFile)),
-                () -> assertEquals("", output.toString(StandardCharsets.UTF_8)));
+        assertEquals(MAX_TASKS, tasks.size());
+        assertFalse(Files.exists(storageFile));
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -100,19 +95,19 @@ class AddCommandTest {
                 () -> new AddCommand("reminder buy milk", new Parser())
                         .execute(tasks, createUi(output), storage));
 
-        assertAll(
-                () -> assertEquals(0, tasks.size()),
-                () -> assertFalse(Files.exists(storageFile)),
-                () -> assertEquals("", output.toString(StandardCharsets.UTF_8)));
+        assertEquals(0, tasks.size());
+        assertFalse(Files.exists(storageFile));
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
-    void constructor_nullArgument_throwsNullPointerException() {
-        assertAll(
-                () -> assertThrows(NullPointerException.class,
-                        () -> new AddCommand(null, new Parser())),
-                () -> assertThrows(NullPointerException.class,
-                        () -> new AddCommand("todo buy milk", null)));
+    void constructor_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new AddCommand(null, new Parser()));
+    }
+
+    @Test
+    void constructor_nullParser_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new AddCommand("todo buy milk", null));
     }
 
     private static TaskList createTaskList(int size) {
