@@ -1,5 +1,6 @@
 package megatron.task;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -51,5 +52,34 @@ class TaskListTest {
         TaskList emptyTaskList = new TaskList();
 
         assertThrows(TaskNotFoundException.class, () -> emptyTaskList.getTask(1));
+    }
+
+    @Test
+    void find_matchingKeyword_returnsMatchesInListOrder() throws TaskNotFoundException {
+        TaskList matches = taskList.find("task");
+
+        assertEquals(3, matches.size());
+        assertSame(firstTask, matches.getTask(1));
+        assertSame(middleTask, matches.getTask(2));
+        assertSame(lastTask, matches.getTask(3));
+    }
+
+    @Test
+    void find_partialKeyword_returnsOnlyMatchingTasks() throws TaskNotFoundException {
+        TaskList matches = taskList.find("st");
+
+        assertEquals(2, matches.size());
+        assertSame(firstTask, matches.getTask(1));
+        assertSame(lastTask, matches.getTask(2));
+    }
+
+    @Test
+    void find_unknownKeyword_returnsEmptyList() {
+        assertEquals(0, taskList.find("book").size());
+    }
+
+    @Test
+    void find_nullKeyword_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> taskList.find(null));
     }
 }

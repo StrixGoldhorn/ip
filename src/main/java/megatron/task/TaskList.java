@@ -84,10 +84,19 @@ public final class TaskList implements Iterable<Task> {
         return task;
     }
 
-    /** Returns an iterator over the tasks in list order.
-     *
-     * @return An iterator over the tasks.
-     */
+    /** Returns tasks whose descriptions contain the keyword, in list order. */
+    public TaskList find(String keyword) {
+        Objects.requireNonNull(keyword);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().contains(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return new TaskList(matchingTasks);
+    }
+
+    /** Returns an iterator over the tasks in list order. */
     @Override
     public Iterator<Task> iterator() {
         return tasks.iterator();
