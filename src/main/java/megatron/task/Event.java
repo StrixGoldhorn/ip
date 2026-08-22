@@ -7,6 +7,7 @@ public class Event extends Task {
     private final LocalDateTime from;
     private final LocalDateTime to;
 
+    /** Creates an event by parsing its start and end date/time values. */
     public Event(String description, String from, String to) {
         super(description, TaskType.EVENT);
         this.from = DatetimeValidator.parseToLocalDateTime(from);
@@ -28,7 +29,9 @@ public class Event extends Task {
     }
 
     @Override
-    public String getExtra() { return from + "|" + to; }
+    public String getExtra() {
+        return from + "|" + to;
+    }
 
     @Override
     public String toString() {

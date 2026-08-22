@@ -65,7 +65,8 @@ public final class DatetimeValidator {
                     + "Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\s+"
                     + "(\\d{1,2})(?:\\s+(.*))?$");
 
-    private DatetimeValidator() { }
+    private DatetimeValidator() {
+    }
 
     /** Converts a supported date/time string to a local date/time value. */
     public static LocalDateTime parseToLocalDateTime(String input) {
@@ -126,12 +127,14 @@ public final class DatetimeValidator {
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
             try {
                 return new ParsedDateTime(LocalDateTime.parse(value, formatter), true);
-            } catch (DateTimeParseException ignored) { }
+            } catch (DateTimeParseException ignored) {
+            }
         }
         for (DateTimeFormatter formatter : DATE_ONLY_FORMATTERS) {
             try {
                 return new ParsedDateTime(LocalDate.parse(value, formatter).atStartOfDay(), false);
-            } catch (DateTimeParseException ignored) { }
+            } catch (DateTimeParseException ignored) {
+            }
         }
         try {
             return new ParsedDateTime(LocalDate.parse(value, ISO_DATE).atStartOfDay(), false);
@@ -192,7 +195,8 @@ public final class DatetimeValidator {
         for (DateTimeFormatter formatter : TIME_FORMATTERS) {
             try {
                 return LocalTime.parse(normalised, formatter);
-            } catch (DateTimeParseException ignored) { }
+            } catch (DateTimeParseException ignored) {
+            }
         }
         throw invalidDateTime();
     }

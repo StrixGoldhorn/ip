@@ -44,13 +44,19 @@ public class Task {
     }
 
     /** Returns the task description for storage. */
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
     /** Returns the CSV type code for storage. */
-    public String getTypeCode() { return type == TaskType.DEADLINE ? "D" : type == TaskType.EVENT ? "E" : "T"; }
+    public String getTypeCode() {
+        return type == TaskType.DEADLINE ? "D" : type == TaskType.EVENT ? "E" : "T";
+    }
 
     /** Returns the additional CSV field for this task. */
-    public String getExtra() { return ""; }
+    public String getExtra() {
+        return "";
+    }
 
     /**
      * Returns the task in the format used by the user interface.
