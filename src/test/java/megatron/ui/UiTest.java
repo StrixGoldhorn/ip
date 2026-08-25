@@ -23,8 +23,7 @@ import megatron.task.Todo;
 class UiTest {
     @Test
     void constructor_nullScanner_throwsNullPointerException() {
-        assertThrows(NullPointerException.class,
-                () -> new Ui(null, new PrintStream(new ByteArrayOutputStream())));
+        assertThrows(NullPointerException.class, () -> new Ui(null, new PrintStream(new ByteArrayOutputStream())));
     }
 
     @Test

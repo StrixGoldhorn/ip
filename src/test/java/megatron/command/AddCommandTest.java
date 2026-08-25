@@ -77,8 +77,7 @@ class AddCommandTest {
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertThrows(TaskListFullException.class,
-                () -> new AddCommand("todo extra task", new Parser())
+        assertThrows(TaskListFullException.class, () -> new AddCommand("todo extra task", new Parser())
                         .execute(tasks, createUi(output), storage));
 
         assertEquals(MAX_TASKS, tasks.size());
@@ -93,8 +92,7 @@ class AddCommandTest {
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertThrows(UnknownCommandException.class,
-                () -> new AddCommand("reminder buy milk", new Parser())
+        assertThrows(UnknownCommandException.class, () -> new AddCommand("reminder buy milk", new Parser())
                         .execute(tasks, createUi(output), storage));
 
         assertEquals(0, tasks.size());

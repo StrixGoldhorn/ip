@@ -183,8 +183,7 @@ class ParserTest {
 
     @Test
     void createTask_deadlineWithoutDescription_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("deadline  /by 2026-08-06"));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("deadline  /by 2026-08-06"));
     }
 
     @Test
@@ -194,8 +193,7 @@ class ParserTest {
 
     @Test
     void createTask_deadlineWithInvalidDate_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("deadline report /by 31/2/2026"));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("deadline report /by 31/2/2026"));
     }
 
     @Test
@@ -205,32 +203,27 @@ class ParserTest {
 
     @Test
     void createTask_eventWithoutToMarker_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event review /from 2026-08-06 1400"));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event review /from 2026-08-06 1400"));
     }
 
     @Test
     void createTask_eventWithoutDescription_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event  /from 2026-08-06 1400 /to 1600"));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event  /from 2026-08-06 1400 /to 1600"));
     }
 
     @Test
     void createTask_eventWithoutStart_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event review /from /to 1600"));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event review /from /to 1600"));
     }
 
     @Test
     void createTask_eventWithoutEnd_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event review /from 2026-08-06 1400 /to "));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event review /from 2026-08-06 1400 /to "));
     }
 
     @Test
     void createTask_eventWithInvalidStart_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event review /from invalid /to 1600"));
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event review /from invalid /to 1600"));
     }
 
     @Test

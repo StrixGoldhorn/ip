@@ -87,8 +87,7 @@ class DeleteCommandTest {
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertThrows(TaskNotFoundException.class,
-                () -> new DeleteCommand(taskNumber).execute(tasks, createUi(output), storage));
+        assertThrows(TaskNotFoundException.class, () -> new DeleteCommand(taskNumber).execute(tasks, createUi(output), storage));
 
         assertEquals(1, tasks.size());
         assertEquals("task", tasks.getTask(1).getDescription());

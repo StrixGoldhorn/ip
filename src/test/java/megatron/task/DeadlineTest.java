@@ -53,13 +53,11 @@ class DeadlineTest {
 
     @Test
     void constructor_invalidDate_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Deadline("submit report", "31/2/2026"));
+        assertThrows(IllegalArgumentException.class, () -> new Deadline("submit report", "31/2/2026"));
     }
 
     @Test
     void constructor_nullDateText_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Deadline("submit report", (String) null));
+        assertThrows(IllegalArgumentException.class, () -> new Deadline("submit report", (String) null));
     }
 }

@@ -106,43 +106,36 @@ class DatetimeValidatorTest {
 
     @Test
     void parseToLocalDateTime_nullInput_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime(null));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime(null));
     }
 
     @Test
     void parseToLocalDateTime_emptyInput_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime(""));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime(""));
     }
 
     @Test
     void parseToLocalDateTime_whitespaceInput_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime("   "));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime("   "));
     }
 
     @Test
     void parseToLocalDateTime_impossibleDate_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime("31/4/2026"));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime("31/4/2026"));
     }
 
     @Test
     void parseToLocalDateTime_nonLeapDay_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime("2025-02-29"));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime("2025-02-29"));
     }
 
     @Test
     void parseToLocalDateTime_impossibleTime_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime("2026-08-06 2400"));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime("2026-08-06 2400"));
     }
 
     @Test
     void parseToLocalDateTime_unknownText_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime("not a date"));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime("not a date"));
     }
 }
