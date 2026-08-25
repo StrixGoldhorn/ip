@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests date parsing, storage data, status, and display behavior of {@link Deadline}. */
+/**
+ * Tests date parsing, storage data, status, and display behavior of {@link Deadline}.
+ */
 class DeadlineTest {
     @Test
     void constructor_textDateTime_parsesAndDisplaysDeadline() {
@@ -51,13 +53,11 @@ class DeadlineTest {
 
     @Test
     void constructor_invalidDate_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Deadline("submit report", "31/2/2026"));
+        assertThrows(IllegalArgumentException.class, () -> new Deadline("submit report", "31/2/2026"));
     }
 
     @Test
     void constructor_nullDateText_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Deadline("submit report", (String) null));
+        assertThrows(IllegalArgumentException.class, () -> new Deadline("submit report", (String) null));
     }
 }

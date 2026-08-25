@@ -6,11 +6,14 @@ import megatron.task.Task;
 import megatron.task.TaskList;
 import megatron.ui.Ui;
 
-/** Marks one task as not done. */
+/**
+ * Marks one task as not done.
+ */
 public final class UnmarkCommand extends Command {
     private final int taskNumber;
 
-    /** Creates a command for a one-based task number.
+    /**
+     * Creates a command for a one-based task number.
      *
      * @param taskNumber The one-based task number.
      */
@@ -18,7 +21,8 @@ public final class UnmarkCommand extends Command {
         this.taskNumber = taskNumber;
     }
 
-    /** Unmarks, saves, and displays the selected task.
+    /**
+     * Unmarks, saves, and displays the selected task.
      *
      * @param tasks The current task list.
      * @param ui The user interface used for output.

@@ -6,11 +6,14 @@ import megatron.task.Task;
 import megatron.task.TaskList;
 import megatron.ui.Ui;
 
-/** Deletes one task from the task list. */
+/**
+ * Deletes one task from the task list.
+ */
 public final class DeleteCommand extends Command {
     private final int taskNumber;
 
-    /** Creates a command for a one-based task number.
+    /**
+     * Creates a command for a one-based task number.
      *
      * @param taskNumber The one-based task number.
      */
@@ -18,7 +21,8 @@ public final class DeleteCommand extends Command {
         this.taskNumber = taskNumber;
     }
 
-    /** Deletes, saves, and displays the selected task.
+    /**
+     * Deletes, saves, and displays the selected task.
      *
      * @param tasks The current task list.
      * @param ui The user interface used for output.

@@ -17,12 +17,13 @@ import megatron.exception.EmptyCommandException;
 import megatron.task.TaskList;
 import megatron.task.Todo;
 
-/** Tests input handling and console output by {@link Ui}. */
+/**
+ * Tests input handling and console output by {@link Ui}.
+ */
 class UiTest {
     @Test
     void constructor_nullScanner_throwsNullPointerException() {
-        assertThrows(NullPointerException.class,
-                () -> new Ui(null, new PrintStream(new ByteArrayOutputStream())));
+        assertThrows(NullPointerException.class, () -> new Ui(null, new PrintStream(new ByteArrayOutputStream())));
     }
 
     @Test

@@ -22,7 +22,9 @@ import megatron.task.Task;
 import megatron.task.TaskList;
 import megatron.task.Todo;
 
-/** Tests persistent task storage without using the production data file. */
+/**
+ * Tests persistent task storage without using the production data file.
+ */
 class TaskStorageTest {
     @TempDir
     private Path tempDirectory;

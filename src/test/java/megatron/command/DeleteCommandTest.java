@@ -22,7 +22,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task removal, persistence, and display by {@link DeleteCommand}. */
+/**
+ * Tests task removal, persistence, and display by {@link DeleteCommand}.
+ */
 class DeleteCommandTest {
     @TempDir
     private Path tempDirectory;
@@ -85,8 +87,8 @@ class DeleteCommandTest {
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertThrows(TaskNotFoundException.class,
-                () -> new DeleteCommand(taskNumber).execute(tasks, createUi(output), storage));
+        assertThrows(TaskNotFoundException.class, () -> new DeleteCommand(taskNumber)
+                .execute(tasks, createUi(output), storage));
 
         assertEquals(1, tasks.size());
         assertEquals("task", tasks.getTask(1).getDescription());

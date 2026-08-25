@@ -2,12 +2,15 @@ package megatron.task;
 
 import java.time.LocalDateTime;
 
-/** A task with a specified start and end date or time. */
+/**
+ * A task with a specified start and end date or time.
+ */
 public class Event extends Task {
     private final LocalDateTime from;
     private final LocalDateTime to;
 
-    /** Creates an event by parsing supported user start and end date/time values.
+    /**
+     * Creates an event by parsing supported user start and end date/time values.
      *
      * @param description The event description.
      * @param from The supported event start input.
@@ -26,7 +29,8 @@ public class Event extends Task {
         this.to = parsedTo;
     }
 
-    /** Recreates an event from its ISO local date/time storage values.
+    /**
+     * Recreates an event from its ISO local date/time storage values.
      *
      * @param description The event description.
      * @param from The stored event start value.
@@ -38,13 +42,17 @@ public class Event extends Task {
         this.to = to;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getExtra() {
         return from + "|" + to;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return super.toString() + " (from: " + DatetimeValidator.formatForUser(from)

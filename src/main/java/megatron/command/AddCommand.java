@@ -9,14 +9,17 @@ import megatron.task.Task;
 import megatron.task.TaskList;
 import megatron.ui.Ui;
 
-/** Adds one task to the task list. */
+/**
+ * Adds one task to the task list.
+ */
 public final class AddCommand extends Command {
     private static final int MAX_TASKS = 100;
 
     private final String input;
     private final Parser parser;
 
-    /** Creates an add command from the original user input.
+    /**
+     * Creates an add command from the original user input.
      *
      * @param input The original user input.
      * @param parser The parser used to create the task.
@@ -26,7 +29,8 @@ public final class AddCommand extends Command {
         this.parser = Objects.requireNonNull(parser);
     }
 
-    /** Validates, adds, saves, and displays the new task.
+    /**
+     * Validates, adds, saves, and displays the new task.
      *
      * @param tasks The current task list.
      * @param ui The user interface used for output.

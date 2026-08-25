@@ -16,11 +16,14 @@ import megatron.task.Task;
 import megatron.task.TaskList;
 import megatron.task.Todo;
 
-/** Stores and restores Megatron tasks in a CSV file. */
+/**
+ * Stores and restores Megatron tasks in a CSV file.
+ */
 public final class TaskStorage {
     private final Path file;
 
-    /** Creates storage that reads and writes the given relative or absolute path.
+    /**
+     * Creates storage that reads and writes the given relative or absolute path.
      *
      * @param fileName The relative or absolute storage path.
      */
@@ -28,7 +31,8 @@ public final class TaskStorage {
         file = Paths.get(fileName);
     }
 
-    /** Loads all valid tasks. A missing file is treated as an empty task list.
+    /**
+     * Loads all valid tasks. A missing file is treated as an empty task list.
      *
      * @return A task list containing all valid stored tasks.
      */
@@ -61,7 +65,8 @@ public final class TaskStorage {
         return new TaskList(tasks);
     }
 
-    /** Saves all tasks and creates the data folder when needed.
+    /**
+     * Saves all tasks and creates the data folder when needed.
      *
      * @param tasks The tasks to save.
      */
@@ -84,7 +89,8 @@ public final class TaskStorage {
         }
     }
 
-    /** Creates a task from the fields in a valid storage row.
+    /**
+     * Creates a task from the fields in a valid storage row.
      *
      * @param fields The fields in a valid storage row.
      * @return The created task, or null for an unsupported row.
@@ -110,7 +116,8 @@ public final class TaskStorage {
         return null;
     }
 
-    /** Checks a row before converting it into a task. Invalid rows are ignored.
+    /**
+     * Checks a row before converting it into a task. Invalid rows are ignored.
      *
      * @param fields The fields in a storage row.
      * @return True if the fields describe a valid task.
@@ -131,7 +138,8 @@ public final class TaskStorage {
         return false;
     }
 
-    /** Escapes and quotes a value for storage in one CSV field.
+    /**
+     * Escapes and quotes a value for storage in one CSV field.
      *
      * @param value The value to escape.
      * @return The escaped CSV field.
@@ -140,7 +148,8 @@ public final class TaskStorage {
         return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
-    /** Splits one CSV row while preserving commas and escaped quotes in quoted fields.
+    /**
+     * Splits one CSV row while preserving commas and escaped quotes in quoted fields.
      *
      * @param line The CSV row.
      * @return The parsed CSV fields.

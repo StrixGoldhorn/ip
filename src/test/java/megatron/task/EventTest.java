@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests date parsing, storage data, status, and display behavior of {@link Event}. */
+/**
+ * Tests date parsing, storage data, status, and display behavior of {@link Event}.
+ */
 class EventTest {
     @Test
     void constructor_fullDateTimes_parsesAndDisplaysEvent() {
@@ -56,13 +58,11 @@ class EventTest {
 
     @Test
     void constructor_invalidStart_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Event("meeting", "not a date", "2026-08-06 1600"));
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "not a date", "2026-08-06 1600"));
     }
 
     @Test
     void constructor_invalidEnd_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Event("meeting", "2026-08-06 1400", "not a time"));
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "2026-08-06 1400", "not a time"));
     }
 }

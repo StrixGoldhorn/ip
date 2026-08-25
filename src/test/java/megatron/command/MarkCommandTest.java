@@ -23,7 +23,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task selection, persistence, and display by {@link MarkCommand}. */
+/**
+ * Tests task selection, persistence, and display by {@link MarkCommand}.
+ */
 class MarkCommandTest {
     @TempDir
     private Path tempDirectory;
@@ -80,8 +82,8 @@ class MarkCommandTest {
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertThrows(TaskNotFoundException.class,
-                () -> new MarkCommand(taskNumber).execute(tasks, createUi(output), storage));
+        assertThrows(TaskNotFoundException.class, () -> new MarkCommand(taskNumber)
+                .execute(tasks, createUi(output), storage));
 
         assertFalse(tasks.getTask(1).isDone());
         assertFalse(Files.exists(storageFile));
