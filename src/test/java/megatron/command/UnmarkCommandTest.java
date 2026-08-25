@@ -85,7 +85,8 @@ class UnmarkCommandTest {
         TaskStorage storage = new TaskStorage(storageFile.toString());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        assertThrows(TaskNotFoundException.class, () -> new UnmarkCommand(taskNumber).execute(tasks, createUi(output), storage));
+        assertThrows(TaskNotFoundException.class, () -> new UnmarkCommand(taskNumber)
+                .execute(tasks, createUi(output), storage));
 
         assertFalse(tasks.getTask(1).isDone());
         assertFalse(Files.exists(storageFile));
