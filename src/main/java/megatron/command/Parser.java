@@ -40,43 +40,43 @@ public final class Parser {
         String commandWord = firstSpace == -1 ? input : input.substring(0, firstSpace);
 
         switch (commandWord) {
-        case "bye":
-            if (input.equals("bye")) {
-                return new ExitCommand();
-            }
-            break;
-        case "list":
-            if (input.equals("list")) {
-                return new ListCommand();
-            }
-            break;
-        case "find":
-            if (input.startsWith("find ")) {
-                String keyword = input.substring(5).trim();
-                if (!keyword.isEmpty()) {
-                    return new FindCommand(keyword);
+            case "bye":
+                if (input.equals("bye")) {
+                    return new ExitCommand();
                 }
-            }
-            throw new InvalidTaskFormatException("find <keyword>.");
-        case "datetime-help":
-            if (input.equals("datetime-help")) {
-                return new DatetimeHelpCommand();
-            }
-            break;
-        case "mark":
-            if (input.startsWith("mark ")) {
-                return new MarkCommand(parseTaskNumber(input));
-            }
-            break;
-        case "unmark":
-            if (input.startsWith("unmark ")) {
-                return new UnmarkCommand(parseTaskNumber(input));
-            }
-            break;
-        case "delete":
-            return new DeleteCommand(parseTaskNumber(input));
-        default:
-            break;
+                break;
+            case "list":
+                if (input.equals("list")) {
+                    return new ListCommand();
+                }
+                break;
+            case "find":
+                if (input.startsWith("find ")) {
+                    String keyword = input.substring(5).trim();
+                    if (!keyword.isEmpty()) {
+                        return new FindCommand(keyword);
+                    }
+                }
+                throw new InvalidTaskFormatException("find <keyword>.");
+            case "datetime-help":
+                if (input.equals("datetime-help")) {
+                    return new DatetimeHelpCommand();
+                }
+                break;
+            case "mark":
+                if (input.startsWith("mark ")) {
+                    return new MarkCommand(parseTaskNumber(input));
+                }
+                break;
+            case "unmark":
+                if (input.startsWith("unmark ")) {
+                    return new UnmarkCommand(parseTaskNumber(input));
+                }
+                break;
+            case "delete":
+                return new DeleteCommand(parseTaskNumber(input));
+            default:
+                break;
         }
 
         if (input.isBlank()) {
@@ -85,7 +85,8 @@ public final class Parser {
         return new AddCommand(input, this);
     }
 
-    /** Creates the task described by an add command.
+    /**
+     * Creates the task described by an add command.
      *
      * @param text The add command text.
      * @return The created task.
@@ -136,7 +137,8 @@ public final class Parser {
         throw new UnknownCommandException(AVAILABLE_COMMANDS);
     }
 
-    /** Extracts a task number from a mark, unmark, or delete command.
+    /**
+     * Extracts a task number from a mark, unmark, or delete command.
      *
      * @param input The complete command text.
      * @return The parsed one-based task number.
