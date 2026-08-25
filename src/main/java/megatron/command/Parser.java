@@ -15,15 +15,20 @@ import megatron.task.Event;
 import megatron.task.Task;
 import megatron.task.Todo;
 
-/** Interprets user commands and creates tasks from add commands. */
+/**
+ * Interprets user commands and creates tasks from add commands.
+ */
 public final class Parser {
     private static final List<String> AVAILABLE_COMMANDS = new ArrayList<>(List.of(
             "todo", "deadline", "event", "list", "find", "mark", "unmark", "delete", "datetime-help"));
 
-    /** Creates a parser for Megatron commands. */
+    /**
+     * Creates a parser for Megatron commands.
+     */
     public Parser() { }
 
-    /** Converts raw input into an executable command.
+    /**
+     * Converts raw input into an executable command.
      *
      * @param input The raw user input.
      * @return The executable command.

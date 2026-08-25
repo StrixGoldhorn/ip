@@ -16,7 +16,9 @@ import megatron.task.Deadline;
 import megatron.task.Event;
 import megatron.task.Todo;
 
-/** Tests command parsing and task creation by {@link Parser}. */
+/**
+ * Tests command parsing and task creation by {@link Parser}.
+ */
 class ParserTest {
     private final Parser parser = new Parser();
 

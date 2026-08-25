@@ -22,7 +22,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task removal, persistence, and display by {@link DeleteCommand}. */
+/**
+ * Tests task removal, persistence, and display by {@link DeleteCommand}.
+ */
 class DeleteCommandTest {
     @TempDir
     private Path tempDirectory;

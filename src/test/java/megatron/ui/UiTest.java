@@ -17,7 +17,9 @@ import megatron.exception.EmptyCommandException;
 import megatron.task.TaskList;
 import megatron.task.Todo;
 
-/** Tests input handling and console output by {@link Ui}. */
+/**
+ * Tests input handling and console output by {@link Ui}.
+ */
 class UiTest {
     @Test
     void constructor_nullScanner_throwsNullPointerException() {

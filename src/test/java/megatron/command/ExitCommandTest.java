@@ -21,7 +21,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests exit state and display behavior by {@link ExitCommand}. */
+/**
+ * Tests exit state and display behavior by {@link ExitCommand}.
+ */
 class ExitCommandTest {
     @TempDir
     private Path tempDirectory;

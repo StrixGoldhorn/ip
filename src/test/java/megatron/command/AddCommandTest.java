@@ -27,7 +27,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task validation, addition, persistence, and display by {@link AddCommand}. */
+/**
+ * Tests task validation, addition, persistence, and display by {@link AddCommand}.
+ */
 class AddCommandTest {
     private static final int MAX_TASKS = 100;
 

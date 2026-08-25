@@ -21,7 +21,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task display behavior by {@link ListCommand}. */
+/**
+ * Tests task display behavior by {@link ListCommand}.
+ */
 class ListCommandTest {
     @TempDir
     private Path tempDirectory;

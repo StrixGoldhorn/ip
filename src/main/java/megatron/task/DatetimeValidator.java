@@ -14,7 +14,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Parses supported user date/time formats into local date/time values. */
+/**
+ * Parses supported user date/time formats into local date/time values.
+ */
 public final class DatetimeValidator {
     private static final String DEFAULT_OUTPUT_PATTERN = "dd MMM uu, HHmm'hrs'";
     private static final Map<String, DayOfWeek> WEEKDAYS = Map.ofEntries(
@@ -68,7 +70,8 @@ public final class DatetimeValidator {
     private DatetimeValidator() {
     }
 
-    /** Converts a supported date/time string to a local date/time value.
+    /**
+     * Converts a supported date/time string to a local date/time value.
      *
      * @param input The supported date/time string.
      * @return The parsed local date/time value.
@@ -78,7 +81,8 @@ public final class DatetimeValidator {
         return parse(input).value;
     }
 
-    /** Returns whether the input explicitly included a time.
+    /**
+     * Returns whether the input explicitly included a time.
      *
      * @param input The supported date/time string.
      * @return True if the input includes a time.
@@ -88,7 +92,8 @@ public final class DatetimeValidator {
         return parse(input).timeSpecified;
     }
 
-    /** Formats a local date/time using the supplied DateTimeFormatter pattern.
+    /**
+     * Formats a local date/time using the supplied DateTimeFormatter pattern.
      *
      * @param value The local date/time value.
      * @param pattern The DateTimeFormatter pattern.
@@ -98,7 +103,8 @@ public final class DatetimeValidator {
         return value.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
     }
 
-    /** Formats a local date/time using the chatbot's default numeric 24-hour format.
+    /**
+     * Formats a local date/time using the chatbot's default numeric 24-hour format.
      *
      * @param value The local date/time value.
      * @return The formatted date/time string.
@@ -107,7 +113,8 @@ public final class DatetimeValidator {
         return format(value, DEFAULT_OUTPUT_PATTERN);
     }
 
-    /** Parses a user input and records whether its time was explicitly supplied.
+    /**
+     * Parses a user input and records whether its time was explicitly supplied.
      *
      * @param input The user date/time input.
      * @return The parsed date/time and time-presence flag.
@@ -141,7 +148,8 @@ public final class DatetimeValidator {
         throw invalidDateTime();
     }
 
-    /** Tries the supported date/time and date-only formatters.
+    /**
+     * Tries the supported date/time and date-only formatters.
      *
      * @param value The normalised date/time input.
      * @return The parsed date/time, or null if no formatter matches.
@@ -156,12 +164,14 @@ public final class DatetimeValidator {
             try {
                 return new ParsedDateTime(LocalDateTime.parse(value, formatter), true);
             } catch (DateTimeParseException ignored) {
+                continue;
             }
         }
         for (DateTimeFormatter formatter : DATE_ONLY_FORMATTERS) {
             try {
                 return new ParsedDateTime(LocalDate.parse(value, formatter).atStartOfDay(), false);
             } catch (DateTimeParseException ignored) {
+                continue;
             }
         }
         try {
@@ -171,7 +181,8 @@ public final class DatetimeValidator {
         }
     }
 
-    /** Parses an ISO date followed by one of the supported time formats.
+    /**
+     * Parses an ISO date followed by one of the supported time formats.
      *
      * @param value The normalised ISO date/time input.
      * @return The parsed date/time, or null if the input is not ISO date/time.
@@ -188,7 +199,8 @@ public final class DatetimeValidator {
         }
     }
 
-    /** Adds the current year only to a text-month input that does not have a year.
+    /**
+     * Adds the current year only to a text-month input that does not have a year.
      *
      * @param value The normalised date/time input.
      * @return The input with a year, or null if a year is already present.
@@ -203,7 +215,8 @@ public final class DatetimeValidator {
                 + (time == null ? "" : " " + time);
     }
 
-    /** Resolves a weekday to its next occurrence. A missing time means midnight.
+    /**
+     * Resolves a weekday to its next occurrence. A missing time means midnight.
      *
      * @param value The weekday input, with an optional time.
      * @return The next matching date/time, or null if the input is not a weekday.
@@ -230,7 +243,8 @@ public final class DatetimeValidator {
         return new ParsedDateTime(today.plusDays(daysUntil).atTime(time), timeSpecified);
     }
 
-    /** Parses one of the supported time formats.
+    /**
+     * Parses one of the supported time formats.
      *
      * @param value The time input.
      * @return The parsed local time.
@@ -242,12 +256,14 @@ public final class DatetimeValidator {
             try {
                 return LocalTime.parse(normalised, formatter);
             } catch (DateTimeParseException ignored) {
+                continue;
             }
         }
         throw invalidDateTime();
     }
 
-    /** Normalises whitespace, ordinal day suffixes, and spaces before am/pm.
+    /**
+     * Normalises whitespace, ordinal day suffixes, and spaces before am/pm.
      *
      * @param input The raw date/time input.
      * @return The normalised date/time input.
@@ -258,7 +274,8 @@ public final class DatetimeValidator {
         return value.replaceAll("(?i)(\\d{1,2}(?::\\d{2})?)\\s+(am|pm)\\b", "$1$2");
     }
 
-    /** Creates a case-insensitive formatter that rejects invalid dates and times.
+    /**
+     * Creates a case-insensitive formatter that rejects invalid dates and times.
      *
      * @param pattern The DateTimeFormatter pattern.
      * @return The strict date/time formatter.
@@ -268,7 +285,8 @@ public final class DatetimeValidator {
                 .toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.STRICT);
     }
 
-    /** Creates a strict formatter for a pattern that contains month text.
+    /**
+     * Creates a strict formatter for a pattern that contains month text.
      *
      * @param pattern The DateTimeFormatter pattern.
      * @return The strict text-month formatter.
@@ -277,7 +295,8 @@ public final class DatetimeValidator {
         return strictFormatter(pattern);
     }
 
-    /** Creates the standard exception for unsupported or invalid date/time input.
+    /**
+     * Creates the standard exception for unsupported or invalid date/time input.
      *
      * @return The invalid date/time exception.
      */
@@ -286,12 +305,15 @@ public final class DatetimeValidator {
                 + "date/time formats.");
     }
 
-    /** Holds the parsed value and whether the user supplied a time. */
+    /**
+     * Holds the parsed value and whether the user supplied a time.
+     */
     private static final class ParsedDateTime {
         private final LocalDateTime value;
         private final boolean timeSpecified;
 
-        /** Creates parsed date/time information.
+        /**
+         * Creates parsed date/time information.
          *
          * @param value The parsed local date/time value.
          * @param timeSpecified Whether the input explicitly included a time.

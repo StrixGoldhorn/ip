@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests date parsing, storage data, status, and display behavior of {@link Deadline}. */
+/**
+ * Tests date parsing, storage data, status, and display behavior of {@link Deadline}.
+ */
 class DeadlineTest {
     @Test
     void constructor_textDateTime_parsesAndDisplaysDeadline() {

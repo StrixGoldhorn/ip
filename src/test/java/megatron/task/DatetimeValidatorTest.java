@@ -10,7 +10,9 @@ import java.time.temporal.TemporalAdjusters;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests supported and invalid inputs for {@link DatetimeValidator}. */
+/**
+ * Tests supported and invalid inputs for {@link DatetimeValidator}.
+ */
 class DatetimeValidatorTest {
 
     @Test

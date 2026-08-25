@@ -23,7 +23,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task selection, persistence, and display by {@link MarkCommand}. */
+/**
+ * Tests task selection, persistence, and display by {@link MarkCommand}.
+ */
 class MarkCommandTest {
     @TempDir
     private Path tempDirectory;

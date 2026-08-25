@@ -7,16 +7,21 @@ import java.util.Objects;
 
 import megatron.exception.TaskNotFoundException;
 
-/** Owns the tasks in the order in which they were added. */
+/**
+ * Owns the tasks in the order in which they were added.
+ */
 public final class TaskList implements Iterable<Task> {
     private final List<Task> tasks;
 
-    /** Creates an empty task list. */
+    /**
+     * Creates an empty task list.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
-    /** Creates a task list containing a copy of the supplied tasks.
+    /**
+     * Creates a task list containing a copy of the supplied tasks.
      *
      * @param initialTasks The tasks to copy.
      */
@@ -24,7 +29,8 @@ public final class TaskList implements Iterable<Task> {
         this.tasks = new ArrayList<>(Objects.requireNonNull(initialTasks));
     }
 
-    /** Returns the number of tasks in this list.
+    /**
+     * Returns the number of tasks in this list.
      *
      * @return The number of tasks.
      */
@@ -32,7 +38,8 @@ public final class TaskList implements Iterable<Task> {
         return tasks.size();
     }
 
-    /** Adds a task to the end of this list.
+    /**
+     * Adds a task to the end of this list.
      *
      * @param task The task to add.
      */
@@ -40,7 +47,8 @@ public final class TaskList implements Iterable<Task> {
         tasks.add(Objects.requireNonNull(task));
     }
 
-    /** Returns the task at a one-based list number.
+    /**
+     * Returns the task at a one-based list number.
      *
      * @param taskNumber The one-based task number.
      * @return The selected task.
@@ -50,7 +58,8 @@ public final class TaskList implements Iterable<Task> {
         return tasks.get(toIndex(taskNumber));
     }
 
-    /** Removes and returns the task at a one-based list number.
+    /**
+     * Removes and returns the task at a one-based list number.
      *
      * @param taskNumber The one-based task number.
      * @return The removed task.
@@ -60,7 +69,8 @@ public final class TaskList implements Iterable<Task> {
         return tasks.remove(toIndex(taskNumber));
     }
 
-    /** Marks and returns the task at a one-based list number as done.
+    /**
+     * Marks and returns the task at a one-based list number as done.
      *
      * @param taskNumber The one-based task number.
      * @return The marked task.
@@ -72,7 +82,8 @@ public final class TaskList implements Iterable<Task> {
         return task;
     }
 
-    /** Marks and returns the task at a one-based list number as not done.
+    /**
+     * Marks and returns the task at a one-based list number as not done.
      *
      * @param taskNumber The one-based task number.
      * @return The unmarked task.
@@ -84,7 +95,9 @@ public final class TaskList implements Iterable<Task> {
         return task;
     }
 
-    /** Returns tasks whose descriptions contain the keyword, in list order. */
+    /**
+     * Returns tasks whose descriptions contain the keyword, in list order.
+     */
     public TaskList find(String keyword) {
         Objects.requireNonNull(keyword);
         List<Task> matchingTasks = new ArrayList<>();
@@ -96,13 +109,16 @@ public final class TaskList implements Iterable<Task> {
         return new TaskList(matchingTasks);
     }
 
-    /** Returns an iterator over the tasks in list order. */
+    /**
+     * Returns an iterator over the tasks in list order.
+     */
     @Override
     public Iterator<Task> iterator() {
         return tasks.iterator();
     }
 
-    /** Converts a one-based task number to an internal zero-based index.
+    /**
+     * Converts a one-based task number to an internal zero-based index.
      *
      * @param taskNumber The one-based task number.
      * @return The zero-based index.

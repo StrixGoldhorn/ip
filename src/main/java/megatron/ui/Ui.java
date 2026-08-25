@@ -26,12 +26,15 @@ public final class Ui {
     private final Scanner scanner;
     private final PrintStream output;
 
-    /** Creates a UI connected to the standard input and output streams. */
+    /**
+     * Creates a UI connected to the standard input and output streams.
+     */
     public Ui() {
         this(new Scanner(System.in), System.out);
     }
 
-    /** Creates a UI using the supplied input and output streams.
+    /**
+     * Creates a UI using the supplied input and output streams.
      *
      * @param scanner The input scanner.
      * @param output The output stream.
@@ -41,7 +44,8 @@ public final class Ui {
         this.output = Objects.requireNonNull(output);
     }
 
-    /** Returns whether another complete command is available.
+    /**
+     * Returns whether another complete command is available.
      *
      * @return True if another command line is available.
      */
@@ -49,7 +53,8 @@ public final class Ui {
         return scanner.hasNextLine();
     }
 
-    /** Reads and returns the next complete command line.
+    /**
+     * Reads and returns the next complete command line.
      *
      * @return The next command line.
      */
@@ -57,7 +62,9 @@ public final class Ui {
         return scanner.nextLine();
     }
 
-    /** Displays the welcome banner shown when the application starts. */
+    /**
+     * Displays the welcome banner shown when the application starts.
+     */
     public void showWelcome() {
         showDivider();
         output.println(BANNER);
@@ -66,18 +73,23 @@ public final class Ui {
         showDivider();
     }
 
-    /** Displays the divider used between console responses. */
+    /**
+     * Displays the divider used between console responses.
+     */
     public void showDivider() {
         output.println(DIVIDER);
     }
 
-    /** Displays the message shown when the user exits. */
+    /**
+     * Displays the message shown when the user exits.
+     */
     public void showGoodbye() {
         output.println("     Bye. Hope to see you again soon!");
         showDivider();
     }
 
-    /** Displays every stored task in the order in which it was added.
+    /**
+     * Displays every stored task in the order in which it was added.
      *
      * @param tasks The tasks to display.
      */
@@ -89,7 +101,9 @@ public final class Ui {
         }
     }
 
-    /** Displays tasks that match a find command. */
+    /**
+     * Displays tasks that match a find command.
+     */
     public void showMatchingTasks(TaskList matchingTasks) {
         if (matchingTasks.size() == 0) {
             output.println("     No tasks found matching that description.");
@@ -100,7 +114,9 @@ public final class Ui {
         showTasks(matchingTasks);
     }
 
-    /** Displays the supported date/time inputs and interpretation rules. */
+    /**
+     * Displays the supported date/time inputs and interpretation rules.
+     */
     public void showDatetimeInformation() {
         output.println("     Supported date/time formats:");
         output.println("     Dates with a year: yyyy-MM-dd, d/M/yyyy");
@@ -120,7 +136,8 @@ public final class Ui {
         output.println("     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)");
     }
 
-    /** Displays confirmation after a task is added.
+    /**
+     * Displays confirmation after a task is added.
      *
      * @param task The added task.
      * @param taskCount The current number of tasks.
@@ -131,7 +148,8 @@ public final class Ui {
         output.println("     Now you have " + taskCount + " tasks in the list.");
     }
 
-    /** Displays confirmation after a task's completion status changes.
+    /**
+     * Displays confirmation after a task's completion status changes.
      *
      * @param task The task whose status changed.
      * @param markedDone Whether the task is now done.
@@ -145,7 +163,8 @@ public final class Ui {
         output.println("       " + task.displayText());
     }
 
-    /** Displays confirmation after a task is deleted.
+    /**
+     * Displays confirmation after a task is deleted.
      *
      * @param task The deleted task.
      * @param taskCount The current number of tasks.
@@ -156,7 +175,8 @@ public final class Ui {
         output.println("     Now you have " + taskCount + " tasks in the list.");
     }
 
-    /** Displays an error message for a rejected command.
+    /**
+     * Displays an error message for a rejected command.
      *
      * @param exception The command error to display.
      */
@@ -164,7 +184,9 @@ public final class Ui {
         output.println("     OOPS! " + exception.getMessage());
     }
 
-    /** Closes the input stream owned by this UI. */
+    /**
+     * Closes the input stream owned by this UI.
+     */
     public void close() {
         scanner.close();
     }

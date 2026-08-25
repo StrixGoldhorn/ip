@@ -20,7 +20,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests help display and exit behavior by {@link DatetimeHelpCommand}. */
+/**
+ * Tests help display and exit behavior by {@link DatetimeHelpCommand}.
+ */
 class DatetimeHelpCommandTest {
     @TempDir
     private Path tempDirectory;

@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import megatron.exception.TaskNotFoundException;
 
-/** Tests the one-based task lookup provided by {@link TaskList}. */
+/**
+ * Tests the one-based task lookup provided by {@link TaskList}.
+ */
 class TaskListTest {
     private final Task firstTask = new Todo("first task");
     private final Task middleTask = new Todo("middle task");

@@ -20,7 +20,9 @@ import megatron.task.TaskList;
 import megatron.task.Todo;
 import megatron.ui.Ui;
 
-/** Tests task search and display behavior by {@link FindCommand}. */
+/**
+ * Tests task search and display behavior by {@link FindCommand}.
+ */
 class FindCommandTest {
     @TempDir
     private Path tempDirectory;

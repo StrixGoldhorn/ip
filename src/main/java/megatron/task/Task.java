@@ -17,7 +17,8 @@ public class Task {
         this(description, TaskType.TASK);
     }
 
-    /** Creates a task with the given type and an initial not-done status.
+    /**
+     * Creates a task with the given type and an initial not-done status.
      *
      * @param description The task description.
      * @param type The task type.
@@ -28,12 +29,16 @@ public class Task {
         this.status = TaskStatus.NOT_DONE;
     }
 
-    /** Marks this task as done. */
+    /**
+     * Marks this task as done.
+     */
     public void markAsDone() {
         status = TaskStatus.DONE;
     }
 
-    /** Marks this task as not done. */
+    /**
+     * Marks this task as not done.
+     */
     public void markAsNotDone() {
         status = TaskStatus.NOT_DONE;
     }
@@ -47,7 +52,8 @@ public class Task {
         return status == TaskStatus.DONE;
     }
 
-    /** Returns the task description for storage.
+    /**
+     * Returns the task description for storage.
      *
      * @return The task description.
      */
@@ -55,7 +61,8 @@ public class Task {
         return description;
     }
 
-    /** Returns the CSV type code for storage.
+    /**
+     * Returns the CSV type code for storage.
      *
      * @return The CSV type code.
      */
@@ -63,7 +70,8 @@ public class Task {
         return type == TaskType.DEADLINE ? "D" : type == TaskType.EVENT ? "E" : "T";
     }
 
-    /** Returns the additional CSV field for this task.
+    /**
+     * Returns the additional CSV field for this task.
      *
      * @return The additional CSV field.
      */
@@ -81,7 +89,8 @@ public class Task {
         return status.getMarker() + " " + description;
     }
 
-    /** Returns the task type marker used in the list view.
+    /**
+     * Returns the task type marker used in the list view.
      *
      * @return The task type marker.
      */
@@ -89,7 +98,8 @@ public class Task {
         return type.getMarker();
     }
 
-    /** Returns the type marker, status, and description for this task.
+    /**
+     * Returns the type marker, status, and description for this task.
      *
      * @return The display text for this task.
      */

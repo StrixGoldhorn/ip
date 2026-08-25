@@ -2,9 +2,12 @@ package megatron.exception;
 
 import java.util.List;
 
-/** Reports that the user entered a command that Megatron does not support. */
+/**
+ * Reports that the user entered a command that Megatron does not support.
+ */
 public final class UnknownCommandException extends MegatronException {
-    /** Creates an error that lists the commands that Megatron supports.
+    /**
+     * Creates an error that lists the commands that Megatron supports.
      *
      * @param availableCommands The supported command names.
      */
@@ -12,7 +15,8 @@ public final class UnknownCommandException extends MegatronException {
         super("I do not recognise that command. Try " + formatCommands(availableCommands) + ".");
     }
 
-    /** Formats command names as a readable list with "or" before the final command.
+    /**
+     * Formats command names as a readable list with "or" before the final command.
      *
      * @param availableCommands The command names to format.
      * @return The readable command list.

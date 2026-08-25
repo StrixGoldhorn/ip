@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests date parsing, storage data, status, and display behavior of {@link Event}. */
+/**
+ * Tests date parsing, storage data, status, and display behavior of {@link Event}.
+ */
 class EventTest {
     @Test
     void constructor_fullDateTimes_parsesAndDisplaysEvent() {

@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests the shared description, status, and display behavior of {@link Task}. */
+/**
+ * Tests the shared description, status, and display behavior of {@link Task}.
+ */
 class TaskTest {
     @Test
     void constructor_description_createsNotDoneBaseTask() {
