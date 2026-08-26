@@ -7,11 +7,10 @@ import java.util.Scanner;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-
+//
 import megatron.command.Command;
 import megatron.command.Parser;
 import megatron.exception.MegatronException;
@@ -55,7 +54,8 @@ public class MainWindowController {
      */
     @FXML
     private void initialize() {
-        appendMessage(captureOutput(ui -> ui.showWelcome()));
+        appendMessage(captureOutput(ui -> ui.showWelcome()), false);
+        messageScrollPane.vvalueProperty().bind(messageContainer.heightProperty());
     }
 
     /**
@@ -68,15 +68,15 @@ public class MainWindowController {
             return;
         }
 
-        appendMessage(USER_MESSAGE_PREFIX + input);
+        appendMessage(USER_MESSAGE_PREFIX + input, true);
 
         boolean isExit = false;
         try {
             Command command = parser.parse(input);
-            appendMessage(captureCommandOutput(command));
+            appendMessage(captureCommandOutput(command), false);
             isExit = command.isExit();
         } catch (MegatronException exception) {
-            appendMessage(captureOutput(ui -> ui.showError(exception)));
+            appendMessage(captureOutput(ui -> ui.showError(exception)), false);
         }
 
         commandInput.clear();
@@ -91,12 +91,9 @@ public class MainWindowController {
      *
      * @param message The message to append.
      */
-    private void appendMessage(String message) {
-        Label messageLabel = new Label(message);
-        messageLabel.setWrapText(true);
-        messageLabel.setMaxWidth(Double.MAX_VALUE);
-        messageContainer.getChildren().add(messageLabel);
-        messageScrollPane.setVvalue(1.0);
+    private void appendMessage(String message, boolean isUserMessage) {
+        DialogBox dialogBox = new DialogBox(message, isUserMessage);
+        messageContainer.getChildren().add(dialogBox);
     }
 
     /**

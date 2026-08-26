@@ -1,0 +1,71 @@
+.main-layout {
+    -fx-background-color: #ffffff;
+    -fx-font-family: "Arial";
+}
+
+.header-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.message-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.message-scroll-pane > .viewport {
+    -fx-background-color: #ffffff;
+}
+
+.dialog-text {
+    -fx-background-color: #e7f3ff;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px;
+    -fx-text-fill: #333333;
+}
+
+.megatron-dialog .dialog-text {
+    -fx-background-color: #eeeeee;
+}
+
+.user-avatar,
+.megatron-avatar {
+    -fx-alignment: center;
+    -fx-background-radius: 50%;
+    -fx-font-weight: bold;
+    -fx-min-width: 36px;
+    -fx-min-height: 36px;
+    -fx-max-width: 36px;
+    -fx-max-height: 36px;
+}
+
+.user-avatar {
+    -fx-background-color: #5b9bd5;
+    -fx-text-fill: white;
+}
+
+.megatron-avatar {
+    -fx-background-color: #777777;
+    -fx-text-fill: white;
+}
+
+.command-input {
+    -fx-background-radius: 4px;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4px;
+    -fx-padding: 7px;
+}
+
+.send-button {
+    -fx-background-color: #eeeeee;
+    -fx-background-radius: 4px;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4px;
+    -fx-text-fill: #333333;
+}
+
+.send-button:hover {
+    -fx-background-color: #dddddd;
+}
