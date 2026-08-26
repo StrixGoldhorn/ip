@@ -36,9 +36,10 @@
             <BorderPane.margin>
                 <Insets right="15" bottom="15" left="15" />
             </BorderPane.margin>
-            <TextField fx:id="commandInput" promptText="Enter a command..."
+            <TextField fx:id="commandInput" promptText="Enter a command..." onAction="#handleUserInput"
                        prefHeight="35" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-            <Button fx:id="sendButton" text="Send" prefWidth="80" prefHeight="35" />
+            <Button fx:id="sendButton" text="Send" onAction="#handleUserInput"
+                    prefWidth="80" prefHeight="35" />
         </HBox>
     </bottom>
 </BorderPane>

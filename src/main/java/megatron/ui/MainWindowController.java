@@ -1,15 +1,30 @@
 package megatron.ui;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+
+import megatron.command.Command;
+import megatron.command.Parser;
+import megatron.exception.MegatronException;
+import megatron.storage.TaskStorage;
+import megatron.task.TaskList;
 
 /**
  * Controls the main Megatron window.
  */
 public class MainWindowController {
+    private static final String STORAGE_FILE_PATH = "data/megatron.csv";
+    private static final String USER_MESSAGE_PREFIX = "> ";
+
     @FXML
     private ScrollPane messageScrollPane;
 
@@ -21,4 +36,107 @@ public class MainWindowController {
 
     @FXML
     private Button sendButton;
+
+    private final TaskStorage storage;
+    private final TaskList tasks;
+    private final Parser parser;
+
+    /**
+     * Creates a controller backed by Megatron's default task storage.
+     */
+    public MainWindowController() {
+        storage = new TaskStorage(STORAGE_FILE_PATH);
+        tasks = storage.load();
+        parser = new Parser();
+    }
+
+    /**
+     * Displays the welcome message after FXML injects the controls.
+     */
+    @FXML
+    private void initialize() {
+        appendMessage(captureOutput(ui -> ui.showWelcome()));
+    }
+
+    /**
+     * Processes the command in the input field and displays the response.
+     */
+    @FXML
+    private void handleUserInput() {
+        String input = commandInput.getText();
+        if (input.isBlank()) {
+            return;
+        }
+
+        appendMessage(USER_MESSAGE_PREFIX + input);
+
+        boolean isExit = false;
+        try {
+            Command command = parser.parse(input);
+            appendMessage(captureCommandOutput(command));
+            isExit = command.isExit();
+        } catch (MegatronException exception) {
+            appendMessage(captureOutput(ui -> ui.showError(exception)));
+        }
+
+        commandInput.clear();
+        if (isExit) {
+            commandInput.setDisable(true);
+            sendButton.setDisable(true);
+        }
+    }
+
+    /**
+     * Appends a message to the conversation and scrolls to the latest message.
+     *
+     * @param message The message to append.
+     */
+    private void appendMessage(String message) {
+        Label messageLabel = new Label(message);
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(Double.MAX_VALUE);
+        messageContainer.getChildren().add(messageLabel);
+        messageScrollPane.setVvalue(1.0);
+    }
+
+    /**
+     * Captures output produced by the existing console UI methods.
+     *
+     * @param outputAction The action that writes to the UI.
+     * @return The captured output without its trailing line break.
+     */
+    private static String captureOutput(UiOutputAction outputAction) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (PrintStream printStream = new PrintStream(output, true, StandardCharsets.UTF_8);
+                Scanner scanner = new Scanner("")) {
+            Ui ui = new Ui(scanner, printStream);
+            outputAction.execute(ui);
+        }
+        return output.toString(StandardCharsets.UTF_8).stripTrailing();
+    }
+
+    /**
+     * Executes a command and captures its response.
+     *
+     * @param command The command to execute.
+     * @return The command response without its trailing line break.
+     * @throws MegatronException If the command input or task selection is invalid.
+     */
+    private String captureCommandOutput(Command command) throws MegatronException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (PrintStream printStream = new PrintStream(output, true, StandardCharsets.UTF_8);
+                Scanner scanner = new Scanner("")) {
+            Ui ui = new Ui(scanner, printStream);
+            command.execute(tasks, ui, storage);
+        }
+        return output.toString(StandardCharsets.UTF_8).stripTrailing();
+    }
+
+    /**
+     * Represents an action that writes a response through the console UI.
+     */
+    @FunctionalInterface
+    private interface UiOutputAction {
+        void execute(Ui ui);
+    }
 }
