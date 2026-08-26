@@ -1,8 +1,10 @@
 package megatron;
 
+import java.io.IOException;
+
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
@@ -10,19 +12,19 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
     private static final String WINDOW_TITLE = "Megatron";
-    private static final String PLACEHOLDER_MESSAGE = "Megatron GUI will be added here.";
-    private static final double WINDOW_WIDTH = 600;
-    private static final double WINDOW_HEIGHT = 400;
+    private static final double WINDOW_WIDTH = 700;
+    private static final double WINDOW_HEIGHT = 500;
 
     /**
-     * Displays the temporary main window.
+     * Displays the main window loaded from its FXML layout.
      *
      * @param stage The primary JavaFX stage.
+     * @throws IOException If the FXML layout cannot be loaded.
      */
     @Override
-    public void start(Stage stage) {
-        Label placeholder = new Label(PLACEHOLDER_MESSAGE);
-        Scene scene = new Scene(placeholder, WINDOW_WIDTH, WINDOW_HEIGHT);
+    public void start(Stage stage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
+        Scene scene = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);
