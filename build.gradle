@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     String jUnitVersion = '5.14.4'
-    String javaFxVersion = '25.0.1'
+    String javaFxVersion = '17.0.7'
 
     implementation("org.openjfx:javafx-base:${javaFxVersion}:win")
     implementation("org.openjfx:javafx-base:${javaFxVersion}:mac")
