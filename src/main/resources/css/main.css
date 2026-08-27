@@ -20,8 +20,11 @@
 }
 
 .dialog-text {
-    -fx-background-color: #e7f3ff;
+    -fx-background-color: #e8edf0;
     -fx-background-radius: 10px;
+    -fx-border-color: #c8d1d6;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
     -fx-padding: 10px;
     -fx-text-fill: #333333;
 }
@@ -30,11 +33,59 @@
     -fx-background-color: #eeeeee;
     -fx-font-family: "Consolas";
     -fx-font-size: 13px;
+    -fx-max-width: 460px;
 }
 
 .user-dialog .dialog-text {
     -fx-font-family: "Comic Sans MS";
     -fx-font-size: 14px;
+}
+
+.welcome-dialog .dialog-text,
+.help-dialog .dialog-text {
+    -fx-background-color: #f0ede8;
+    -fx-border-color: #d6cec4;
+}
+
+.add-dialog .dialog-text {
+    -fx-background-color: #dff5e3;
+    -fx-border-color: #a8d5b4;
+}
+
+.mark-dialog .dialog-text {
+    -fx-background-color: #e9ddfb;
+    -fx-border-color: #c5afe5;
+}
+
+.unmark-dialog .dialog-text {
+    -fx-background-color: #fff2c6;
+    -fx-border-color: #e3ce83;
+}
+
+.find-dialog .dialog-text {
+    -fx-background-color: #ffe4d6;
+    -fx-border-color: #e8b99f;
+}
+
+.list-dialog .dialog-text {
+    -fx-background-color: #ddeeff;
+    -fx-border-color: #a9c9e8;
+}
+
+.delete-dialog .dialog-text {
+    -fx-background-color: #ffdcd5;
+    -fx-border-color: #e7aaa0;
+}
+
+.bye-dialog .dialog-text {
+    -fx-background-color: #e6e6e6;
+    -fx-border-color: #c7c7c7;
+}
+
+.error-dialog .dialog-text {
+    -fx-background-color: #ffe1e5;
+    -fx-border-color: #f08a94;
+    -fx-text-fill: #7f1d1d;
 }
 
 .avatar-container {

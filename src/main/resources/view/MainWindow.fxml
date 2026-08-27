@@ -38,7 +38,7 @@
                     <Button fx:id="sendButton" text="Send" onAction="#handleUserInput"
                             styleClass="send-button" prefWidth="55.0" prefHeight="35.0" />
                 </HBox>
-                <Label text="Commands: todo, deadline, event, list, find, mark, unmark, delete, bye"
+                <Label text="Commands: todo, deadline, event, list, find, mark, unmark, delete, bye, datetime-help"
                        wrapText="true" styleClass="help-text" />
                 <Label text="Example: todo finish the report"
                        wrapText="true" styleClass="help-text" />
