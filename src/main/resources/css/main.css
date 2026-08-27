@@ -1,6 +1,10 @@
 .main-layout {
     -fx-background-color: #ffffff;
-    -fx-font-family: "Arial";
+    -fx-background-image: url("../images/decepticon-background.png");
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-font-family: "Consolas";
 }
 
 .header-label {
@@ -15,10 +19,6 @@
     -fx-border-color: transparent;
 }
 
-.message-scroll-pane > .viewport {
-    -fx-background-color: #ffffff;
-}
-
 .dialog-text {
     -fx-background-color: #e7f3ff;
     -fx-background-radius: 10px;
@@ -30,25 +30,18 @@
     -fx-background-color: #eeeeee;
 }
 
-.user-avatar,
-.megatron-avatar {
+.avatar-container {
     -fx-alignment: center;
-    -fx-background-radius: 50%;
-    -fx-font-weight: bold;
-    -fx-min-width: 36px;
-    -fx-min-height: 36px;
-    -fx-max-width: 36px;
-    -fx-max-height: 36px;
+    -fx-background-radius: 12px;
+    -fx-padding: 6px;
 }
 
-.user-avatar {
-    -fx-background-color: #5b9bd5;
-    -fx-text-fill: white;
+.user-avatar-container {
+    -fx-background-color: rgba(78, 166, 255, 0.48);
 }
 
-.megatron-avatar {
-    -fx-background-color: #777777;
-    -fx-text-fill: white;
+.megatron-avatar-container {
+    -fx-background-color: rgba(255, 78, 78, 0.48);
 }
 
 .command-input {

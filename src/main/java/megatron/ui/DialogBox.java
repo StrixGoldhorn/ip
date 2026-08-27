@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 /**
  * Displays one chat message with a simple avatar and message bubble.
@@ -27,6 +28,9 @@ public final class DialogBox extends HBox {
 
     @FXML
     private ImageView avatar;
+
+    @FXML
+    private StackPane avatarContainer;
 
     /**
      * Creates a dialog box for the given message.
@@ -43,6 +47,8 @@ public final class DialogBox extends HBox {
         avatar.setFitHeight(AVATAR_SIZE);
         avatar.setPreserveRatio(true);
         avatar.getStyleClass().add(isUserMessage ? "user-avatar" : "megatron-avatar");
+        avatarContainer.getStyleClass().add(isUserMessage
+                ? "user-avatar-container" : "megatron-avatar-container");
 
         setSpacing(10);
         setAlignment(isUserMessage ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
