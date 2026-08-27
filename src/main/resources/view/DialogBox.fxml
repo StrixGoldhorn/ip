@@ -8,7 +8,9 @@
 <fx:root type="HBox" xmlns="http://javafx.com/javafx/17.0.7"
          xmlns:fx="http://javafx.com/fxml/1" spacing="10">
     <children>
-        <StackPane fx:id="avatarContainer" styleClass="avatar-container">
+        <StackPane fx:id="avatarContainer" styleClass="avatar-container"
+                   minWidth="140.0" prefWidth="140.0" maxWidth="140.0"
+                   minHeight="140.0" prefHeight="140.0" maxHeight="140.0">
             <children>
                 <ImageView fx:id="avatar" styleClass="megatron-avatar" />
             </children>

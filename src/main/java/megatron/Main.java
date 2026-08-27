@@ -26,6 +26,9 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
         Scene scene = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        stage.setMinHeight(480);
+        stage.setMinWidth(720);
+
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);
         stage.show();

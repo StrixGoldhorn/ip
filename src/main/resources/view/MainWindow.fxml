@@ -2,33 +2,47 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/17.0.7"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="megatron.ui.MainWindowController"
-            styleClass="main-layout"  stylesheets="@../css/main.css">
-    <ScrollPane fx:id="messageScrollPane" fitToWidth="true"
-                hbarPolicy="NEVER" vbarPolicy="ALWAYS"
-                styleClass="message-scroll-pane"
-                AnchorPane.topAnchor="1.0" AnchorPane.leftAnchor="1.0"
-                AnchorPane.rightAnchor="1.0" AnchorPane.bottomAnchor="65.0">
-        <content>
-            <VBox fx:id="messageContainer" spacing="10">
-                <padding>
-                    <Insets top="10" right="10" bottom="10" left="10" />
-                </padding>
-            </VBox>
-        </content>
-    </ScrollPane>
-    <TextField fx:id="commandInput" promptText="Enter a command..."
-               onAction="#handleUserInput" styleClass="command-input"
-               AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="65.0"
-               AnchorPane.bottomAnchor="1.0" />
-    <Button fx:id="sendButton" text="Send" onAction="#handleUserInput"
-            styleClass="send-button" prefWidth="55.0"
-            AnchorPane.rightAnchor="1.0" AnchorPane.bottomAnchor="1.0" />
+            styleClass="main-layout" stylesheets="@../css/main.css">
+    <VBox AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+        <ScrollPane fx:id="messageScrollPane" fitToWidth="true"
+                    hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" pannable="true"
+                    styleClass="message-scroll-pane" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox fx:id="messageContainer" spacing="10" fillWidth="true">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10" />
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+        <VBox spacing="6.0" styleClass="command-panel">
+            <padding>
+                <Insets top="8" right="10" bottom="8" left="10" />
+            </padding>
+            <children>
+                <HBox spacing="10.0" alignment="CENTER">
+                    <TextField fx:id="commandInput" promptText="Enter a command..."
+                               onAction="#handleUserInput" styleClass="command-input"
+                               prefHeight="35.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                    <Button fx:id="sendButton" text="Send" onAction="#handleUserInput"
+                            styleClass="send-button" prefWidth="55.0" prefHeight="35.0" />
+                </HBox>
+                <Label text="Commands: todo, deadline, event, list, find, mark, unmark, delete, bye"
+                       wrapText="true" styleClass="help-text" />
+                <Label text="Example: todo finish the report"
+                       wrapText="true" styleClass="help-text" />
+            </children>
+        </VBox>
+    </VBox>
 </AnchorPane>

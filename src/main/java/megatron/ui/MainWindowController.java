@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -55,7 +56,6 @@ public class MainWindowController {
     @FXML
     private void initialize() {
         appendMessage(captureOutput(ui -> ui.showWelcome()), false);
-        messageScrollPane.vvalueProperty().bind(messageContainer.heightProperty());
     }
 
     /**
@@ -94,6 +94,7 @@ public class MainWindowController {
     private void appendMessage(String message, boolean isUserMessage) {
         DialogBox dialogBox = new DialogBox(message, isUserMessage);
         messageContainer.getChildren().add(dialogBox);
+        Platform.runLater(() -> messageScrollPane.setVvalue(1.0));
     }
 
     /**

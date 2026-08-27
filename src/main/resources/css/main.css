@@ -51,6 +51,12 @@
     -fx-background-color: rgba(255, 78, 78, 0.48);
 }
 
+.command-panel {
+    -fx-background-color: rgba(225, 225, 225, 0.94);
+    -fx-border-color: #b8b8b8 transparent transparent transparent;
+    -fx-border-width: 1px;
+}
+
 .command-input {
     -fx-background-radius: 4px;
     -fx-border-color: #cccccc;
@@ -68,4 +74,9 @@
 
 .send-button:hover {
     -fx-background-color: #dddddd;
+}
+
+.help-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #555555;
 }
