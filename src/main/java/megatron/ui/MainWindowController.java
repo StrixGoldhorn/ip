@@ -22,7 +22,7 @@ import megatron.task.TaskList;
  */
 public class MainWindowController {
     private static final String STORAGE_FILE_PATH = "data/megatron.csv";
-    private static final String USER_MESSAGE_PREFIX = "> ";
+    private static final String USER_MESSAGE_PREFIX = "";
 
     @FXML
     private ScrollPane messageScrollPane;

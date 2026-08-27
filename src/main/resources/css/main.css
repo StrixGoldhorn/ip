@@ -28,6 +28,13 @@
 
 .megatron-dialog .dialog-text {
     -fx-background-color: #eeeeee;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 13px;
+}
+
+.user-dialog .dialog-text {
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 14px;
 }
 
 .avatar-container {
