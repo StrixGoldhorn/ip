@@ -96,6 +96,7 @@ public final class TaskStorage {
      * @return The created task, or null for an unsupported row.
      */
     private static Task createTask(List<String> fields) {
+        assert isValid(fields) : "Task creation requires a validated four-field storage row.";
         if (fields.get(0).equals("T")) {
             return new Todo(fields.get(2));
         } else if (fields.get(0).equals("D")) {
