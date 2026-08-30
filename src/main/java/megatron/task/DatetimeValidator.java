@@ -319,6 +319,7 @@ public final class DatetimeValidator {
          * @param timeSpecified Whether the input explicitly included a time.
          */
         private ParsedDateTime(LocalDateTime value, boolean timeSpecified) {
+            assert value != null : "Parsed date/time information must contain a value.";
             this.value = value;
             this.timeSpecified = timeSpecified;
         }
