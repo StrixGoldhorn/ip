@@ -27,6 +27,8 @@ public final class TaskList implements Iterable<Task> {
      */
     public TaskList(List<Task> initialTasks) {
         this.tasks = new ArrayList<>(Objects.requireNonNull(initialTasks));
+        assert this.tasks.stream().noneMatch(Objects::isNull)
+                : "A task list must not contain null tasks.";
     }
 
     /**
@@ -44,7 +46,10 @@ public final class TaskList implements Iterable<Task> {
      * @param task The task to add.
      */
     public void add(Task task) {
-        tasks.add(Objects.requireNonNull(task));
+        Task nonNullTask = Objects.requireNonNull(task);
+        tasks.add(nonNullTask);
+        assert tasks.get(tasks.size() - 1) == nonNullTask
+                : "A newly added task must be stored at the end of the list.";
     }
 
     /**
@@ -128,6 +133,9 @@ public final class TaskList implements Iterable<Task> {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new TaskNotFoundException();
         }
-        return taskNumber - 1;
+        int index = taskNumber - 1;
+        assert index >= 0 && index < tasks.size()
+                : "A valid one-based task number must convert to a valid zero-based index.";
+        return index;
     }
 }
