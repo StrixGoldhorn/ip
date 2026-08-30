@@ -125,7 +125,7 @@ public final class DatetimeValidator {
             throw invalidDateTime();
         }
 
-        String value = normaliseInput(input);
+        String value = normalizeInput(input);
         ParsedDateTime weekdayDateTime = parseWeekday(value);
         if (weekdayDateTime != null) {
             return weekdayDateTime;
@@ -151,7 +151,7 @@ public final class DatetimeValidator {
     /**
      * Tries the supported date/time and date-only formatters.
      *
-     * @param value The normalised date/time input.
+     * @param value The normalized date/time input.
      * @return The parsed date/time, or null if no formatter matches.
      */
     private static ParsedDateTime tryParseDateTime(String value) {
@@ -184,7 +184,7 @@ public final class DatetimeValidator {
     /**
      * Parses an ISO date followed by one of the supported time formats.
      *
-     * @param value The normalised ISO date/time input.
+     * @param value The normalized ISO date/time input.
      * @return The parsed date/time, or null if the input is not ISO date/time.
      */
     private static ParsedDateTime tryParseIsoDateTime(String value) {
@@ -202,7 +202,7 @@ public final class DatetimeValidator {
     /**
      * Adds the current year only to a text-month input that does not have a year.
      *
-     * @param value The normalised date/time input.
+     * @param value The normalized date/time input.
      * @return The input with a year, or null if a year is already present.
      */
     private static String addCurrentYearIfMissing(String value) {
@@ -251,10 +251,10 @@ public final class DatetimeValidator {
      * @throws IllegalArgumentException If the time is invalid.
      */
     private static LocalTime parseTime(String value) {
-        String normalised = value.trim().replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
+        String normalized = value.trim().replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
         for (DateTimeFormatter formatter : TIME_FORMATTERS) {
             try {
-                return LocalTime.parse(normalised, formatter);
+                return LocalTime.parse(normalized, formatter);
             } catch (DateTimeParseException ignored) {
                 continue;
             }
@@ -263,12 +263,12 @@ public final class DatetimeValidator {
     }
 
     /**
-     * Normalises whitespace, ordinal day suffixes, and spaces before am/pm.
+     * Normalizes whitespace, ordinal day suffixes, and spaces before am/pm.
      *
      * @param input The raw date/time input.
-     * @return The normalised date/time input.
+     * @return The normalized date/time input.
      */
-    private static String normaliseInput(String input) {
+    private static String normalizeInput(String input) {
         String value = input.trim().replaceAll("\\s+", " ")
                 .replaceAll("(?i)(\\d+)(st|nd|rd|th)\\b", "$1");
         return value.replaceAll("(?i)(\\d{1,2}(?::\\d{2})?)\\s+(am|pm)\\b", "$1$2");

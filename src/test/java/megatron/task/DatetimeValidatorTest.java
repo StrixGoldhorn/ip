@@ -76,7 +76,7 @@ class DatetimeValidatorTest {
     }
 
     @Test
-    void parseToLocalDateTime_irregularCaseWhitespaceAndOrdinal_normalisesInput() {
+    void parseToLocalDateTime_irregularCaseWhitespaceAndOrdinal_normalizesInput() {
         assertEquals(LocalDateTime.of(2026, 8, 6, 14, 5),
                 DatetimeValidator.parseToLocalDateTime("  AUGUST   6th   2026   2:05 pm  "));
     }
