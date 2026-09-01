@@ -111,31 +111,17 @@ public class MainWindowController {
      * @return The dialog type for the command response.
      */
     private static DialogBox.DialogType getDialogType(Command command) {
-        if (command instanceof AddCommand) {
-            return DialogBox.DialogType.ADD;
-        }
-        if (command instanceof MarkCommand) {
-            return DialogBox.DialogType.MARK;
-        }
-        if (command instanceof UnmarkCommand) {
-            return DialogBox.DialogType.UNMARK;
-        }
-        if (command instanceof FindCommand) {
-            return DialogBox.DialogType.FIND;
-        }
-        if (command instanceof ListCommand) {
-            return DialogBox.DialogType.LIST;
-        }
-        if (command instanceof DeleteCommand) {
-            return DialogBox.DialogType.DELETE;
-        }
-        if (command instanceof DatetimeHelpCommand) {
-            return DialogBox.DialogType.HELP;
-        }
-        if (command instanceof ExitCommand) {
-            return DialogBox.DialogType.BYE;
-        }
-        return DialogBox.DialogType.DEFAULT;
+        return switch (command) {
+            case AddCommand ignored -> DialogBox.DialogType.ADD;
+            case MarkCommand ignored -> DialogBox.DialogType.MARK;
+            case UnmarkCommand ignored -> DialogBox.DialogType.UNMARK;
+            case FindCommand ignored -> DialogBox.DialogType.FIND;
+            case ListCommand ignored -> DialogBox.DialogType.LIST;
+            case DeleteCommand ignored -> DialogBox.DialogType.DELETE;
+            case DatetimeHelpCommand ignored -> DialogBox.DialogType.HELP;
+            case ExitCommand ignored -> DialogBox.DialogType.BYE;
+            case null, default -> DialogBox.DialogType.DEFAULT;
+        };
     }
 
     /**
