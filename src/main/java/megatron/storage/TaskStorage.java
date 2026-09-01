@@ -44,18 +44,8 @@ public final class TaskStorage {
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                List<String> fields = parseCsvLine(line);
-                if (fields.size() < 4 || fields.get(0).equals("type")) {
-                    continue;
-                }
-                if (!isValid(fields)) {
-                    continue;
-                }
-                Task task = createTask(fields);
+                Task task = loadTask(line);
                 if (task != null) {
-                    if ("1".equals(fields.get(1))) {
-                        task.markAsDone();
-                    }
                     tasks.add(task);
                 }
             }
@@ -63,6 +53,31 @@ public final class TaskStorage {
             // Keep the application usable when the data file is unreadable or malformed.
         }
         return new TaskList(tasks);
+    }
+
+    /**
+     * Parses and creates one task from a storage row.
+     *
+     * @param line The CSV row to load.
+     * @return The created task, or null if the row is invalid.
+     */
+    private static Task loadTask(String line) {
+        List<String> fields = parseCsvLine(line);
+        if (fields.size() < 4 || fields.get(0).equals("type")) {
+            return null;
+        }
+        if (!isValid(fields)) {
+            return null;
+        }
+
+        Task task = createTask(fields);
+        if (task == null) {
+            return null;
+        }
+        if ("1".equals(fields.get(1))) {
+            task.markAsDone();
+        }
+        return task;
     }
 
     /**
