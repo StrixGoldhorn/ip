@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import megatron.exception.StorageException;
 import megatron.exception.TaskNotFoundException;
 import megatron.task.Deadline;
 import megatron.task.Event;
@@ -37,7 +39,8 @@ class TaskStorageTest {
     }
 
     @Test
-    void saveAndLoad_allTaskTypes_preservesDataAndEscapesCsv() throws IOException, TaskNotFoundException {
+    void saveAndLoad_allTaskTypes_preservesDataAndEscapesCsv()
+            throws IOException, StorageException, TaskNotFoundException {
         Path file = tempDirectory.resolve("nested").resolve("tasks.csv");
         TaskStorage storage = new TaskStorage(file.toString());
         Todo todo = new Todo("buy, \"fresh\" milk");
@@ -103,11 +106,22 @@ class TaskStorageTest {
     }
 
     @Test
-    void loadAndSave_directoryPath_doesNotPropagateIoFailure() throws IOException {
+    void load_directoryPath_doesNotPropagateIoFailure() throws IOException {
         Path directory = Files.createDirectory(tempDirectory.resolve("data"));
         TaskStorage storage = new TaskStorage(directory.toString());
 
         assertDoesNotThrow(storage::load);
-        assertDoesNotThrow(() -> storage.save(new TaskList()));
+    }
+
+    @Test
+    void save_directoryPath_throwsStorageException() throws IOException {
+        Path directory = Files.createDirectory(tempDirectory.resolve("data"));
+        TaskStorage storage = new TaskStorage(directory.toString());
+
+        StorageException exception = assertThrows(StorageException.class,
+                () -> storage.save(new TaskList()));
+
+        assertEquals("Could not save tasks. Check that the data file is writable.", exception.getMessage());
+        assertInstanceOf(IOException.class, exception.getCause());
     }
 }

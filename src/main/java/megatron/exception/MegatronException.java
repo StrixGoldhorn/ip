@@ -12,4 +12,14 @@ public class MegatronException extends Exception {
     public MegatronException(String message) {
         super(message);
     }
+
+    /**
+     * Creates an exception with a user-facing message and its underlying cause.
+     *
+     * @param message The user-facing error message.
+     * @param cause The error that caused this exception.
+     */
+    protected MegatronException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

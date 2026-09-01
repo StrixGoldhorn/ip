@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import megatron.exception.StorageException;
 import megatron.task.Deadline;
 import megatron.task.Event;
 import megatron.task.Task;
@@ -84,8 +85,9 @@ public final class TaskStorage {
      * Saves all tasks and creates the data folder when needed.
      *
      * @param tasks The tasks to save.
+     * @throws StorageException If the tasks cannot be written to the data file.
      */
-    public void save(TaskList tasks) {
+    public void save(TaskList tasks) throws StorageException {
         try {
             if (file.getParent() != null) {
                 Files.createDirectories(file.getParent());
@@ -100,7 +102,7 @@ public final class TaskStorage {
                 }
             }
         } catch (IOException exception) {
-            // A save failure must not terminate the chatbot.
+            throw new StorageException(exception);
         }
     }
 
