@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -123,5 +124,27 @@ class TaskStorageTest {
 
         assertEquals("Could not save tasks. Check that the data file is writable.", exception.getMessage());
         assertInstanceOf(IOException.class, exception.getCause());
+    }
+
+    @Test
+    void save_serializationFailure_preservesExistingFileAndRemovesTemporaryFile() throws IOException {
+        Path file = tempDirectory.resolve("tasks.csv");
+        Files.writeString(file, "existing task data");
+        Task failingTask = new Task("unwritable task") {
+            @Override
+            public String getDescription() {
+                throw new IllegalStateException("simulated serialization failure");
+            }
+        };
+        TaskStorage storage = new TaskStorage(file.toString());
+
+        StorageException exception = assertThrows(StorageException.class,
+                () -> storage.save(new TaskList(List.of(failingTask))));
+
+        assertInstanceOf(IllegalStateException.class, exception.getCause());
+        assertEquals("existing task data", Files.readString(file));
+        try (Stream<Path> storedFiles = Files.list(tempDirectory)) {
+            assertEquals(List.of(file), storedFiles.toList());
+        }
     }
 }

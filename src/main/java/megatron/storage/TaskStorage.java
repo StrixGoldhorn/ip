@@ -3,9 +3,11 @@ package megatron.storage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,21 +90,69 @@ public final class TaskStorage {
      * @throws StorageException If the tasks cannot be written to the data file.
      */
     public void save(TaskList tasks) throws StorageException {
+        Path absoluteFile = file.toAbsolutePath();
+        Path temporaryFile = null;
         try {
-            if (file.getParent() != null) {
-                Files.createDirectories(file.getParent());
-            }
-            try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-                writer.write("type,done,description,extra");
-                writer.newLine();
-                for (Task task : tasks) {
-                    writer.write(csv(task.getTypeCode()) + "," + (task.isDone() ? "1" : "0") + ","
-                            + csv(task.getDescription()) + "," + csv(task.getExtra()));
-                    writer.newLine();
-                }
-            }
-        } catch (IOException exception) {
+            Path directory = absoluteFile.getParent();
+            Files.createDirectories(directory);
+            temporaryFile = Files.createTempFile(directory, absoluteFile.getFileName() + ".", ".tmp");
+            writeTasks(temporaryFile, tasks);
+            replaceFile(temporaryFile, absoluteFile);
+        } catch (IOException | RuntimeException exception) {
+            deleteTemporaryFile(temporaryFile, exception);
             throw new StorageException(exception);
+        }
+    }
+
+    /**
+     * Writes a complete task list to the given file.
+     *
+     * @param target The file to write.
+     * @param tasks The tasks to write.
+     * @throws IOException If the task list cannot be written.
+     */
+    private static void writeTasks(Path target, TaskList tasks) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(target)) {
+            writer.write("type,done,description,extra");
+            writer.newLine();
+            for (Task task : tasks) {
+                writer.write(csv(task.getTypeCode()) + "," + (task.isDone() ? "1" : "0") + ","
+                        + csv(task.getDescription()) + "," + csv(task.getExtra()));
+                writer.newLine();
+            }
+        }
+    }
+
+    /**
+     * Replaces the storage file with a complete temporary file.
+     *
+     * @param temporaryFile The complete temporary file.
+     * @param targetFile The storage file to replace.
+     * @throws IOException If the temporary file cannot replace the storage file.
+     */
+    private static void replaceFile(Path temporaryFile, Path targetFile) throws IOException {
+        try {
+            Files.move(temporaryFile, targetFile, StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException exception) {
+            Files.move(temporaryFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * Removes an incomplete temporary file and retains any cleanup error.
+     *
+     * @param temporaryFile The temporary file to remove, or null if none was created.
+     * @param originalException The error that interrupted the save.
+     */
+    private static void deleteTemporaryFile(Path temporaryFile, Throwable originalException) {
+        if (temporaryFile == null) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(temporaryFile);
+        } catch (IOException cleanupException) {
+            originalException.addSuppressed(cleanupException);
         }
     }
 
