@@ -3,13 +3,16 @@ package megatron.storage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import megatron.exception.StorageException;
 import megatron.task.Deadline;
 import megatron.task.Event;
 import megatron.task.Task;
@@ -44,18 +47,8 @@ public final class TaskStorage {
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                List<String> fields = parseCsvLine(line);
-                if (fields.size() < 4 || fields.get(0).equals("type")) {
-                    continue;
-                }
-                if (!isValid(fields)) {
-                    continue;
-                }
-                Task task = createTask(fields);
+                Task task = loadTask(line);
                 if (task != null) {
-                    if ("1".equals(fields.get(1))) {
-                        task.markAsDone();
-                    }
                     tasks.add(task);
                 }
             }
@@ -66,26 +59,100 @@ public final class TaskStorage {
     }
 
     /**
+     * Parses and creates one task from a storage row.
+     *
+     * @param line The CSV row to load.
+     * @return The created task, or null if the row is invalid.
+     */
+    private static Task loadTask(String line) {
+        List<String> fields = parseCsvLine(line);
+        if (fields.size() < 4 || fields.get(0).equals("type")) {
+            return null;
+        }
+        if (!isValid(fields)) {
+            return null;
+        }
+
+        Task task = createTask(fields);
+        if (task == null) {
+            return null;
+        }
+        if ("1".equals(fields.get(1))) {
+            task.markAsDone();
+        }
+        return task;
+    }
+
+    /**
      * Saves all tasks and creates the data folder when needed.
      *
      * @param tasks The tasks to save.
+     * @throws StorageException If the tasks cannot be written to the data file.
      */
-    public void save(TaskList tasks) {
+    public void save(TaskList tasks) throws StorageException {
+        Path absoluteFile = file.toAbsolutePath();
+        Path temporaryFile = null;
         try {
-            if (file.getParent() != null) {
-                Files.createDirectories(file.getParent());
-            }
-            try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-                writer.write("type,done,description,extra");
+            Path directory = absoluteFile.getParent();
+            Files.createDirectories(directory);
+            temporaryFile = Files.createTempFile(directory, absoluteFile.getFileName() + ".", ".tmp");
+            writeTasks(temporaryFile, tasks);
+            replaceFile(temporaryFile, absoluteFile);
+        } catch (IOException | RuntimeException exception) {
+            deleteTemporaryFile(temporaryFile, exception);
+            throw new StorageException(exception);
+        }
+    }
+
+    /**
+     * Writes a complete task list to the given file.
+     *
+     * @param target The file to write.
+     * @param tasks The tasks to write.
+     * @throws IOException If the task list cannot be written.
+     */
+    private static void writeTasks(Path target, TaskList tasks) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(target)) {
+            writer.write("type,done,description,extra");
+            writer.newLine();
+            for (Task task : tasks) {
+                writer.write(csv(task.getTypeCode()) + "," + (task.isDone() ? "1" : "0") + ","
+                        + csv(task.getDescription()) + "," + csv(task.getExtra()));
                 writer.newLine();
-                for (Task task : tasks) {
-                    writer.write(csv(task.getTypeCode()) + "," + (task.isDone() ? "1" : "0") + ","
-                            + csv(task.getDescription()) + "," + csv(task.getExtra()));
-                    writer.newLine();
-                }
             }
-        } catch (IOException exception) {
-            // A save failure must not terminate the chatbot.
+        }
+    }
+
+    /**
+     * Replaces the storage file with a complete temporary file.
+     *
+     * @param temporaryFile The complete temporary file.
+     * @param targetFile The storage file to replace.
+     * @throws IOException If the temporary file cannot replace the storage file.
+     */
+    private static void replaceFile(Path temporaryFile, Path targetFile) throws IOException {
+        try {
+            Files.move(temporaryFile, targetFile, StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException exception) {
+            Files.move(temporaryFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * Removes an incomplete temporary file and retains any cleanup error.
+     *
+     * @param temporaryFile The temporary file to remove, or null if none was created.
+     * @param originalException The error that interrupted the save.
+     */
+    private static void deleteTemporaryFile(Path temporaryFile, Throwable originalException) {
+        if (temporaryFile == null) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(temporaryFile);
+        } catch (IOException cleanupException) {
+            originalException.addSuppressed(cleanupException);
         }
     }
 
