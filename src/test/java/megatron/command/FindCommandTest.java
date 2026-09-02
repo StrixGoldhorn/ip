@@ -42,7 +42,7 @@ class FindCommandTest {
 
         assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
                 + "     1.[T][X] read book" + System.lineSeparator()
-                + "     2.[D][ ] return book (by: 06 Jun 26, 0000hrs)" + System.lineSeparator(),
+                + "     3.[D][ ] return book (by: 06 Jun 26, 0000hrs)" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
         assertEquals(3, tasks.size());
         assertFalse(Files.exists(storageFile));
@@ -58,6 +58,22 @@ class FindCommandTest {
 
         assertEquals("     No tasks found matching that description." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void execute_caseInsensitiveFuzzyTerms_displaysMatchingTaskWithoutSaving() {
+        TaskList tasks = new TaskList(List.of(
+                new Todo("buy groceries"), new Todo("read book"), new Todo("return book")));
+        Path storageFile = tempDirectory.resolve("tasks.csv");
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        new FindCommand("READ bok").execute(tasks, createUi(output), new TaskStorage(storageFile.toString()));
+
+        assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
+                + "     2.[T][ ] read book" + System.lineSeparator(),
+                output.toString(StandardCharsets.UTF_8));
+        assertEquals(3, tasks.size());
+        assertFalse(Files.exists(storageFile));
     }
 
     private static Ui createUi(ByteArrayOutputStream output) {

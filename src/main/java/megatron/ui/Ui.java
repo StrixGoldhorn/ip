@@ -1,12 +1,14 @@
 package megatron.ui;
 
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 import megatron.exception.MegatronException;
 import megatron.task.Task;
 import megatron.task.TaskList;
+import megatron.task.TaskMatch;
 
 /**
  * Handles all console input and output used by Megatron.
@@ -96,22 +98,33 @@ public final class Ui {
     public void showTasks(TaskList tasks) {
         int taskNumber = 1;
         for (Task task : tasks) {
-            output.println("     " + taskNumber + "." + task.displayText());
+            showTask(taskNumber, task);
             taskNumber++;
         }
     }
 
     /**
      * Displays tasks that match a find command.
+     *
+     * @param matchingTasks The matching tasks and their original list numbers.
      */
-    public void showMatchingTasks(TaskList matchingTasks) {
-        if (matchingTasks.size() == 0) {
+    public void showMatchingTasks(List<TaskMatch> matchingTasks) {
+        if (matchingTasks.isEmpty()) {
             output.println("     No tasks found matching that description.");
             return;
         }
 
         output.println("     Here are the matching tasks in your list:");
-        showTasks(matchingTasks);
+        for (TaskMatch match : matchingTasks) {
+            showTask(match.taskNumber(), match.task());
+        }
+    }
+
+    /**
+     * Displays one task with the supplied one-based number.
+     */
+    private void showTask(int taskNumber, Task task) {
+        output.println("     " + taskNumber + "." + task.displayText());
     }
 
     /**

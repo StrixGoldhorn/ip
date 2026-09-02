@@ -76,6 +76,71 @@ class TaskListTest {
     }
 
     @Test
+    void find_differentCase_returnsCaseInsensitiveMatch() throws TaskNotFoundException {
+        Task match = new Todo("read book");
+        TaskList tasks = new TaskList(List.of(match, new Todo("buy groceries")));
+
+        TaskList matches = tasks.find("BOO");
+
+        assertEquals(1, matches.size());
+        assertSame(match, matches.getTask(1));
+    }
+
+    @Test
+    void find_multipleTermsInAnyOrder_returnsTaskMatchingAllTerms() throws TaskNotFoundException {
+        Task match = new Todo("read book");
+        TaskList tasks = new TaskList(List.of(match, new Todo("return book")));
+
+        TaskList matches = tasks.find("BOOK read");
+
+        assertEquals(1, matches.size());
+        assertSame(match, matches.getTask(1));
+    }
+
+    @Test
+    void find_singleEditTerms_returnFuzzyMatch() throws TaskNotFoundException {
+        Task match = new Todo("read book");
+        TaskList tasks = new TaskList(List.of(match, new Todo("buy groceries")));
+
+        for (String searchTerm : List.of("bok", "boon", "boook")) {
+            TaskList matches = tasks.find(searchTerm);
+
+            assertEquals(1, matches.size());
+            assertSame(match, matches.getTask(1));
+        }
+    }
+
+    @Test
+    void find_twoEditTerm_returnsEmptyList() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertEquals(0, tasks.find("bppk").size());
+    }
+
+    @Test
+    void find_twoCharacterTerm_doesNotUseFuzzyMatching() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertEquals(0, tasks.find("bk").size());
+    }
+
+    @Test
+    void findMatches_matchingTasks_retainsOriginalTaskNumbers() {
+        Task secondTask = new Todo("read book");
+        Task fourthTask = new Todo("return book");
+        TaskList tasks = new TaskList(List.of(
+                new Todo("buy groceries"), secondTask, new Todo("watch movie"), fourthTask));
+
+        List<TaskMatch> matches = tasks.findMatches("book");
+
+        assertEquals(2, matches.size());
+        assertEquals(2, matches.get(0).taskNumber());
+        assertSame(secondTask, matches.get(0).task());
+        assertEquals(4, matches.get(1).taskNumber());
+        assertSame(fourthTask, matches.get(1).task());
+    }
+
+    @Test
     void find_unknownKeyword_returnsEmptyList() {
         assertEquals(0, taskList.find("book").size());
     }
