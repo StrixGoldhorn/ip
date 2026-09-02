@@ -119,8 +119,8 @@ class TaskStorageTest {
         Path directory = Files.createDirectory(tempDirectory.resolve("data"));
         TaskStorage storage = new TaskStorage(directory.toString());
 
-        StorageException exception = assertThrows(StorageException.class,
-                () -> storage.save(new TaskList()));
+        StorageException exception = assertThrows(StorageException.class, ()
+                -> storage.save(new TaskList()));
 
         assertEquals("Could not save tasks. Check that the data file is writable.", exception.getMessage());
         assertInstanceOf(IOException.class, exception.getCause());
@@ -138,8 +138,8 @@ class TaskStorageTest {
         };
         TaskStorage storage = new TaskStorage(file.toString());
 
-        StorageException exception = assertThrows(StorageException.class,
-                () -> storage.save(new TaskList(List.of(failingTask))));
+        StorageException exception = assertThrows(StorageException.class, ()
+                -> storage.save(new TaskList(List.of(failingTask))));
 
         assertInstanceOf(IllegalStateException.class, exception.getCause());
         assertEquals("existing task data", Files.readString(file));

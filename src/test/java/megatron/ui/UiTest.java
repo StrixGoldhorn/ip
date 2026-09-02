@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import megatron.exception.EmptyCommandException;
 import megatron.task.TaskList;
+import megatron.task.TaskMatch;
 import megatron.task.Todo;
 
 /**
@@ -115,14 +116,14 @@ class UiTest {
     }
 
     @Test
-    void showMatchingTasks_populatedList_printsHeadingAndNumberedTasks() {
+    void showMatchingTasks_populatedList_printsHeadingAndOriginalTaskNumbers() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Ui ui = createUi(output);
 
-        ui.showMatchingTasks(new TaskList(List.of(new Todo("read book"))));
+        ui.showMatchingTasks(List.of(new TaskMatch(2, new Todo("read book"))));
 
         assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
-                + "     1.[T][ ] read book" + System.lineSeparator(),
+                + "     2.[T][ ] read book" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -131,7 +132,7 @@ class UiTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Ui ui = createUi(output);
 
-        ui.showMatchingTasks(new TaskList());
+        ui.showMatchingTasks(List.of());
 
         assertEquals("     No tasks found matching that description." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));

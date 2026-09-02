@@ -3,6 +3,7 @@ package megatron.task;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import megatron.exception.TaskNotFoundException;
@@ -11,6 +12,8 @@ import megatron.exception.TaskNotFoundException;
  * Owns the tasks in the order in which they were added.
  */
 public final class TaskList implements Iterable<Task> {
+    private static final int MINIMUM_FUZZY_TERM_LENGTH = 3;
+
     private final List<Task> tasks;
 
     /**
@@ -101,17 +104,107 @@ public final class TaskList implements Iterable<Task> {
     }
 
     /**
-     * Returns tasks whose descriptions contain the keyword, in list order.
+     * Returns tasks whose descriptions match all search terms, in list order.
+     *
+     * <p>A term matches when it is a case-insensitive substring of the description
+     * or differs by at most one character from a description word. Fuzzy matching
+     * applies only to terms with at least three characters.</p>
+     *
+     * @param keyword The search text.
+     * @return The matching tasks in list order.
      */
     public TaskList find(String keyword) {
-        Objects.requireNonNull(keyword);
         List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().contains(keyword)) {
-                matchingTasks.add(task);
-            }
+        for (TaskMatch match : findMatches(keyword)) {
+            matchingTasks.add(match.task());
         }
         return new TaskList(matchingTasks);
+    }
+
+    /**
+     * Returns matching tasks with their original task numbers, in list order.
+     *
+     * @param keyword The search text.
+     * @return The numbered matching tasks in list order.
+     */
+    public List<TaskMatch> findMatches(String keyword) {
+        Objects.requireNonNull(keyword);
+        String[] searchTerms = keyword.trim().toLowerCase(Locale.ROOT).split("\\s+");
+        List<TaskMatch> matches = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            String description = task.getDescription().toLowerCase(Locale.ROOT);
+            if (matchesAllTerms(description, searchTerms)) {
+                matches.add(new TaskMatch(i + 1, task));
+            }
+        }
+        return List.copyOf(matches);
+    }
+
+    /**
+     * Returns whether a description matches every search term.
+     */
+    private static boolean matchesAllTerms(String description, String[] searchTerms) {
+        String[] descriptionWords = description.split("\\s+");
+        for (String searchTerm : searchTerms) {
+            if (!description.contains(searchTerm) && !hasFuzzyWordMatch(searchTerm, descriptionWords)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether a search term differs by at most one character from a description word.
+     */
+    private static boolean hasFuzzyWordMatch(String searchTerm, String[] descriptionWords) {
+        if (searchTerm.length() < MINIMUM_FUZZY_TERM_LENGTH) {
+            return false;
+        }
+        for (String descriptionWord : descriptionWords) {
+            if (isWithinOneEdit(searchTerm, descriptionWord)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether two values have a Levenshtein distance of at most one.
+     */
+    private static boolean isWithinOneEdit(String first, String second) {
+        if (Math.abs(first.length() - second.length()) > 1) {
+            return false;
+        }
+
+        int firstIndex = 0;
+        int secondIndex = 0;
+        int edits = 0;
+        while (firstIndex < first.length() && secondIndex < second.length()) {
+            if (first.charAt(firstIndex) == second.charAt(secondIndex)) {
+                firstIndex++;
+                secondIndex++;
+                continue;
+            }
+
+            edits++;
+            if (edits > 1) {
+                return false;
+            }
+            if (first.length() > second.length()) {
+                firstIndex++;
+            } else if (first.length() < second.length()) {
+                secondIndex++;
+            } else {
+                firstIndex++;
+                secondIndex++;
+            }
+        }
+
+        if (firstIndex < first.length() || secondIndex < second.length()) {
+            edits++;
+        }
+        return edits <= 1;
     }
 
     /**
