@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -24,7 +25,10 @@ import javafx.util.Duration;
 public final class DialogBox extends HBox {
     private static final String USER_AVATAR_PATH = "/images/user-avatar.png";
     private static final String MEGATRON_AVATAR_PATH = "/images/megatron-avatar.png";
-    private static final double AVATAR_SIZE = 128;
+    private static final double MIN_AVATAR_SIZE = 40;
+    private static final double MAX_AVATAR_SIZE = 160;
+    private static final double AVATAR_WIDTH_RATIO = 0.1;
+    private static final double MESSAGE_HORIZONTAL_SPACE = 24;
 
     /** Keeps the error animation active for the lifetime of the dialog. */
     private ScaleTransition errorPulse;
@@ -60,17 +64,21 @@ public final class DialogBox extends HBox {
 
         messageLabel.setText(message);
         avatar.setImage(loadAvatar(isUserMessage ? USER_AVATAR_PATH : MEGATRON_AVATAR_PATH));
-        avatar.setFitWidth(AVATAR_SIZE);
-        avatar.setFitHeight(AVATAR_SIZE);
         avatar.setPreserveRatio(true);
         avatar.getStyleClass().add(isUserMessage ? "user-avatar" : "megatron-avatar");
         avatarContainer.getStyleClass().add(isUserMessage
                 ? "user-avatar-container" : "megatron-avatar-container");
 
+        setMaxWidth(Double.MAX_VALUE);
         setSpacing(10);
         setAlignment(isUserMessage ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
+        HBox.setHgrow(messageLabel, Priority.NEVER);
         getStyleClass().add(isUserMessage ? "user-dialog" : "megatron-dialog");
         getStyleClass().add(dialogType.getStyleClass());
+
+        widthProperty().addListener((observable, oldWidth, newWidth) ->
+                updateResponsiveLayout(newWidth.doubleValue()));
+        updateResponsiveLayout(getWidth());
 
         if (isUserMessage) {
             flip();
@@ -149,6 +157,26 @@ public final class DialogBox extends HBox {
         errorPulse.setCycleCount(ScaleTransition.INDEFINITE);
         errorPulse.setInterpolator(Interpolator.EASE_BOTH);
         errorPulse.play();
+    }
+
+    /**
+     * Updates the avatar and message widths to fit the current dialog width.
+     *
+     * @param dialogWidth The current width of this dialog.
+     */
+    private void updateResponsiveLayout(double dialogWidth) {
+        double availableWidth = dialogWidth > 0 ? dialogWidth : 700;
+        double avatarSize = Math.clamp(availableWidth * AVATAR_WIDTH_RATIO,
+                MIN_AVATAR_SIZE, MAX_AVATAR_SIZE);
+        double messageWidth = Math.max(MIN_AVATAR_SIZE,
+                availableWidth - avatarSize - getSpacing() - MESSAGE_HORIZONTAL_SPACE);
+
+        avatar.setFitWidth(avatarSize);
+        avatar.setFitHeight(avatarSize);
+        avatarContainer.setMinSize(avatarSize, avatarSize);
+        avatarContainer.setPrefSize(avatarSize, avatarSize);
+        avatarContainer.setMaxSize(avatarSize, avatarSize);
+        messageLabel.setMaxWidth(messageWidth);
     }
 
     /**
