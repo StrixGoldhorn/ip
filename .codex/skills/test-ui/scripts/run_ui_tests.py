@@ -1,9 +1,46 @@
 ﻿"""Run console UI tests and stop at the first output mismatch."""
-import argparse, json, subprocess, sys
+import argparse
+import json
+import subprocess
+import sys
+import tempfile
+import time
 from pathlib import Path
 
 TEST_DATA_FILE = Path("temp.csv")
 MAIN_CLASS = "megatron.Megatron"
+
+
+def run_command(command, input_text, input_delay_ms=0):
+    """Run a command and optionally pause between lines of input."""
+    if input_delay_ms <= 0:
+        return subprocess.run(command, input=input_text, text=True,
+                              capture_output=True, shell=False)
+
+    with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as stdout_file, \
+            tempfile.TemporaryFile(mode="w+", encoding="utf-8") as stderr_file:
+        process = subprocess.Popen(command, stdin=subprocess.PIPE,
+                                   stdout=stdout_file, stderr=stderr_file,
+                                   text=True, shell=False)
+        try:
+            for line_number, line in enumerate(input_text.splitlines(keepends=True)):
+                if line_number > 0:
+                    time.sleep(input_delay_ms / 1000)
+                process.stdin.write(line)
+                process.stdin.flush()
+        except BrokenPipeError:
+            pass
+        finally:
+            try:
+                process.stdin.close()
+            except BrokenPipeError:
+                pass
+
+        return_code = process.wait()
+        stdout_file.seek(0)
+        stderr_file.seek(0)
+        return subprocess.CompletedProcess(command, return_code,
+                                           stdout_file.read(), stderr_file.read())
 
 def load_cases(path):
     text = path.read_text(encoding="utf-8")
@@ -21,10 +58,9 @@ def main():
         if case.get("persistence"):
             TEST_DATA_FILE.unlink(missing_ok=True)
             command = ["java", "-cp", "out/production/ip_project", MAIN_CLASS, str(TEST_DATA_FILE)]
-            first = subprocess.run(command, input=case["save_input"], text=True,
-                                   capture_output=True, shell=False)
-            second = subprocess.run(command, input=case["load_input"], text=True,
-                                    capture_output=True, shell=False)
+            input_delay_ms = case.get("input_delay_ms", 0)
+            first = run_command(command, case["save_input"], input_delay_ms)
+            second = run_command(command, case["load_input"], input_delay_ms)
             TEST_DATA_FILE.unlink(missing_ok=True)
             actual = second.stdout
             print(f"\n=== Test {number}: {case['name']} ===\nAim: {case['aim']}\n")
@@ -45,7 +81,7 @@ def main():
         TEST_DATA_FILE.unlink(missing_ok=True)
         if case.get("initial_data") is not None:
             TEST_DATA_FILE.write_text(case["initial_data"], encoding="utf-8")
-        result = subprocess.run(command, input=case.get("input", ""), text=True, capture_output=True, shell=False)
+        result = run_command(command, case.get("input", ""), case.get("input_delay_ms", 0))
         TEST_DATA_FILE.unlink(missing_ok=True)
         actual, expected = result.stdout, case["expected_output"]
         print(f"\n=== Test {number}: {case['name']} ===\nAim: {case['aim']}\n$ {' '.join(command)}")
