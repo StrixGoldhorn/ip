@@ -7,6 +7,10 @@
     -fx-font-family: "Consolas";
 }
 
+.portrait-layout {
+    -fx-background-image: url("../images/decepticon-background-vertical.png");
+}
+
 .header-label {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
@@ -103,7 +107,7 @@
 }
 
 .command-panel {
-    -fx-background-color: rgba(225, 225, 225, 0.94);
+    -fx-background-color: #e1e1e1;
     -fx-border-color: #b8b8b8 transparent transparent transparent;
     -fx-border-width: 1px;
 }

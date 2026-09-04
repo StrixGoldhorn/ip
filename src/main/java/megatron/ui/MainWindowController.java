@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import megatron.command.AddCommand;
 import megatron.command.Command;
@@ -31,6 +32,10 @@ import megatron.task.TaskList;
 public class MainWindowController {
     private static final String STORAGE_FILE_PATH = "data/megatron.csv";
     private static final String USER_MESSAGE_PREFIX = "";
+    private static final String PORTRAIT_LAYOUT_STYLE_CLASS = "portrait-layout";
+
+    @FXML
+    private AnchorPane mainLayout;
 
     @FXML
     private ScrollPane messageScrollPane;
@@ -62,7 +67,27 @@ public class MainWindowController {
      */
     @FXML
     private void initialize() {
+        mainLayout.widthProperty().addListener((observable, oldWidth, newWidth) ->
+                updateBackgroundForAspectRatio(newWidth.doubleValue(), mainLayout.getHeight()));
+        mainLayout.heightProperty().addListener((observable, oldHeight, newHeight) ->
+                updateBackgroundForAspectRatio(mainLayout.getWidth(), newHeight.doubleValue()));
+        updateBackgroundForAspectRatio(mainLayout.getWidth(), mainLayout.getHeight());
         appendMessage(captureOutput(ui -> ui.showWelcome()), false, DialogBox.DialogType.WELCOME);
+    }
+
+    /**
+     * Selects the background image that best fits the window aspect ratio.
+     *
+     * @param width The current window width.
+     * @param height The current window height.
+     */
+    private void updateBackgroundForAspectRatio(double width, double height) {
+        boolean isPortrait = height > width;
+        if (isPortrait && !mainLayout.getStyleClass().contains(PORTRAIT_LAYOUT_STYLE_CLASS)) {
+            mainLayout.getStyleClass().add(PORTRAIT_LAYOUT_STYLE_CLASS);
+        } else if (!isPortrait) {
+            mainLayout.getStyleClass().remove(PORTRAIT_LAYOUT_STYLE_CLASS);
+        }
     }
 
     /**
