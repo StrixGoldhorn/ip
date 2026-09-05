@@ -29,7 +29,7 @@ class ListCommandTest {
     private Path tempDirectory;
 
     @Test
-    void execute_populatedList_displaysTasksInOrderWithoutChangingState() throws MegatronException {
+    void execute_populatedList_displaysHeadingAndTasksWithoutChangingState() throws MegatronException {
         Todo firstTask = new Todo("first");
         Todo secondTask = new Todo("second");
         secondTask.markAsDone();
@@ -47,14 +47,15 @@ class ListCommandTest {
     }
 
     @Test
-    void execute_emptyList_displaysNothingAndDoesNotSave() throws MegatronException {
+    void execute_emptyList_displaysEmptyStateAndDoesNotSave() throws MegatronException {
         TaskList tasks = new TaskList();
         Path storageFile = tempDirectory.resolve("tasks.csv");
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         new ListCommand().execute(tasks, createUi(output), new TaskStorage(storageFile.toString()));
 
-        assertEquals("", output.toString(StandardCharsets.UTF_8));
+        assertEquals("     Your task empire is empty. Add a task before it gets awkward."
+                + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
         assertEquals(0, tasks.size());
         assertFalse(Files.exists(storageFile));
     }
@@ -64,7 +65,8 @@ class ListCommandTest {
     }
 
     private static String expectedListOutput() {
-        return "     1.[T][ ] first" + System.lineSeparator()
+        return "     Behold! The current state of your task empire:" + System.lineSeparator()
+                + "     1.[T][ ] first" + System.lineSeparator()
                 + "     2.[T][X] second" + System.lineSeparator();
     }
 }

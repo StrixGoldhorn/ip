@@ -40,7 +40,7 @@ class FindCommandTest {
 
         new FindCommand("book").execute(tasks, createUi(output), new TaskStorage(storageFile.toString()));
 
-        assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
+        assertEquals("     Target acquired! Here are the matching tasks:" + System.lineSeparator()
                 + "     1.[T][X] read book" + System.lineSeparator()
                 + "     3.[D][ ] return book (by: 06 Jun 26, 0000hrs)" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
@@ -56,7 +56,8 @@ class FindCommandTest {
         new FindCommand("movie").execute(tasks, createUi(output),
                 new TaskStorage(tempDirectory.resolve("tasks.csv").toString()));
 
-        assertEquals("     No tasks found matching that description." + System.lineSeparator(),
+        assertEquals("     No matching tasks detected. The search has conquered nothing."
+                + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -69,7 +70,7 @@ class FindCommandTest {
 
         new FindCommand("READ bok").execute(tasks, createUi(output), new TaskStorage(storageFile.toString()));
 
-        assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
+        assertEquals("     Target acquired! Here are the matching tasks:" + System.lineSeparator()
                 + "     2.[T][ ] read book" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
         assertEquals(3, tasks.size());

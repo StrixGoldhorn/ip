@@ -53,7 +53,7 @@ class DatetimeHelpCommandTest {
 
     private static String expectedHelpOutput() {
         return String.join(System.lineSeparator(), List.of(
-                "     Supported date/time formats:",
+                "     Initiating temporal intelligence. Supported formats:",
                 "     Dates with a year: yyyy-MM-dd, d/M/yyyy",
                 "       MMM d yyyy, MMMM d yyyy",
                 "       d MMM yyyy, d MMMM yyyy",

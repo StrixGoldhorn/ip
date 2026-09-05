@@ -14,6 +14,8 @@ import java.util.Scanner;
 import org.junit.jupiter.api.Test;
 
 import megatron.exception.EmptyCommandException;
+import megatron.exception.InvalidTaskFormatException;
+import megatron.exception.UnknownCommandException;
 import megatron.task.TaskList;
 import megatron.task.TaskMatch;
 import megatron.task.Todo;
@@ -61,8 +63,9 @@ class UiTest {
 
         String welcome = output.toString(StandardCharsets.UTF_8);
         assertTrue(welcome.startsWith("____________________________________________________________"));
-        assertTrue(welcome.contains("Rawr! I'm Megatron."));
-        assertTrue(welcome.contains("What can I do for you?"));
+        assertTrue(welcome.contains("Rawr! Megatron Griffin reporting for duty!"));
+        assertTrue(welcome.contains("I was built to conquer the universe, but task management will do."));
+        assertTrue(welcome.contains("What command shall I execute?"));
         assertTrue(welcome.endsWith("____________________________________________________________"
                 + System.lineSeparator()));
     }
@@ -85,19 +88,21 @@ class UiTest {
 
         ui.showGoodbye();
 
-        assertEquals("     Bye. Hope to see you again soon!" + System.lineSeparator()
+        assertEquals("     Retreat accepted. Try not to create more tasks while I'm gone!"
+                + System.lineSeparator()
                 + "____________________________________________________________" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
-    void showTasks_emptyList_printsNothing() {
+    void showTasks_emptyList_printsEmptyStateMessage() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         Ui ui = createUi(output);
 
         ui.showTasks(new TaskList());
 
-        assertEquals("", output.toString(StandardCharsets.UTF_8));
+        assertEquals("     Your task empire is empty. Add a task before it gets awkward."
+                + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -110,7 +115,8 @@ class UiTest {
 
         ui.showTasks(new TaskList(List.of(firstTask, secondTask)));
 
-        assertEquals("     1.[T][ ] first" + System.lineSeparator()
+        assertEquals("     Behold! The current state of your task empire:" + System.lineSeparator()
+                + "     1.[T][ ] first" + System.lineSeparator()
                 + "     2.[T][X] second" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
@@ -122,7 +128,7 @@ class UiTest {
 
         ui.showMatchingTasks(List.of(new TaskMatch(2, new Todo("read book"))));
 
-        assertEquals("     Here are the matching tasks in your list:" + System.lineSeparator()
+        assertEquals("     Target acquired! Here are the matching tasks:" + System.lineSeparator()
                 + "     2.[T][ ] read book" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
@@ -134,7 +140,8 @@ class UiTest {
 
         ui.showMatchingTasks(List.of());
 
-        assertEquals("     No tasks found matching that description." + System.lineSeparator(),
+        assertEquals("     No matching tasks detected. The search has conquered nothing."
+                + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -155,9 +162,9 @@ class UiTest {
 
         ui.showTaskAdded(new Todo("study"), 3);
 
-        assertEquals("     Got it. I've added this task:" + System.lineSeparator()
+        assertEquals("     Command accepted! This task has joined my army:" + System.lineSeparator()
                 + "       [T][ ] study" + System.lineSeparator()
-                + "     Now you have 3 tasks in the list." + System.lineSeparator(),
+                + "     My army now contains 3 tasks." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -170,7 +177,8 @@ class UiTest {
 
         ui.showTaskMarked(task, true);
 
-        assertEquals("     Nice! I've marked this task as done:" + System.lineSeparator()
+        assertEquals("     Victory! This task has fallen before my mighty intellect:"
+                + System.lineSeparator()
                 + "       [T][X] study" + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
@@ -181,7 +189,7 @@ class UiTest {
 
         ui.showTaskMarked(new Todo("study"), false);
 
-        assertEquals("     OK, I've marked this task as not done yet:" + System.lineSeparator()
+        assertEquals("     Rebellion successful. This task escaped completion:" + System.lineSeparator()
                 + "       [T][ ] study" + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
@@ -194,9 +202,9 @@ class UiTest {
 
         ui.showTaskDeleted(task, 2);
 
-        assertEquals("     Noted. I've removed this task:" + System.lineSeparator()
+        assertEquals("     Target destroyed! This task has been removed:" + System.lineSeparator()
                 + "       [T][X] study" + System.lineSeparator()
-                + "     Now you have 2 tasks in the list." + System.lineSeparator(),
+                + "     My army now contains 2 tasks." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -207,7 +215,31 @@ class UiTest {
 
         ui.showError(new EmptyCommandException());
 
-        assertEquals("     OOPS! Please enter a command." + System.lineSeparator(),
+        assertEquals("     I need more details. My mind-reading module is still under construction."
+                + " Please enter a command." + System.lineSeparator(),
+                output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void showError_unknownCommand_usesMasterPlanMessage() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Ui ui = createUi(output);
+
+        ui.showError(new UnknownCommandException(List.of("list", "bye")));
+
+        assertEquals("     That command is not part of my master plan. Try again."
+                + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void showError_missingDetails_keepsFormatHint() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Ui ui = createUi(output);
+
+        ui.showError(new InvalidTaskFormatException("todo <description>."));
+
+        assertEquals("     I need more details. My mind-reading module is still under construction."
+                + " Use: todo <description>." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -217,7 +249,7 @@ class UiTest {
 
     private static String expectedDatetimeInformation() {
         return String.join(System.lineSeparator(), List.of(
-                "     Supported date/time formats:",
+                "     Initiating temporal intelligence. Supported formats:",
                 "     Dates with a year: yyyy-MM-dd, d/M/yyyy",
                 "       MMM d yyyy, MMMM d yyyy",
                 "       d MMM yyyy, d MMMM yyyy",
