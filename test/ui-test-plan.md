@@ -233,7 +233,7 @@ The expected output below includes the final newline.
     "name": "Corrupted data file",
     "aim": "Check that malformed rows are ignored while valid rows are loaded.",
     "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
-    "initial_data": "type,done,description,extra\nT,0,valid task,\ninvalid,row\nD,maybe,bad task,Friday\n",
+    "initial_data": "type,done,description,extra\nT,0,valid task,\ninvalid,row\nD,maybe,bad task,Friday\n\"T,0,unclosed quote,\nT\"0,misplaced quote,\n",
     "input": "list\nbye\n",
     "expected_contains": "[T][ ] valid task",
     "expected_output": ""

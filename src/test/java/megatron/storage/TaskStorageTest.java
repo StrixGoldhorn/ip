@@ -108,6 +108,24 @@ class TaskStorageTest {
     }
 
     @Test
+    void load_malformedCsvQuotes_skipsMalformedRowsAndLoadsValidRows()
+            throws IOException, StorageException, TaskNotFoundException {
+        Path file = tempDirectory.resolve("tasks.csv");
+        Files.write(file, List.of(
+                "type,done,description,extra",
+                "T,0,valid todo,",
+                "\"T,0,unclosed quote,",
+                "T\"0,misplaced quote,",
+                "\"T\"trailing,0,characters after quote,"));
+        TaskStorage storage = new TaskStorage(file.toString());
+
+        TaskList loadedTasks = storage.load();
+
+        assertEquals(1, loadedTasks.size());
+        assertEquals("valid todo", loadedTasks.getTask(1).getDescription());
+    }
+
+    @Test
     void load_directoryPath_throwsStorageException() throws IOException {
         Path directory = Files.createDirectory(tempDirectory.resolve("data"));
         TaskStorage storage = new TaskStorage(directory.toString());

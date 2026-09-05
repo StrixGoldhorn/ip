@@ -73,7 +73,7 @@ public final class TaskStorage {
      */
     private static Task loadTask(String line) {
         List<String> fields = parseCsvLine(line);
-        if (fields.size() < 4 || fields.get(0).equals("type")) {
+        if (fields == null || fields.size() < 4 || fields.get(0).equals("type")) {
             return null;
         }
         if (!isValid(fields)) {
@@ -227,28 +227,48 @@ public final class TaskStorage {
      * Splits one CSV row while preserving commas and escaped quotes in quoted fields.
      *
      * @param line The CSV row.
-     * @return The parsed CSV fields.
+     * @return The parsed CSV fields, or null if the row has malformed quoting.
      */
     private static List<String> parseCsvLine(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
         boolean quoted = false;
+        boolean fieldStarted = false;
+        boolean quoteClosed = false;
+
         for (int i = 0; i < line.length(); i++) {
             char character = line.charAt(i);
             if (character == '"') {
                 if (quoted && i + 1 < line.length() && line.charAt(i + 1) == '"') {
                     field.append('"');
                     i++;
+                } else if (quoted) {
+                    quoted = false;
+                    quoteClosed = true;
+                } else if (!fieldStarted) {
+                    quoted = true;
+                    fieldStarted = true;
                 } else {
-                    quoted = !quoted;
+                    return null;
                 }
             } else if (character == ',' && !quoted) {
                 fields.add(field.toString());
                 field.setLength(0);
+                fieldStarted = false;
+                quoteClosed = false;
             } else {
+                if (quoteClosed) {
+                    return null;
+                }
                 field.append(character);
+                fieldStarted = true;
             }
         }
+
+        if (quoted) {
+            return null;
+        }
+
         fields.add(field.toString());
         return fields;
     }
