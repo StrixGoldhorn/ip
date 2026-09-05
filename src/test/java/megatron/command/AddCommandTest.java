@@ -67,7 +67,7 @@ class AddCommandTest {
         assertEquals(MAX_TASKS, tasks.size());
         assertEquals("final task", tasks.getTask(MAX_TASKS).getDescription());
         assertEquals(MAX_TASKS, storage.load().size());
-        assertTrue(output.toString(StandardCharsets.UTF_8).contains("Now you have 100 tasks in the list."));
+        assertTrue(output.toString(StandardCharsets.UTF_8).contains("My army now contains 100 tasks."));
     }
 
     @Test
@@ -123,8 +123,8 @@ class AddCommandTest {
     }
 
     private static String expectedAddedOutput(String taskText, int taskCount) {
-        return "     Got it. I've added this task:" + System.lineSeparator()
-                + "       " + taskText + System.lineSeparator()
-                + "     Now you have " + taskCount + " tasks in the list." + System.lineSeparator();
+        return "Command accepted! This task has joined my army:" + System.lineSeparator()
+                + "" + taskText + System.lineSeparator()
+                + "My army now contains " + taskCount + " tasks." + System.lineSeparator();
     }
 }
