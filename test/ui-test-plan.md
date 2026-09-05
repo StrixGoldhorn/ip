@@ -35,6 +35,7 @@ prevents rapid test input from causing temporary Windows file-replacement locks.
 | Day-month-year date/time | Check that short and full month names are accepted after the day. | `deadline launch /by 6 Aug 2026 2pm`, `event review /from 6 August 2026 14:00 /to 16:00` | Display normalized deadline and event date/times. |
 | Day-month-year date-only | Check that a day-month-year date without a time defaults to midnight in the default output format. | `deadline launch /by 6 August 2026` | Display `(by: 06 Aug 26, 0000hrs)`. |
 | Strict invalid date/time | Check that impossible calendar dates and times are rejected without terminating the chatbot. | `deadline invalid day /by 31/04/2019`, `deadline invalid time /by 2019-01-01 2560` | Print the datetime format error and continue to `bye`. |
+| Invalid event range | Check that an event ending earlier than or at its start is rejected. | `event invalid range /from 2026-08-06 1600 /to 2026-08-06 1400`, `event invalid range /from 2026-08-06 1400 /to 2026-08-06 1400` | Print the event format error and continue running. |
 | Weekday time display | Check that a weekday with a time keeps the time in 24-hour format when displayed. | `deadline meeting /by monday 6pm` | Display the deadline with `1800`. |
 | Date-only persistence | Check that a date-only deadline reloads with the default midnight output. | Save `deadline saved /by 2026-06-06`, restart, then `list`. | Display `(by: 06 Jun 26, 0000hrs)` after reload. |
 | Maximum list capacity | Check that the 101st task is rejected. | 101 todo commands, with a 100 ms interval between commands. | Print the full-list error and keep 100 tasks. |
@@ -259,6 +260,14 @@ The expected output below includes the final newline.
     "save_input": "deadline saved /by 2026-06-06\nbye\n",
     "load_input": "list\nbye\n",
     "expected_contains": "[D][ ] saved (by: 06 Jun 26, 0000hrs)",
+    "expected_output": ""
+  },
+  {
+    "name": "Invalid event range",
+    "aim": "Check that an event ending earlier than or at its start is rejected without terminating the chatbot.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
+    "input": "event invalid range /from 2026-08-06 1600 /to 2026-08-06 1400\nevent invalid range /from 2026-08-06 1400 /to 2026-08-06 1400\nbye\n",
+    "expected_contains": "I need more details. My mind-reading module is still under construction. Use: event <description> /from <valid start> /to <valid end>.",
     "expected_output": ""
   },
   {

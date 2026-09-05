@@ -26,7 +26,9 @@ public class Event extends Task {
             // A time-only end value is interpreted on the start date.
             parsedTo = DatetimeValidator.parseToLocalDateTime(this.from.toLocalDate() + " " + to);
         }
-        assert !parsedTo.isBefore(this.from) : "An event must end at or after its start.";
+        if (!parsedTo.isAfter(this.from)) {
+            throw new IllegalArgumentException("An event must end after its start.");
+        }
         this.to = parsedTo;
     }
 
@@ -39,7 +41,9 @@ public class Event extends Task {
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description, TaskType.EVENT);
-        assert !to.isBefore(from) : "An event must end at or after its start.";
+        if (!to.isAfter(from)) {
+            throw new IllegalArgumentException("An event must end after its start.");
+        }
         this.from = from;
         this.to = to;
     }

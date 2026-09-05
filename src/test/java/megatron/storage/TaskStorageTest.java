@@ -94,7 +94,9 @@ class TaskStorageTest {
                 "D,0,invalid deadline,not-a-date",
                 "D,0,missing deadline,",
                 "E,0,missing end,2026-08-07T15:00",
-                "E,0,invalid start,invalid|2026-08-07T16:30"));
+                "E,0,invalid start,invalid|2026-08-07T16:30",
+                "E,0,end before start,2026-08-07T16:30|2026-08-07T15:00",
+                "E,0,end equal to start,2026-08-07T15:00|2026-08-07T15:00"));
         TaskStorage storage = new TaskStorage(file.toString());
 
         TaskList loadedTasks = storage.load();
