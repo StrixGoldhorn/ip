@@ -1,6 +1,5 @@
 package megatron.storage;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -33,7 +32,7 @@ class TaskStorageTest {
     private Path tempDirectory;
 
     @Test
-    void load_missingFile_returnsEmptyTaskList() {
+    void load_missingFile_returnsEmptyTaskList() throws StorageException {
         TaskStorage storage = new TaskStorage(tempDirectory.resolve("missing.csv").toString());
 
         assertEquals(0, storage.load().size());
@@ -79,7 +78,7 @@ class TaskStorageTest {
 
     @Test
     void load_malformedRows_skipsInvalidRowsAndLoadsValidRows()
-            throws IOException, TaskNotFoundException {
+            throws IOException, StorageException, TaskNotFoundException {
         Path file = tempDirectory.resolve("tasks.csv");
         Files.write(file, List.of(
                 "type,done,description,extra",
@@ -109,11 +108,11 @@ class TaskStorageTest {
     }
 
     @Test
-    void load_directoryPath_doesNotPropagateIoFailure() throws IOException {
+    void load_directoryPath_throwsStorageException() throws IOException {
         Path directory = Files.createDirectory(tempDirectory.resolve("data"));
         TaskStorage storage = new TaskStorage(directory.toString());
 
-        assertDoesNotThrow(storage::load);
+        assertThrows(StorageException.class, storage::load);
     }
 
     @Test

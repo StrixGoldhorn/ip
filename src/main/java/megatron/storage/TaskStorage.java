@@ -38,22 +38,29 @@ public final class TaskStorage {
      * Loads all valid tasks. A missing file is treated as an empty task list.
      *
      * @return A task list containing all valid stored tasks.
+     * @throws StorageException If the data file cannot be read.
      */
-    public TaskList load() {
+    public TaskList load() throws StorageException {
         List<Task> tasks = new ArrayList<>();
-        if (!Files.exists(file)) {
-            return new TaskList(tasks);
-        }
-        try (BufferedReader reader = Files.newBufferedReader(file)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Task task = loadTask(line);
-                if (task != null) {
-                    tasks.add(task);
+        try {
+            if (!Files.exists(file)) {
+                if (Files.notExists(file)) {
+                    return new TaskList(tasks);
+                }
+                throw new IOException("Unable to determine whether the data file exists.");
+            }
+
+            try (BufferedReader reader = Files.newBufferedReader(file)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Task task = loadTask(line);
+                    if (task != null) {
+                        tasks.add(task);
+                    }
                 }
             }
-        } catch (IOException | RuntimeException exception) {
-            // Keep the application usable when the data file is unreadable or malformed.
+        } catch (IOException | SecurityException exception) {
+            throw StorageException.forLoad(exception);
         }
         return new TaskList(tasks);
     }

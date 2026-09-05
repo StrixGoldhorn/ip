@@ -3,6 +3,7 @@ package megatron;
 import megatron.command.Command;
 import megatron.command.Parser;
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.storage.TaskStorage;
 import megatron.task.TaskList;
 import megatron.ui.Ui;
@@ -15,6 +16,7 @@ public class Megatron {
     private final TaskStorage storage;
     private final TaskList tasks;
     private final Parser parser;
+    private final StorageException storageLoadException;
 
     /**
      * Creates a Megatron application that stores tasks at the given path.
@@ -24,7 +26,17 @@ public class Megatron {
     public Megatron(String filePath) {
         ui = new Ui();
         storage = new TaskStorage(filePath);
-        tasks = storage.load();
+        TaskList loadedTasks;
+        StorageException loadException;
+        try {
+            loadedTasks = storage.load();
+            loadException = null;
+        } catch (StorageException exception) {
+            loadedTasks = new TaskList();
+            loadException = exception;
+        }
+        tasks = loadedTasks;
+        storageLoadException = loadException;
         parser = new Parser();
     }
 
@@ -40,6 +52,10 @@ public class Megatron {
      */
     public void run() {
         ui.showWelcome();
+        if (storageLoadException != null) {
+            ui.showDivider();
+            ui.showError(storageLoadException);
+        }
         boolean isExit = false;
         while (!isExit && ui.hasNextCommand()) {
             String input = ui.readCommand();
