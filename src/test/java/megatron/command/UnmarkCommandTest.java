@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.exception.TaskNotFoundException;
 import megatron.storage.TaskStorage;
 import megatron.task.TaskList;
@@ -77,6 +78,21 @@ class UnmarkCommandTest {
     @Test
     void execute_taskNumberAboveSize_throwsWithoutSavingOrDisplaying() throws MegatronException {
         assertInvalidTaskNumber(2);
+    }
+
+    @Test
+    void execute_saveFailure_restoresPreviousStatus() {
+        Todo task = new Todo("task");
+        task.markAsDone();
+        TaskList tasks = new TaskList(List.of(task));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TaskStorage storage = new TaskStorage(tempDirectory.toString());
+
+        assertThrows(StorageException.class, () -> new UnmarkCommand(1)
+                .execute(tasks, createUi(output), storage));
+
+        assertTrue(task.isDone());
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 
     private void assertInvalidTaskNumber(int taskNumber) throws MegatronException {

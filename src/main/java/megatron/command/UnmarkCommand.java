@@ -1,6 +1,7 @@
 package megatron.command;
 
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.storage.TaskStorage;
 import megatron.task.Task;
 import megatron.task.TaskList;
@@ -31,8 +32,17 @@ public final class UnmarkCommand extends Command {
      */
     @Override
     public void execute(TaskList tasks, Ui ui, TaskStorage storage) throws MegatronException {
-        Task task = tasks.setNotDone(taskNumber);
-        storage.save(tasks);
+        Task task = tasks.getTask(taskNumber);
+        boolean wasDone = task.isDone();
+        task.markAsNotDone();
+        try {
+            storage.save(tasks);
+        } catch (StorageException exception) {
+            if (wasDone) {
+                task.markAsDone();
+            }
+            throw exception;
+        }
         ui.showTaskMarked(task, false);
     }
 }

@@ -1,6 +1,7 @@
 package megatron.command;
 
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.storage.TaskStorage;
 import megatron.task.Task;
 import megatron.task.TaskList;
@@ -32,7 +33,12 @@ public final class DeleteCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, TaskStorage storage) throws MegatronException {
         Task removedTask = tasks.removeTask(taskNumber);
-        storage.save(tasks);
+        try {
+            storage.save(tasks);
+        } catch (StorageException exception) {
+            tasks.add(removedTask);
+            throw exception;
+        }
         ui.showTaskDeleted(removedTask, tasks.size());
     }
 }

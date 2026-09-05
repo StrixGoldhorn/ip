@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.exception.TaskNotFoundException;
 import megatron.storage.TaskStorage;
 import megatron.task.TaskList;
@@ -79,6 +80,20 @@ class DeleteCommandTest {
     @Test
     void execute_taskNumberAboveSize_throwsWithoutSavingOrDisplaying() throws MegatronException {
         assertInvalidTaskNumber(2);
+    }
+
+    @Test
+    void execute_saveFailure_restoresRemovedTask() {
+        TaskList tasks = new TaskList(List.of(new Todo("first"), new Todo("second")));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TaskStorage storage = new TaskStorage(tempDirectory.toString());
+
+        assertThrows(StorageException.class, () -> new DeleteCommand(2)
+                .execute(tasks, createUi(output), storage));
+
+        assertEquals(2, tasks.size());
+        assertEquals("second", tasks.getTask(2).getDescription());
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 
     private void assertInvalidTaskNumber(int taskNumber) throws MegatronException {

@@ -42,6 +42,7 @@ prevents rapid test input from causing temporary Windows file-replacement locks.
 | Whitespace handling | Check that surrounding task whitespace is removed. | `todo    buy milk    ` | Store `buy milk`. |
 | Corrupted data file | Check that malformed rows do not stop valid rows from loading. | Start with valid and malformed CSV rows, then `list`. | Display only the valid task. |
 | Storage write failure | Check that a failed save is reported instead of displaying a successful update. | Start Megatron with a directory as its data-file path, then add a todo. | Print `OOPS! Megatron says: Could not save tasks. Check that the data file is writable.` and continue running. |
+| Storage failure rollback | Check that a failed save does not leave an unsaved task in memory. | Start Megatron with a directory as its data-file path, add a todo, then enter `list`. | Print the storage error and then the empty-task message. |
 | Persistence | Check that saved tasks are loaded by a new process. | Add a task, exit, restart, then `list`. | Display the saved task. |
 | Bye | Check that the chatbot exits after the extended checks. | `bye` | Display the exit message. |
 
@@ -242,6 +243,14 @@ The expected output below includes the final newline.
     "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron", "."],
     "input": "todo unsaved task\nbye\n",
     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \nRawr! Megatron Griffin reporting for duty!\nI was built to conquer the universe, but task management will do.\nWhat command shall I execute?\n____________________________________________________________\n____________________________________________________________\nOOPS! Megatron says: Could not save tasks. Check that the data file is writable.\n____________________________________________________________\n____________________________________________________________\nRetreat accepted. Try not to create more tasks while I'm gone!\n____________________________________________________________\n"
+  },
+  {
+    "name": "Storage failure rollback",
+    "aim": "Check that a failed save does not leave an unsaved task in memory.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron", "."],
+    "input": "todo unsaved task\nlist\nbye\n",
+    "expected_contains": "Your task empire is empty. Add a task before it gets awkward.",
+    "expected_output": ""
   },
   {
     "name": "Persistence",
