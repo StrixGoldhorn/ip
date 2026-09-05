@@ -95,8 +95,8 @@ class MarkCommandTest {
     }
 
     private static String expectedMarkedOutput(String taskText) {
-        return "     Victory! This task has fallen before my mighty intellect:"
+        return "Victory! This task has fallen before my mighty intellect:"
                 + System.lineSeparator()
-                + "       " + taskText + System.lineSeparator();
+                + "" + taskText + System.lineSeparator();
     }
 }

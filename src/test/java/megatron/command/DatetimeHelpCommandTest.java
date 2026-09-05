@@ -53,22 +53,22 @@ class DatetimeHelpCommandTest {
 
     private static String expectedHelpOutput() {
         return String.join(System.lineSeparator(), List.of(
-                "     Initiating temporal intelligence. Supported formats:",
-                "     Dates with a year: yyyy-MM-dd, d/M/yyyy",
-                "       MMM d yyyy, MMMM d yyyy",
-                "       d MMM yyyy, d MMMM yyyy",
-                "     Dates without a year: MMM d, MMMM d",
-                "       d MMM, d MMMM (current year is used)",
-                "     Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]",
-                "       Examples: 2145, 21:45, 9pm, 9:45pm",
-                "     Weekdays: mon/tue/wed/thu/fri/sat/sun",
-                "       Full names are also accepted, for example monday 6pm.",
-                "     Missing times default to 0000 (midnight).",
-                "     A weekday resolves to its next available occurrence.",
-                "     A time-only event end uses the event start date.",
-                "       Example: event Exam /from 6 Jul 26 1200 /to 1400",
-                "       The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs",
-                "     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)"))
+                "Initiating temporal intelligence. Supported formats:",
+                "Dates with a year: yyyy-MM-dd, d/M/yyyy",
+                "MMM d yyyy, MMMM d yyyy",
+                "d MMM yyyy, d MMMM yyyy",
+                "Dates without a year: MMM d, MMMM d",
+                "d MMM, d MMMM (current year is used)",
+                "Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]",
+                "Examples: 2145, 21:45, 9pm, 9:45pm",
+                "Weekdays: mon/tue/wed/thu/fri/sat/sun",
+                "Full names are also accepted, for example monday 6pm.",
+                "Missing times default to 0000 (midnight).",
+                "A weekday resolves to its next available occurrence.",
+                "A time-only event end uses the event start date.",
+                "Example: event Exam /from 6 Jul 26 1200 /to 1400",
+                "The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs",
+                "Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)"))
                 + System.lineSeparator();
     }
 }

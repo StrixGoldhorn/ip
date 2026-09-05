@@ -98,7 +98,7 @@ class UnmarkCommandTest {
     }
 
     private static String expectedUnmarkedOutput(String taskText) {
-        return "     Rebellion successful. This task escaped completion:" + System.lineSeparator()
-                + "       " + taskText + System.lineSeparator();
+        return "Rebellion successful. This task escaped completion:" + System.lineSeparator()
+                + "" + taskText + System.lineSeparator();
     }
 }

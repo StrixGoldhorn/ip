@@ -54,7 +54,7 @@ class ListCommandTest {
 
         new ListCommand().execute(tasks, createUi(output), new TaskStorage(storageFile.toString()));
 
-        assertEquals("     Your task empire is empty. Add a task before it gets awkward."
+        assertEquals("Your task empire is empty. Add a task before it gets awkward."
                 + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
         assertEquals(0, tasks.size());
         assertFalse(Files.exists(storageFile));
@@ -65,8 +65,8 @@ class ListCommandTest {
     }
 
     private static String expectedListOutput() {
-        return "     Behold! The current state of your task empire:" + System.lineSeparator()
-                + "     1.[T][ ] first" + System.lineSeparator()
-                + "     2.[T][X] second" + System.lineSeparator();
+        return "Behold! The current state of your task empire:" + System.lineSeparator()
+                + "1.[T][ ] first" + System.lineSeparator()
+                + "2.[T][X] second" + System.lineSeparator();
     }
 }

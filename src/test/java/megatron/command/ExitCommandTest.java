@@ -52,7 +52,7 @@ class ExitCommandTest {
     }
 
     private static String expectedGoodbyeOutput() {
-        return "     Retreat accepted. Try not to create more tasks while I'm gone!"
+        return "Retreat accepted. Try not to create more tasks while I'm gone!"
                 + System.lineSeparator()
                 + "____________________________________________________________" + System.lineSeparator();
     }

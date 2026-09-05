@@ -74,9 +74,9 @@ public final class Ui {
     public void showWelcome() {
         showDivider();
         output.println(BANNER);
-        output.println("     Rawr! Megatron Griffin reporting for duty!");
-        output.println("     I was built to conquer the universe, but task management will do.");
-        output.println("     What command shall I execute?");
+        output.println("Rawr! Megatron Griffin reporting for duty!");
+        output.println("I was built to conquer the universe, but task management will do.");
+        output.println("What command shall I execute?");
         showDivider();
     }
 
@@ -91,7 +91,7 @@ public final class Ui {
      * Displays the message shown when the user exits.
      */
     public void showGoodbye() {
-        output.println("     Retreat accepted. Try not to create more tasks while I'm gone!");
+        output.println("Retreat accepted. Try not to create more tasks while I'm gone!");
         showDivider();
     }
 
@@ -102,11 +102,11 @@ public final class Ui {
      */
     public void showTasks(TaskList tasks) {
         if (tasks.size() == 0) {
-            output.println("     Your task empire is empty. Add a task before it gets awkward.");
+            output.println("Your task empire is empty. Add a task before it gets awkward.");
             return;
         }
 
-        output.println("     Behold! The current state of your task empire:");
+        output.println("Behold! The current state of your task empire:");
         int taskNumber = 1;
         for (Task task : tasks) {
             showTask(taskNumber, task);
@@ -121,11 +121,11 @@ public final class Ui {
      */
     public void showMatchingTasks(List<TaskMatch> matchingTasks) {
         if (matchingTasks.isEmpty()) {
-            output.println("     No matching tasks detected. The search has conquered nothing.");
+            output.println("No matching tasks detected. The search has conquered nothing.");
             return;
         }
 
-        output.println("     Target acquired! Here are the matching tasks:");
+        output.println("Target acquired! Here are the matching tasks:");
         for (TaskMatch match : matchingTasks) {
             showTask(match.taskNumber(), match.task());
         }
@@ -135,29 +135,29 @@ public final class Ui {
      * Displays one task with the supplied one-based number.
      */
     private void showTask(int taskNumber, Task task) {
-        output.println("     " + taskNumber + "." + task.displayText());
+        output.println(taskNumber + "." + task.displayText());
     }
 
     /**
      * Displays the supported date/time inputs and interpretation rules.
      */
     public void showDatetimeInformation() {
-        output.println("     Initiating temporal intelligence. Supported formats:");
-        output.println("     Dates with a year: yyyy-MM-dd, d/M/yyyy");
-        output.println("       MMM d yyyy, MMMM d yyyy");
-        output.println("       d MMM yyyy, d MMMM yyyy");
-        output.println("     Dates without a year: MMM d, MMMM d");
-        output.println("       d MMM, d MMMM (current year is used)");
-        output.println("     Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]");
-        output.println("       Examples: 2145, 21:45, 9pm, 9:45pm");
-        output.println("     Weekdays: mon/tue/wed/thu/fri/sat/sun");
-        output.println("       Full names are also accepted, for example monday 6pm.");
-        output.println("     Missing times default to 0000 (midnight).");
-        output.println("     A weekday resolves to its next available occurrence.");
-        output.println("     A time-only event end uses the event start date.");
-        output.println("       Example: event Exam /from 6 Jul 26 1200 /to 1400");
-        output.println("       The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs");
-        output.println("     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)");
+        output.println("Initiating temporal intelligence. Supported formats:");
+        output.println("Dates with a year: yyyy-MM-dd, d/M/yyyy");
+        output.println("MMM d yyyy, MMMM d yyyy");
+        output.println("d MMM yyyy, d MMMM yyyy");
+        output.println("Dates without a year: MMM d, MMMM d");
+        output.println("d MMM, d MMMM (current year is used)");
+        output.println("Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]");
+        output.println("Examples: 2145, 21:45, 9pm, 9:45pm");
+        output.println("Weekdays: mon/tue/wed/thu/fri/sat/sun");
+        output.println("Full names are also accepted, for example monday 6pm.");
+        output.println("Missing times default to 0000 (midnight).");
+        output.println("A weekday resolves to its next available occurrence.");
+        output.println("A time-only event end uses the event start date.");
+        output.println("Example: event Exam /from 6 Jul 26 1200 /to 1400");
+        output.println("The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs");
+        output.println("Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)");
     }
 
     /**
@@ -167,9 +167,9 @@ public final class Ui {
      * @param taskCount The current number of tasks.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        output.println("     Command accepted! This task has joined my army:");
-        output.println("       " + task.displayText());
-        output.println("     My army now contains " + taskCount + " tasks.");
+        output.println("Command accepted! This task has joined my army:");
+        output.println(task.displayText());
+        output.println("My army now contains " + taskCount + " tasks.");
     }
 
     /**
@@ -180,11 +180,11 @@ public final class Ui {
      */
     public void showTaskMarked(Task task, boolean markedDone) {
         if (markedDone) {
-            output.println("     Victory! This task has fallen before my mighty intellect:");
+            output.println("Victory! This task has fallen before my mighty intellect:");
         } else {
-            output.println("     Rebellion successful. This task escaped completion:");
+            output.println("Rebellion successful. This task escaped completion:");
         }
-        output.println("       " + task.displayText());
+        output.println(task.displayText());
     }
 
     /**
@@ -194,9 +194,9 @@ public final class Ui {
      * @param taskCount The current number of tasks.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        output.println("     Target destroyed! This task has been removed:");
-        output.println("       " + task.displayText());
-        output.println("     My army now contains " + taskCount + " tasks.");
+        output.println("Target destroyed! This task has been removed:");
+        output.println(task.displayText());
+        output.println("My army now contains " + taskCount + " tasks.");
     }
 
     /**
@@ -206,14 +206,14 @@ public final class Ui {
      */
     public void showError(MegatronException exception) {
         if (exception instanceof UnknownCommandException) {
-            output.println("     That command is not part of my master plan. Try again.");
+            output.println("That command is not part of my master plan. Try again.");
         } else if (exception instanceof EmptyCommandException
                 || exception instanceof EmptyDescriptionException
                 || exception instanceof InvalidTaskFormatException) {
-            output.println("     I need more details. My mind-reading module is still under construction."
+            output.println("I need more details. My mind-reading module is still under construction."
                     + " " + exception.getMessage());
         } else {
-            output.println("     OOPS! Megatron says: " + exception.getMessage());
+            output.println("OOPS! Megatron says: " + exception.getMessage());
         }
     }
 

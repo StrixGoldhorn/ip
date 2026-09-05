@@ -123,8 +123,8 @@ class AddCommandTest {
     }
 
     private static String expectedAddedOutput(String taskText, int taskCount) {
-        return "     Command accepted! This task has joined my army:" + System.lineSeparator()
-                + "       " + taskText + System.lineSeparator()
-                + "     My army now contains " + taskCount + " tasks." + System.lineSeparator();
+        return "Command accepted! This task has joined my army:" + System.lineSeparator()
+                + "" + taskText + System.lineSeparator()
+                + "My army now contains " + taskCount + " tasks." + System.lineSeparator();
     }
 }

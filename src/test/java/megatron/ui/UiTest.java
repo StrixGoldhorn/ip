@@ -88,7 +88,7 @@ class UiTest {
 
         ui.showGoodbye();
 
-        assertEquals("     Retreat accepted. Try not to create more tasks while I'm gone!"
+        assertEquals("Retreat accepted. Try not to create more tasks while I'm gone!"
                 + System.lineSeparator()
                 + "____________________________________________________________" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
@@ -101,7 +101,7 @@ class UiTest {
 
         ui.showTasks(new TaskList());
 
-        assertEquals("     Your task empire is empty. Add a task before it gets awkward."
+        assertEquals("Your task empire is empty. Add a task before it gets awkward."
                 + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
@@ -115,9 +115,9 @@ class UiTest {
 
         ui.showTasks(new TaskList(List.of(firstTask, secondTask)));
 
-        assertEquals("     Behold! The current state of your task empire:" + System.lineSeparator()
-                + "     1.[T][ ] first" + System.lineSeparator()
-                + "     2.[T][X] second" + System.lineSeparator(),
+        assertEquals("Behold! The current state of your task empire:" + System.lineSeparator()
+                + "1.[T][ ] first" + System.lineSeparator()
+                + "2.[T][X] second" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -128,8 +128,8 @@ class UiTest {
 
         ui.showMatchingTasks(List.of(new TaskMatch(2, new Todo("read book"))));
 
-        assertEquals("     Target acquired! Here are the matching tasks:" + System.lineSeparator()
-                + "     2.[T][ ] read book" + System.lineSeparator(),
+        assertEquals("Target acquired! Here are the matching tasks:" + System.lineSeparator()
+                + "2.[T][ ] read book" + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -140,7 +140,7 @@ class UiTest {
 
         ui.showMatchingTasks(List.of());
 
-        assertEquals("     No matching tasks detected. The search has conquered nothing."
+        assertEquals("No matching tasks detected. The search has conquered nothing."
                 + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
@@ -162,9 +162,9 @@ class UiTest {
 
         ui.showTaskAdded(new Todo("study"), 3);
 
-        assertEquals("     Command accepted! This task has joined my army:" + System.lineSeparator()
-                + "       [T][ ] study" + System.lineSeparator()
-                + "     My army now contains 3 tasks." + System.lineSeparator(),
+        assertEquals("Command accepted! This task has joined my army:" + System.lineSeparator()
+                + "[T][ ] study" + System.lineSeparator()
+                + "My army now contains 3 tasks." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -177,9 +177,9 @@ class UiTest {
 
         ui.showTaskMarked(task, true);
 
-        assertEquals("     Victory! This task has fallen before my mighty intellect:"
+        assertEquals("Victory! This task has fallen before my mighty intellect:"
                 + System.lineSeparator()
-                + "       [T][X] study" + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
+                + "[T][X] study" + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -189,8 +189,8 @@ class UiTest {
 
         ui.showTaskMarked(new Todo("study"), false);
 
-        assertEquals("     Rebellion successful. This task escaped completion:" + System.lineSeparator()
-                + "       [T][ ] study" + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
+        assertEquals("Rebellion successful. This task escaped completion:" + System.lineSeparator()
+                + "[T][ ] study" + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -202,9 +202,9 @@ class UiTest {
 
         ui.showTaskDeleted(task, 2);
 
-        assertEquals("     Target destroyed! This task has been removed:" + System.lineSeparator()
-                + "       [T][X] study" + System.lineSeparator()
-                + "     My army now contains 2 tasks." + System.lineSeparator(),
+        assertEquals("Target destroyed! This task has been removed:" + System.lineSeparator()
+                + "[T][X] study" + System.lineSeparator()
+                + "My army now contains 2 tasks." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
 
@@ -215,7 +215,7 @@ class UiTest {
 
         ui.showError(new EmptyCommandException());
 
-        assertEquals("     I need more details. My mind-reading module is still under construction."
+        assertEquals("I need more details. My mind-reading module is still under construction."
                 + " Please enter a command." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
@@ -227,7 +227,7 @@ class UiTest {
 
         ui.showError(new UnknownCommandException(List.of("list", "bye")));
 
-        assertEquals("     That command is not part of my master plan. Try again."
+        assertEquals("That command is not part of my master plan. Try again."
                 + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
@@ -238,7 +238,7 @@ class UiTest {
 
         ui.showError(new InvalidTaskFormatException("todo <description>."));
 
-        assertEquals("     I need more details. My mind-reading module is still under construction."
+        assertEquals("I need more details. My mind-reading module is still under construction."
                 + " Use: todo <description>." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
     }
@@ -249,22 +249,22 @@ class UiTest {
 
     private static String expectedDatetimeInformation() {
         return String.join(System.lineSeparator(), List.of(
-                "     Initiating temporal intelligence. Supported formats:",
-                "     Dates with a year: yyyy-MM-dd, d/M/yyyy",
-                "       MMM d yyyy, MMMM d yyyy",
-                "       d MMM yyyy, d MMMM yyyy",
-                "     Dates without a year: MMM d, MMMM d",
-                "       d MMM, d MMMM (current year is used)",
-                "     Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]",
-                "       Examples: 2145, 21:45, 9pm, 9:45pm",
-                "     Weekdays: mon/tue/wed/thu/fri/sat/sun",
-                "       Full names are also accepted, for example monday 6pm.",
-                "     Missing times default to 0000 (midnight).",
-                "     A weekday resolves to its next available occurrence.",
-                "     A time-only event end uses the event start date.",
-                "       Example: event Exam /from 6 Jul 26 1200 /to 1400",
-                "       The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs",
-                "     Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)"))
+                "Initiating temporal intelligence. Supported formats:",
+                "Dates with a year: yyyy-MM-dd, d/M/yyyy",
+                "MMM d yyyy, MMMM d yyyy",
+                "d MMM yyyy, d MMMM yyyy",
+                "Dates without a year: MMM d, MMMM d",
+                "d MMM, d MMMM (current year is used)",
+                "Times: HHmm, H:mm, h[am|pm], h:mm[am|pm]",
+                "Examples: 2145, 21:45, 9pm, 9:45pm",
+                "Weekdays: mon/tue/wed/thu/fri/sat/sun",
+                "Full names are also accepted, for example monday 6pm.",
+                "Missing times default to 0000 (midnight).",
+                "A weekday resolves to its next available occurrence.",
+                "A time-only event end uses the event start date.",
+                "Example: event Exam /from 6 Jul 26 1200 /to 1400",
+                "The above sets an event occuring from 6 Jul 26 1200hrs to 6 Jul 26 1400hrs",
+                "Output format: dd MMM uu, HHmm'hrs' (example: 24 Aug 26, 2145hrs)"))
                 + System.lineSeparator();
     }
 }

@@ -101,8 +101,8 @@ class DeleteCommandTest {
     }
 
     private static String expectedDeletedOutput(String taskText, int taskCount) {
-        return "     Target destroyed! This task has been removed:" + System.lineSeparator()
-                + "       " + taskText + System.lineSeparator()
-                + "     My army now contains " + taskCount + " tasks." + System.lineSeparator();
+        return "Target destroyed! This task has been removed:" + System.lineSeparator()
+                + "" + taskText + System.lineSeparator()
+                + "My army now contains " + taskCount + " tasks." + System.lineSeparator();
     }
 }
