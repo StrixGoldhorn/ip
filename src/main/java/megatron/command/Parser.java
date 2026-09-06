@@ -127,13 +127,14 @@ public final class Parser {
      * @throws InvalidTaskFormatException If the deadline command or date/time is invalid.
      */
     private static Deadline createDeadline(String text) throws InvalidTaskFormatException {
-        String[] parts = text.substring("deadline".length()).split(" /by ", 2);
-        if (parts.length != 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+        String[] deadlineParts = text.substring("deadline".length()).split(" /by ", 2);
+        if (deadlineParts.length != 2 || deadlineParts[0].trim().isEmpty()
+                || deadlineParts[1].trim().isEmpty()) {
             throw new InvalidTaskFormatException("deadline <description> /by <date>.");
         }
 
         try {
-            return new Deadline(parts[0].trim(), parts[1].trim());
+            return new Deadline(deadlineParts[0].trim(), deadlineParts[1].trim());
         } catch (IllegalArgumentException exception) {
             throw new InvalidTaskFormatException("deadline <description> /by <valid date/time>. "
                     + "Use datetime-help to view supported date/time formats.");
@@ -148,19 +149,19 @@ public final class Parser {
      * @throws InvalidTaskFormatException If the event command or date/time is invalid.
      */
     private static Event createEvent(String text) throws InvalidTaskFormatException {
-        String[] parts = text.substring("event".length()).split(" /from ", 2);
-        if (parts.length != 2) {
+        String[] eventParts = text.substring("event".length()).split(" /from ", 2);
+        if (eventParts.length != 2) {
             throw new InvalidTaskFormatException("event <description> /from <start> /to <end>.");
         }
 
-        String[] times = parts[1].split(" /to ", 2);
-        if (times.length != 2 || parts[0].trim().isEmpty() || times[0].trim().isEmpty()
-                || times[1].trim().isEmpty()) {
+        String[] eventTimes = eventParts[1].split(" /to ", 2);
+        if (eventTimes.length != 2 || eventParts[0].trim().isEmpty()
+                || eventTimes[0].trim().isEmpty() || eventTimes[1].trim().isEmpty()) {
             throw new InvalidTaskFormatException("event <description> /from <start> /to <end>.");
         }
 
         try {
-            return new Event(parts[0].trim(), times[0].trim(), times[1].trim());
+            return new Event(eventParts[0].trim(), eventTimes[0].trim(), eventTimes[1].trim());
         } catch (IllegalArgumentException exception) {
             throw new InvalidTaskFormatException(
                     "event <description> /from <valid start> /to <valid end>. "
