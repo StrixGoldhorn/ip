@@ -20,6 +20,10 @@ checkstyle {
     configFile = file('config/checkstyle/checkstyle.xml')
 }
 
+tasks.withType(Checkstyle).configureEach {
+    configDirectory = file('config/checkstyle')
+}
+
 dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '17.0.7'
