@@ -1,9 +1,13 @@
 package megatron.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -54,6 +58,83 @@ class TaskListTest {
         TaskList emptyTaskList = new TaskList();
 
         assertThrows(TaskNotFoundException.class, () -> emptyTaskList.getTask(1));
+    }
+
+    @Test
+    void constructor_copiesInitialTasks() throws TaskNotFoundException {
+        List<Task> initialTasks = new ArrayList<>(List.of(firstTask));
+        TaskList copiedTaskList = new TaskList(initialTasks);
+
+        initialTasks.add(lastTask);
+
+        assertEquals(1, copiedTaskList.size());
+        assertSame(firstTask, copiedTaskList.getTask(1));
+    }
+
+    @Test
+    void constructor_nullTasks_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new TaskList(null));
+    }
+
+    @Test
+    void add_task_appendsTask() throws TaskNotFoundException {
+        TaskList emptyTaskList = new TaskList();
+
+        emptyTaskList.add(firstTask);
+
+        assertEquals(1, emptyTaskList.size());
+        assertSame(firstTask, emptyTaskList.getTask(1));
+    }
+
+    @Test
+    void add_nullTask_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new TaskList().add(null));
+    }
+
+    @Test
+    void removeTask_validTaskNumber_returnsAndRemovesTask() throws TaskNotFoundException {
+        TaskList tasks = new TaskList(List.of(firstTask, middleTask, lastTask));
+
+        Task removedTask = tasks.removeTask(2);
+
+        assertSame(middleTask, removedTask);
+        assertEquals(2, tasks.size());
+        assertSame(lastTask, tasks.getTask(2));
+    }
+
+    @Test
+    void setDone_validTaskNumber_marksAndReturnsTask() throws TaskNotFoundException {
+        Task task = new Todo("task");
+        TaskList tasks = new TaskList(List.of(task));
+
+        Task markedTask = tasks.setDone(1);
+
+        assertSame(task, markedTask);
+        assertTrue(task.isDone());
+    }
+
+    @Test
+    void setNotDone_validTaskNumber_unmarksAndReturnsTask() throws TaskNotFoundException {
+        Task task = new Todo("task");
+        task.markAsDone();
+        TaskList tasks = new TaskList(List.of(task));
+
+        Task unmarkedTask = tasks.setNotDone(1);
+
+        assertSame(task, unmarkedTask);
+        assertFalse(task.isDone());
+    }
+
+    @Test
+    void iterator_returnsTasksInListOrder() {
+        TaskList tasks = new TaskList(List.of(firstTask, middleTask, lastTask));
+        Iterator<Task> iterator = tasks.iterator();
+
+        assertTrue(iterator.hasNext());
+        assertSame(firstTask, iterator.next());
+        assertSame(middleTask, iterator.next());
+        assertSame(lastTask, iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
