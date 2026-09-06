@@ -176,10 +176,10 @@ public final class Ui {
      * Displays confirmation after a task's completion status changes.
      *
      * @param task The task whose status changed.
-     * @param markedDone Whether the task is now done.
+     * @param isMarkedDone Whether the task is now done.
      */
-    public void showTaskMarked(Task task, boolean markedDone) {
-        if (markedDone) {
+    public void showTaskMarked(Task task, boolean isMarkedDone) {
+        if (isMarkedDone) {
             output.println("Victory! This task has fallen before my mighty intellect:");
         } else {
             output.println("Rebellion successful. This task escaped completion:");

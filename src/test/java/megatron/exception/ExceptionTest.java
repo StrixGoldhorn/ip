@@ -45,7 +45,7 @@ class ExceptionTest {
         Throwable loadCause = new IllegalStateException("load failed");
 
         StorageException saveException = new StorageException(saveCause);
-        StorageException loadException = StorageException.forLoad(loadCause);
+        StorageException loadException = StorageException.createForLoad(loadCause);
 
         assertEquals("Could not save tasks. Check that the data file is writable.",
                 saveException.getMessage());

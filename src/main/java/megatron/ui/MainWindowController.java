@@ -138,6 +138,8 @@ public class MainWindowController {
      * Appends a message to the conversation and scrolls to the latest message.
      *
      * @param message The message to append.
+     * @param isUserMessage Whether the user sent the message.
+     * @param dialogType The visual style for the message.
      */
     private void appendMessage(String message, boolean isUserMessage, DialogBox.DialogType dialogType) {
         DialogBox dialogBox = new DialogBox(message, isUserMessage, dialogType);

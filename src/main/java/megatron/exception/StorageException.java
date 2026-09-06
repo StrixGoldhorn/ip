@@ -4,9 +4,9 @@ package megatron.exception;
  * Reports that Megatron could not access the task storage.
  */
 public final class StorageException extends MegatronException {
-    private static final String SAVE_ERROR_MESSAGE =
+    private static final String ERROR_MESSAGE_SAVE =
             "Could not save tasks. Check that the data file is writable.";
-    private static final String LOAD_ERROR_MESSAGE =
+    private static final String ERROR_MESSAGE_LOAD =
             "Could not load tasks. Check that the data file is readable.";
 
     /**
@@ -25,7 +25,7 @@ public final class StorageException extends MegatronException {
      * @param cause The storage error that caused the failure.
      */
     public StorageException(Throwable cause) {
-        super(SAVE_ERROR_MESSAGE, cause);
+        super(ERROR_MESSAGE_SAVE, cause);
     }
 
     /**
@@ -34,7 +34,7 @@ public final class StorageException extends MegatronException {
      * @param cause The storage error that caused the failure.
      * @return The load error.
      */
-    public static StorageException forLoad(Throwable cause) {
-        return new StorageException(LOAD_ERROR_MESSAGE, cause);
+    public static StorageException createForLoad(Throwable cause) {
+        return new StorageException(ERROR_MESSAGE_LOAD, cause);
     }
 }

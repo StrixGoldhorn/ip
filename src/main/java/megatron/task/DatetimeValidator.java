@@ -29,7 +29,7 @@ public final class DatetimeValidator {
             Map.entry("sun", DayOfWeek.SUNDAY), Map.entry("sunday", DayOfWeek.SUNDAY));
     private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_LOCAL_DATE
             .withResolverStyle(ResolverStyle.STRICT);
-    private static final List<DateTimeFormatter> DATE_TIME_FORMATTERS = List.of(
+    private static final List<DateTimeFormatter> SUPPORTED_DATE_TIME_FORMATTERS = List.of(
             strictFormatter("d/M/uuuu HHmm"),
             strictFormatter("d/M/uuuu H:mm"),
             strictFormatter("d/M/uuuu ha"),
@@ -50,13 +50,13 @@ public final class DatetimeValidator {
             textFormatter("d MMMM uuuu H:mm"),
             textFormatter("d MMMM uuuu h:mma"),
             textFormatter("d MMMM uuuu ha"));
-    private static final List<DateTimeFormatter> DATE_ONLY_FORMATTERS = List.of(
+    private static final List<DateTimeFormatter> SUPPORTED_DATE_ONLY_FORMATTERS = List.of(
             strictFormatter("d/M/uuuu"),
             textFormatter("MMM d uuuu"),
             textFormatter("MMMM d uuuu"),
             textFormatter("d MMM uuuu"),
             textFormatter("d MMMM uuuu"));
-    private static final List<DateTimeFormatter> TIME_FORMATTERS = List.of(
+    private static final List<DateTimeFormatter> SUPPORTED_TIME_FORMATTERS = List.of(
             strictFormatter("HHmm"),
             strictFormatter("H:mm"),
             strictFormatter("ha"),
@@ -89,7 +89,7 @@ public final class DatetimeValidator {
      * @throws IllegalArgumentException If the input is invalid.
      */
     public static boolean hasExplicitTime(String input) {
-        return parse(input).timeSpecified;
+        return parse(input).isTimeSpecified;
     }
 
     /**
@@ -160,14 +160,14 @@ public final class DatetimeValidator {
             return isoDateTime;
         }
 
-        for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
+        for (DateTimeFormatter formatter : SUPPORTED_DATE_TIME_FORMATTERS) {
             try {
                 return new ParsedDateTime(LocalDateTime.parse(value, formatter), true);
             } catch (DateTimeParseException ignored) {
                 continue;
             }
         }
-        for (DateTimeFormatter formatter : DATE_ONLY_FORMATTERS) {
+        for (DateTimeFormatter formatter : SUPPORTED_DATE_ONLY_FORMATTERS) {
             try {
                 return new ParsedDateTime(LocalDate.parse(value, formatter).atStartOfDay(), false);
             } catch (DateTimeParseException ignored) {
@@ -235,12 +235,12 @@ public final class DatetimeValidator {
         if (daysUntil < 0) {
             daysUntil += 7;
         }
-        boolean timeSpecified = parts.length > 1;
-        LocalTime time = timeSpecified ? parseTime(parts[1]) : LocalTime.MIDNIGHT;
+        boolean isTimeSpecified = parts.length > 1;
+        LocalTime time = isTimeSpecified ? parseTime(parts[1]) : LocalTime.MIDNIGHT;
         if (daysUntil == 0 && !today.atTime(time).isAfter(now)) {
             daysUntil = 7;
         }
-        return new ParsedDateTime(today.plusDays(daysUntil).atTime(time), timeSpecified);
+        return new ParsedDateTime(today.plusDays(daysUntil).atTime(time), isTimeSpecified);
     }
 
     /**
@@ -252,7 +252,7 @@ public final class DatetimeValidator {
      */
     private static LocalTime parseTime(String value) {
         String normalized = value.trim().replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
-        for (DateTimeFormatter formatter : TIME_FORMATTERS) {
+        for (DateTimeFormatter formatter : SUPPORTED_TIME_FORMATTERS) {
             try {
                 return LocalTime.parse(normalized, formatter);
             } catch (DateTimeParseException ignored) {
@@ -310,18 +310,18 @@ public final class DatetimeValidator {
      */
     private static final class ParsedDateTime {
         private final LocalDateTime value;
-        private final boolean timeSpecified;
+        private final boolean isTimeSpecified;
 
         /**
          * Creates parsed date/time information.
          *
          * @param value The parsed local date/time value.
-         * @param timeSpecified Whether the input explicitly included a time.
+         * @param isTimeSpecified Whether the input explicitly included a time.
          */
-        private ParsedDateTime(LocalDateTime value, boolean timeSpecified) {
+        private ParsedDateTime(LocalDateTime value, boolean isTimeSpecified) {
             assert value != null : "Parsed date/time information must contain a value.";
             this.value = value;
-            this.timeSpecified = timeSpecified;
+            this.isTimeSpecified = isTimeSpecified;
         }
     }
 }
