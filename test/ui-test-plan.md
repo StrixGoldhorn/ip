@@ -26,6 +26,7 @@ prevents rapid test input from causing temporary Windows file-replacement locks.
 | Incorrect todo format | Check that an unsupported todo keyword is rejected. | `tod buy milk` | Print the unknown-command error. |
 | Incorrect deadline format | Check that a deadline without `/by` is rejected. | `deadline report` | Print the deadline format error. |
 | Incorrect event format | Check that an event without `/to` is rejected. | `event meeting /from 10am` | Print the event format error. |
+| Incomplete command detection | Check that commands with missing required arguments reach their specific format validation. | `deadline`, `event`, `mark`, `unmark`, `delete`, `find` | Print the relevant format error for each command. |
 | Mark and unmark | Check that a task can be marked done and restored to not done. | `todo study`, `mark 1`, `unmark 1` | Show `[T][X] study`, then `[T][ ] study`. |
 | Delete task | Check that a selected task is removed and the remaining tasks are renumbered. | `todo read book`, `deadline return book /by 2026-06-06`, `event project meeting /from 2026-08-06 1400 /to 2026-08-06 1600`, `delete 2`, `list` | Show the removed deadline, report that 2 tasks remain, and display the event as task 2 with normalized dates. |
 | Date/time parsing | Check that explicit dates and times are parsed and displayed in normalized 24-hour form. | `deadline return book /by 2/12/2019 1800`, `event project /from 2020-01-02 1400 /to 2020-01-02 1600`, `list` | Display `02 Dec 19, 1800hrs`, `02 Jan 20, 1400hrs`, and `02 Jan 20, 1600hrs`. |
@@ -35,12 +36,15 @@ prevents rapid test input from causing temporary Windows file-replacement locks.
 | Day-month-year date/time | Check that short and full month names are accepted after the day. | `deadline launch /by 6 Aug 2026 2pm`, `event review /from 6 August 2026 14:00 /to 16:00` | Display normalized deadline and event date/times. |
 | Day-month-year date-only | Check that a day-month-year date without a time defaults to midnight in the default output format. | `deadline launch /by 6 August 2026` | Display `(by: 06 Aug 26, 0000hrs)`. |
 | Strict invalid date/time | Check that impossible calendar dates and times are rejected without terminating the chatbot. | `deadline invalid day /by 31/04/2019`, `deadline invalid time /by 2019-01-01 2560` | Print the datetime format error and continue to `bye`. |
+| Invalid event range | Check that an event ending earlier than or at its start is rejected. | `event invalid range /from 2026-08-06 1600 /to 2026-08-06 1400`, `event invalid range /from 2026-08-06 1400 /to 2026-08-06 1400` | Print the event format error and continue running. |
 | Weekday time display | Check that a weekday with a time keeps the time in 24-hour format when displayed. | `deadline meeting /by monday 6pm` | Display the deadline with `1800`. |
 | Date-only persistence | Check that a date-only deadline reloads with the default midnight output. | Save `deadline saved /by 2026-06-06`, restart, then `list`. | Display `(by: 06 Jun 26, 0000hrs)` after reload. |
 | Maximum list capacity | Check that the 101st task is rejected. | 101 todo commands, with a 100 ms interval between commands. | Print the full-list error and keep 100 tasks. |
 | Whitespace handling | Check that surrounding task whitespace is removed. | `todo    buy milk    ` | Store `buy milk`. |
 | Corrupted data file | Check that malformed rows do not stop valid rows from loading. | Start with valid and malformed CSV rows, then `list`. | Display only the valid task. |
 | Storage write failure | Check that a failed save is reported instead of displaying a successful update. | Start Megatron with a directory as its data-file path, then add a todo. | Print `OOPS! Megatron says: Could not save tasks. Check that the data file is writable.` and continue running. |
+| Storage read failure | Check that an unreadable data path is reported during startup. | Start Megatron with a directory as its data-file path. | Print `OOPS! Megatron says: Could not load tasks. Check that the data file is readable.` |
+| Storage failure rollback | Check that a failed save does not leave an unsaved task in memory. | Start Megatron with a directory as its data-file path, add a todo, then enter `list`. | Print the storage error and then the empty-task message. |
 | Persistence | Check that saved tasks are loaded by a new process. | Add a task, exit, restart, then `list`. | Display the saved task. |
 | Bye | Check that the chatbot exits after the extended checks. | `bye` | Display the exit message. |
 
@@ -124,6 +128,14 @@ The expected output below includes the final newline.
     "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
     "input": "event meeting /from 10am\nbye\n",
     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \nRawr! Megatron Griffin reporting for duty!\nI was built to conquer the universe, but task management will do.\nWhat command shall I execute?\n____________________________________________________________\n____________________________________________________________\nI need more details. My mind-reading module is still under construction. Use: event <description> /from <start> /to <end>.\n____________________________________________________________\n____________________________________________________________\nRetreat accepted. Try not to create more tasks while I'm gone!\n____________________________________________________________\n"
+  },
+  {
+    "name": "Incomplete command detection",
+    "aim": "Check that incomplete commands reach their specific validation.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
+    "input": "deadline\nevent\nmark\nunmark\ndelete\nfind\nbye\n",
+    "expected_contains": "Use: deadline <description> /by <date>.",
+    "expected_output": ""
   },
   {
     "name": "Mark and unmark",
@@ -230,17 +242,34 @@ The expected output below includes the final newline.
     "name": "Corrupted data file",
     "aim": "Check that malformed rows are ignored while valid rows are loaded.",
     "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
-    "initial_data": "type,done,description,extra\nT,0,valid task,\ninvalid,row\nD,maybe,bad task,Friday\n",
+    "initial_data": "type,done,description,extra\nT,0,valid task,\ninvalid,row\nD,maybe,bad task,Friday\n\"T,0,unclosed quote,\nT\"0,misplaced quote,\n",
     "input": "list\nbye\n",
     "expected_contains": "[T][ ] valid task",
     "expected_output": ""
   },
   {
     "name": "Storage write failure",
+    "expected_contains": "Could not save tasks. Check that the data file is writable.",
     "aim": "Check that a failed save is reported instead of displaying a successful update.",
     "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron", "."],
     "input": "todo unsaved task\nbye\n",
     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \nRawr! Megatron Griffin reporting for duty!\nI was built to conquer the universe, but task management will do.\nWhat command shall I execute?\n____________________________________________________________\n____________________________________________________________\nOOPS! Megatron says: Could not save tasks. Check that the data file is writable.\n____________________________________________________________\n____________________________________________________________\nRetreat accepted. Try not to create more tasks while I'm gone!\n____________________________________________________________\n"
+  },
+  {
+    "name": "Storage failure rollback",
+    "aim": "Check that a failed save does not leave an unsaved task in memory.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron", "."],
+    "input": "todo unsaved task\nlist\nbye\n",
+    "expected_contains": "Your task empire is empty. Add a task before it gets awkward.",
+    "expected_output": ""
+  },
+  {
+    "name": "Storage read failure",
+    "aim": "Check that an unreadable data path is reported during startup.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron", "."],
+    "input": "bye\n",
+    "expected_contains": "Could not load tasks. Check that the data file is readable.",
+    "expected_output": ""
   },
   {
     "name": "Persistence",
@@ -259,6 +288,14 @@ The expected output below includes the final newline.
     "save_input": "deadline saved /by 2026-06-06\nbye\n",
     "load_input": "list\nbye\n",
     "expected_contains": "[D][ ] saved (by: 06 Jun 26, 0000hrs)",
+    "expected_output": ""
+  },
+  {
+    "name": "Invalid event range",
+    "aim": "Check that an event ending earlier than or at its start is rejected without terminating the chatbot.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
+    "input": "event invalid range /from 2026-08-06 1600 /to 2026-08-06 1400\nevent invalid range /from 2026-08-06 1400 /to 2026-08-06 1400\nbye\n",
+    "expected_contains": "I need more details. My mind-reading module is still under construction. Use: event <description> /from <valid start> /to <valid end>.",
     "expected_output": ""
   },
   {

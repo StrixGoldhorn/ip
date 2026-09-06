@@ -3,6 +3,7 @@ package megatron.command;
 import java.util.Objects;
 
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.exception.TaskListFullException;
 import megatron.storage.TaskStorage;
 import megatron.task.Task;
@@ -44,7 +45,12 @@ public final class AddCommand extends Command {
         }
         Task task = parser.createTask(input);
         tasks.add(task);
-        storage.save(tasks);
+        try {
+            storage.save(tasks);
+        } catch (StorageException exception) {
+            tasks.removeTask(tasks.size());
+            throw exception;
+        }
         ui.showTaskAdded(task, tasks.size());
     }
 }

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,22 +39,29 @@ public final class TaskStorage {
      * Loads all valid tasks. A missing file is treated as an empty task list.
      *
      * @return A task list containing all valid stored tasks.
+     * @throws StorageException If the data file cannot be read.
      */
-    public TaskList load() {
+    public TaskList load() throws StorageException {
         List<Task> tasks = new ArrayList<>();
-        if (!Files.exists(file)) {
-            return new TaskList(tasks);
-        }
-        try (BufferedReader reader = Files.newBufferedReader(file)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Task task = loadTask(line);
-                if (task != null) {
-                    tasks.add(task);
+        try {
+            if (!Files.exists(file)) {
+                if (Files.notExists(file)) {
+                    return new TaskList(tasks);
+                }
+                throw new IOException("Unable to determine whether the data file exists.");
+            }
+
+            try (BufferedReader reader = Files.newBufferedReader(file)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Task task = loadTask(line);
+                    if (task != null) {
+                        tasks.add(task);
+                    }
                 }
             }
-        } catch (IOException | RuntimeException exception) {
-            // Keep the application usable when the data file is unreadable or malformed.
+        } catch (IOException | SecurityException exception) {
+            throw StorageException.forLoad(exception);
         }
         return new TaskList(tasks);
     }
@@ -66,7 +74,7 @@ public final class TaskStorage {
      */
     private static Task loadTask(String line) {
         List<String> fields = parseCsvLine(line);
-        if (fields.size() < 4 || fields.get(0).equals("type")) {
+        if (fields == null || fields.size() < 4 || fields.get(0).equals("type")) {
             return null;
         }
         if (!isValid(fields)) {
@@ -169,7 +177,7 @@ public final class TaskStorage {
         } else if (fields.get(0).equals("D")) {
             try {
                 return new Deadline(fields.get(2), LocalDateTime.parse(fields.get(3)));
-            } catch (IllegalArgumentException exception) {
+            } catch (DateTimeException | IllegalArgumentException exception) {
                 return null;
             }
         } else if (fields.get(0).equals("E")) {
@@ -177,7 +185,7 @@ public final class TaskStorage {
             try {
                 return times.length == 2 ? new Event(fields.get(2), LocalDateTime.parse(times[0]),
                         LocalDateTime.parse(times[1])) : null;
-            } catch (IllegalArgumentException exception) {
+            } catch (DateTimeException | IllegalArgumentException exception) {
                 return null;
             }
         }
@@ -220,28 +228,48 @@ public final class TaskStorage {
      * Splits one CSV row while preserving commas and escaped quotes in quoted fields.
      *
      * @param line The CSV row.
-     * @return The parsed CSV fields.
+     * @return The parsed CSV fields, or null if the row has malformed quoting.
      */
     private static List<String> parseCsvLine(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
         boolean quoted = false;
+        boolean fieldStarted = false;
+        boolean quoteClosed = false;
+
         for (int i = 0; i < line.length(); i++) {
             char character = line.charAt(i);
             if (character == '"') {
                 if (quoted && i + 1 < line.length() && line.charAt(i + 1) == '"') {
                     field.append('"');
                     i++;
+                } else if (quoted) {
+                    quoted = false;
+                    quoteClosed = true;
+                } else if (!fieldStarted) {
+                    quoted = true;
+                    fieldStarted = true;
                 } else {
-                    quoted = !quoted;
+                    return null;
                 }
             } else if (character == ',' && !quoted) {
                 fields.add(field.toString());
                 field.setLength(0);
+                fieldStarted = false;
+                quoteClosed = false;
             } else {
+                if (quoteClosed) {
+                    return null;
+                }
                 field.append(character);
+                fieldStarted = true;
             }
         }
+
+        if (quoted) {
+            return null;
+        }
+
         fields.add(field.toString());
         return fields;
     }

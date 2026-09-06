@@ -65,4 +65,29 @@ class EventTest {
     void constructor_invalidEnd_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "2026-08-06 1400", "not a time"));
     }
+
+    @Test
+    void constructor_endBeforeStart_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "2026-08-06 1600", "2026-08-06 1400"));
+    }
+
+    @Test
+    void constructor_endEqualToStart_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "2026-08-06 1400", "2026-08-06 1400"));
+    }
+
+    @Test
+    void constructorWithLocalDateTimes_endBeforeStart_throwsIllegalArgumentException() {
+        LocalDateTime start = LocalDateTime.of(2026, 8, 6, 16, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 8, 6, 14, 0);
+
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", start, end));
+    }
+
+    @Test
+    void constructorWithLocalDateTimes_endEqualToStart_throwsIllegalArgumentException() {
+        LocalDateTime start = LocalDateTime.of(2026, 8, 6, 14, 0);
+
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", start, start));
+    }
 }

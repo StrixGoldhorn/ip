@@ -98,8 +98,31 @@ class ParserTest {
     }
 
     @Test
-    void parse_markWithoutNumber_throwsInvalidTaskNumberException() {
-        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("mark "));
+    void parse_markWithoutNumber_throwsInvalidTaskFormatException() {
+        InvalidTaskFormatException exception = assertThrows(
+                InvalidTaskFormatException.class, () -> parser.parse("mark "));
+        assertEquals("Use: mark <task number>.", exception.getMessage());
+    }
+
+    @Test
+    void parse_markWithoutArgument_throwsInvalidTaskFormatException() {
+        InvalidTaskFormatException exception = assertThrows(
+                InvalidTaskFormatException.class, () -> parser.parse("mark"));
+        assertEquals("Use: mark <task number>.", exception.getMessage());
+    }
+
+    @Test
+    void parse_unmarkWithoutArgument_throwsInvalidTaskFormatException() {
+        InvalidTaskFormatException exception = assertThrows(
+                InvalidTaskFormatException.class, () -> parser.parse("unmark"));
+        assertEquals("Use: unmark <task number>.", exception.getMessage());
+    }
+
+    @Test
+    void parse_unmarkWithoutNumber_throwsInvalidTaskFormatException() {
+        InvalidTaskFormatException exception = assertThrows(
+                InvalidTaskFormatException.class, () -> parser.parse("unmark "));
+        assertEquals("Use: unmark <task number>.", exception.getMessage());
     }
 
     @Test
@@ -108,13 +131,17 @@ class ParserTest {
     }
 
     @Test
-    void parse_deleteWithoutNumber_throwsInvalidTaskNumberException() {
-        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("delete"));
+    void parse_deleteWithoutNumber_throwsInvalidTaskFormatException() {
+        InvalidTaskFormatException exception = assertThrows(
+                InvalidTaskFormatException.class, () -> parser.parse("delete"));
+        assertEquals("Use: delete <task number>.", exception.getMessage());
     }
 
     @Test
-    void parse_deleteWithBlankNumber_throwsInvalidTaskNumberException() {
-        assertThrows(InvalidTaskNumberException.class, () -> parser.parse("delete "));
+    void parse_deleteWithBlankNumber_throwsInvalidTaskFormatException() {
+        InvalidTaskFormatException exception = assertThrows(
+                InvalidTaskFormatException.class, () -> parser.parse("delete "));
+        assertEquals("Use: delete <task number>.", exception.getMessage());
     }
 
     @Test
@@ -182,6 +209,11 @@ class ParserTest {
     }
 
     @Test
+    void createTask_deadlineWithoutArguments_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("deadline"));
+    }
+
+    @Test
     void createTask_deadlineWithoutDescription_throwsInvalidTaskFormatException() {
         assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("deadline  /by 2026-08-06"));
     }
@@ -199,6 +231,11 @@ class ParserTest {
     @Test
     void createTask_eventWithoutFromMarker_throwsInvalidTaskFormatException() {
         assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event review"));
+    }
+
+    @Test
+    void createTask_eventWithoutArguments_throwsInvalidTaskFormatException() {
+        assertThrows(InvalidTaskFormatException.class, () -> parser.createTask("event"));
     }
 
     @Test

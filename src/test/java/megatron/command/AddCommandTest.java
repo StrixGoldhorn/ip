@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.exception.TaskListFullException;
 import megatron.exception.UnknownCommandException;
 import megatron.storage.TaskStorage;
@@ -97,6 +98,19 @@ class AddCommandTest {
 
         assertEquals(0, tasks.size());
         assertFalse(Files.exists(storageFile));
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void execute_saveFailure_rollsBackAddedTask() {
+        TaskList tasks = new TaskList();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TaskStorage storage = new TaskStorage(tempDirectory.toString());
+
+        assertThrows(StorageException.class, () -> new AddCommand("todo unsaved task", new Parser())
+                .execute(tasks, createUi(output), storage));
+
+        assertEquals(0, tasks.size());
         assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 

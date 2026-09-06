@@ -23,6 +23,7 @@ import megatron.command.MarkCommand;
 import megatron.command.Parser;
 import megatron.command.UnmarkCommand;
 import megatron.exception.MegatronException;
+import megatron.exception.StorageException;
 import megatron.storage.TaskStorage;
 import megatron.task.TaskList;
 
@@ -52,13 +53,24 @@ public class MainWindowController {
     private final TaskStorage storage;
     private final TaskList tasks;
     private final Parser parser;
+    private final StorageException storageLoadException;
 
     /**
      * Creates a controller backed by Megatron's default task storage.
      */
     public MainWindowController() {
         storage = new TaskStorage(STORAGE_FILE_PATH);
-        tasks = storage.load();
+        TaskList loadedTasks;
+        StorageException loadException;
+        try {
+            loadedTasks = storage.load();
+            loadException = null;
+        } catch (StorageException exception) {
+            loadedTasks = new TaskList();
+            loadException = exception;
+        }
+        tasks = loadedTasks;
+        storageLoadException = loadException;
         parser = new Parser();
     }
 
@@ -73,6 +85,10 @@ public class MainWindowController {
                 updateBackgroundForAspectRatio(mainLayout.getWidth(), newHeight.doubleValue()));
         updateBackgroundForAspectRatio(mainLayout.getWidth(), mainLayout.getHeight());
         appendMessage(captureOutput(ui -> ui.showWelcome()), false, DialogBox.DialogType.WELCOME);
+        if (storageLoadException != null) {
+            appendMessage(captureOutput(ui -> ui.showError(storageLoadException)), false,
+                    DialogBox.DialogType.ERROR);
+        }
     }
 
     /**
