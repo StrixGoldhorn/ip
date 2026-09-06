@@ -41,8 +41,6 @@
                 </HBox>
                 <Label text="Commands: todo, deadline, event, list, find, mark, unmark, delete, bye, datetime-help"
                        wrapText="true" styleClass="help-text" />
-                <Label text="Example: todo finish the report"
-                       wrapText="true" styleClass="help-text" />
             </children>
         </VBox>
     </VBox>
