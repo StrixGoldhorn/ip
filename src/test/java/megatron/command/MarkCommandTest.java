@@ -91,6 +91,21 @@ class MarkCommandTest {
         assertEquals("", output.toString(StandardCharsets.UTF_8));
     }
 
+    @Test
+    void execute_saveFailure_onAlreadyDoneTask_keepsItDone() {
+        Todo task = new Todo("already done");
+        task.markAsDone();
+        TaskList tasks = new TaskList(List.of(task));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TaskStorage storage = new TaskStorage(tempDirectory.toString());
+
+        assertThrows(StorageException.class, () -> new MarkCommand(1)
+                .execute(tasks, createUi(output), storage));
+
+        assertTrue(task.isDone());
+        assertEquals("", output.toString(StandardCharsets.UTF_8));
+    }
+
     private void assertInvalidTaskNumber(int taskNumber) throws MegatronException {
         TaskList tasks = new TaskList(List.of(new Todo("task")));
         Path storageFile = tempDirectory.resolve("tasks.csv");
