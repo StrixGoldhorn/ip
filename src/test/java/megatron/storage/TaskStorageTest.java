@@ -39,6 +39,30 @@ class TaskStorageTest {
     }
 
     @Test
+    void load_emptyFile_returnsEmptyTaskList() throws IOException, StorageException {
+        Path file = tempDirectory.resolve("empty.csv");
+        Files.createFile(file);
+        TaskStorage storage = new TaskStorage(file.toString());
+
+        assertEquals(0, storage.load().size());
+    }
+
+    @Test
+    void load_completedEvent_restoresDoneStatus() throws IOException, StorageException, TaskNotFoundException {
+        Path file = tempDirectory.resolve("completed-event.csv");
+        Files.write(file, List.of(
+                "type,done,description,extra",
+                "E,1,completed event,2026-08-07T15:00|2026-08-07T16:30"));
+        TaskStorage storage = new TaskStorage(file.toString());
+
+        Task loadedTask = storage.load().getTask(1);
+
+        assertInstanceOf(Event.class, loadedTask);
+        assertTrue(loadedTask.isDone());
+        assertEquals("completed event", loadedTask.getDescription());
+    }
+
+    @Test
     void saveAndLoad_allTaskTypes_preservesDataAndEscapesCsv()
             throws IOException, StorageException, TaskNotFoundException {
         Path file = tempDirectory.resolve("nested").resolve("tasks.csv");
@@ -74,6 +98,17 @@ class TaskStorageTest {
         assertEquals("review", loadedEvent.getDescription());
         assertEquals("2026-08-07T15:00|2026-08-07T16:30", loadedEvent.getExtra());
         assertFalse(loadedEvent.isDone());
+    }
+
+    @Test
+    void save_emptyTaskList_writesHeaderAndLoadsAsEmpty() throws IOException, StorageException {
+        Path file = tempDirectory.resolve("empty-tasks.csv");
+        TaskStorage storage = new TaskStorage(file.toString());
+
+        storage.save(new TaskList());
+
+        assertEquals(List.of("type,done,description,extra"), Files.readAllLines(file));
+        assertEquals(0, storage.load().size());
     }
 
     @Test
