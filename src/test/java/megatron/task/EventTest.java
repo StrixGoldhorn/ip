@@ -68,14 +68,12 @@ class EventTest {
 
     @Test
     void constructor_endBeforeStart_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Event("meeting", "2026-08-06 1600", "2026-08-06 1400"));
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "2026-08-06 1600", "2026-08-06 1400"));
     }
 
     @Test
     void constructor_endEqualToStart_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Event("meeting", "2026-08-06 1400", "2026-08-06 1400"));
+        assertThrows(IllegalArgumentException.class, () -> new Event("meeting", "2026-08-06 1400", "2026-08-06 1400"));
     }
 
     @Test

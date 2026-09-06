@@ -83,7 +83,7 @@ class DeleteCommandTest {
     }
 
     @Test
-    void execute_saveFailure_restoresRemovedTask() {
+    void execute_saveFailure_restoresRemovedTask() throws MegatronException {
         TaskList tasks = new TaskList(List.of(new Todo("first"), new Todo("second")));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         TaskStorage storage = new TaskStorage(tempDirectory.toString());

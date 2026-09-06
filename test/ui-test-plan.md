@@ -26,6 +26,7 @@ prevents rapid test input from causing temporary Windows file-replacement locks.
 | Incorrect todo format | Check that an unsupported todo keyword is rejected. | `tod buy milk` | Print the unknown-command error. |
 | Incorrect deadline format | Check that a deadline without `/by` is rejected. | `deadline report` | Print the deadline format error. |
 | Incorrect event format | Check that an event without `/to` is rejected. | `event meeting /from 10am` | Print the event format error. |
+| Incomplete command detection | Check that commands with missing required arguments reach their specific format validation. | `deadline`, `event`, `mark`, `unmark`, `delete`, `find` | Print the relevant format error for each command. |
 | Mark and unmark | Check that a task can be marked done and restored to not done. | `todo study`, `mark 1`, `unmark 1` | Show `[T][X] study`, then `[T][ ] study`. |
 | Delete task | Check that a selected task is removed and the remaining tasks are renumbered. | `todo read book`, `deadline return book /by 2026-06-06`, `event project meeting /from 2026-08-06 1400 /to 2026-08-06 1600`, `delete 2`, `list` | Show the removed deadline, report that 2 tasks remain, and display the event as task 2 with normalized dates. |
 | Date/time parsing | Check that explicit dates and times are parsed and displayed in normalized 24-hour form. | `deadline return book /by 2/12/2019 1800`, `event project /from 2020-01-02 1400 /to 2020-01-02 1600`, `list` | Display `02 Dec 19, 1800hrs`, `02 Jan 20, 1400hrs`, and `02 Jan 20, 1600hrs`. |
@@ -127,6 +128,14 @@ The expected output below includes the final newline.
     "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
     "input": "event meeting /from 10am\nbye\n",
     "expected_output": "____________________________________________________________\n   __  ___              __              \n  /  |/  /__ ___ ____ _/ /________  ___ \n / /|_/ / -_) _ `/ _ `/ __/ __/ _ \\/ _ \\\n/_/  /_/\\__/\\_, /\\_,_/\\__/_/  \\___/_//_/\n           /___/                        \nRawr! Megatron Griffin reporting for duty!\nI was built to conquer the universe, but task management will do.\nWhat command shall I execute?\n____________________________________________________________\n____________________________________________________________\nI need more details. My mind-reading module is still under construction. Use: event <description> /from <start> /to <end>.\n____________________________________________________________\n____________________________________________________________\nRetreat accepted. Try not to create more tasks while I'm gone!\n____________________________________________________________\n"
+  },
+  {
+    "name": "Incomplete command detection",
+    "aim": "Check that incomplete commands reach their specific validation.",
+    "command": ["java", "-cp", "out/production/ip_project", "megatron.Megatron"],
+    "input": "deadline\nevent\nmark\nunmark\ndelete\nfind\nbye\n",
+    "expected_contains": "Use: deadline <description> /by <date>.",
+    "expected_output": ""
   },
   {
     "name": "Mark and unmark",

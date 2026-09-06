@@ -32,7 +32,7 @@ public final class Parser {
      *
      * @param input The raw user input.
      * @return The executable command.
-     * @throws MegatronException If the input is empty or has an invalid task number.
+     * @throws MegatronException If the input is empty or has an invalid format or task number.
      */
     public Command parse(String input) throws MegatronException {
         Objects.requireNonNull(input);
@@ -64,17 +64,11 @@ public final class Parser {
                 }
                 break;
             case "mark":
-                if (input.startsWith("mark ")) {
-                    return new MarkCommand(parseTaskNumber(input));
-                }
-                break;
+                return new MarkCommand(parseTaskNumber(input, "mark <task number>."));
             case "unmark":
-                if (input.startsWith("unmark ")) {
-                    return new UnmarkCommand(parseTaskNumber(input));
-                }
-                break;
+                return new UnmarkCommand(parseTaskNumber(input, "unmark <task number>."));
             case "delete":
-                return new DeleteCommand(parseTaskNumber(input));
+                return new DeleteCommand(parseTaskNumber(input, "delete <task number>."));
             default:
                 break;
         }
@@ -99,11 +93,11 @@ public final class Parser {
             return createTodo(text);
         }
 
-        if (text.startsWith("deadline ")) {
+        if (text.equals("deadline") || text.startsWith("deadline ")) {
             return createDeadline(text);
         }
 
-        if (text.startsWith("event ")) {
+        if (text.equals("event") || text.startsWith("event ")) {
             return createEvent(text);
         }
 
@@ -133,7 +127,7 @@ public final class Parser {
      * @throws InvalidTaskFormatException If the deadline command or date/time is invalid.
      */
     private static Deadline createDeadline(String text) throws InvalidTaskFormatException {
-        String[] parts = text.substring(9).split(" /by ", 2);
+        String[] parts = text.substring("deadline".length()).split(" /by ", 2);
         if (parts.length != 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
             throw new InvalidTaskFormatException("deadline <description> /by <date>.");
         }
@@ -154,7 +148,7 @@ public final class Parser {
      * @throws InvalidTaskFormatException If the event command or date/time is invalid.
      */
     private static Event createEvent(String text) throws InvalidTaskFormatException {
-        String[] parts = text.substring(6).split(" /from ", 2);
+        String[] parts = text.substring("event".length()).split(" /from ", 2);
         if (parts.length != 2) {
             throw new InvalidTaskFormatException("event <description> /from <start> /to <end>.");
         }
@@ -178,13 +172,19 @@ public final class Parser {
      * Extracts a task number from a mark, unmark, or delete command.
      *
      * @param input The complete command text.
+     * @param usage The required command format.
      * @return The parsed one-based task number.
-     * @throws InvalidTaskNumberException If the command does not contain a valid number.
+     * @throws MegatronException If the command is missing a number or contains an invalid number.
      */
-    private static int parseTaskNumber(String input) throws InvalidTaskNumberException {
+    private static int parseTaskNumber(String input, String usage) throws MegatronException {
+        int firstSpace = input.indexOf(' ');
+        if (firstSpace == -1 || input.substring(firstSpace + 1).trim().isEmpty()) {
+            throw new InvalidTaskFormatException(usage);
+        }
+
         try {
-            return Integer.parseInt(input.substring(input.indexOf(' ') + 1).trim());
-        } catch (NumberFormatException | StringIndexOutOfBoundsException exception) {
+            return Integer.parseInt(input.substring(firstSpace + 1).trim());
+        } catch (NumberFormatException exception) {
             throw new InvalidTaskNumberException();
         }
     }

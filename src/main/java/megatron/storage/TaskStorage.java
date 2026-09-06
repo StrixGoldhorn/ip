@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +177,7 @@ public final class TaskStorage {
         } else if (fields.get(0).equals("D")) {
             try {
                 return new Deadline(fields.get(2), LocalDateTime.parse(fields.get(3)));
-            } catch (IllegalArgumentException exception) {
+            } catch (DateTimeException | IllegalArgumentException exception) {
                 return null;
             }
         } else if (fields.get(0).equals("E")) {
@@ -184,7 +185,7 @@ public final class TaskStorage {
             try {
                 return times.length == 2 ? new Event(fields.get(2), LocalDateTime.parse(times[0]),
                         LocalDateTime.parse(times[1])) : null;
-            } catch (IllegalArgumentException exception) {
+            } catch (DateTimeException | IllegalArgumentException exception) {
                 return null;
             }
         }

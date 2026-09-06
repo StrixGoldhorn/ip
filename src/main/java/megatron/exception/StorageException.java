@@ -10,6 +10,16 @@ public final class StorageException extends MegatronException {
             "Could not load tasks. Check that the data file is readable.";
 
     /**
+     * Creates a storage error with the given message.
+     *
+     * @param message The user-facing error message.
+     * @param cause The storage error that caused the failure.
+     */
+    private StorageException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
      * Creates an error for a failed save operation.
      *
      * @param cause The storage error that caused the failure.
@@ -26,15 +36,5 @@ public final class StorageException extends MegatronException {
      */
     public static StorageException forLoad(Throwable cause) {
         return new StorageException(LOAD_ERROR_MESSAGE, cause);
-    }
-
-    /**
-     * Creates a storage error with the given message.
-     *
-     * @param message The user-facing error message.
-     * @param cause The storage error that caused the failure.
-     */
-    private StorageException(String message, Throwable cause) {
-        super(message, cause);
     }
 }
