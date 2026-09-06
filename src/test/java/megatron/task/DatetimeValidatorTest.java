@@ -1,7 +1,9 @@
 package megatron.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -52,6 +54,24 @@ class DatetimeValidatorTest {
     }
 
     @Test
+    void parseToLocalDateTime_numericDateWithColonTime_parsesTime() {
+        assertEquals(LocalDateTime.of(2026, 8, 6, 14, 5),
+                DatetimeValidator.parseToLocalDateTime("6/8/2026 14:05"));
+    }
+
+    @Test
+    void parseToLocalDateTime_numericDateWithMeridiemTime_parsesTime() {
+        assertEquals(LocalDateTime.of(2026, 8, 6, 14, 5),
+                DatetimeValidator.parseToLocalDateTime("6/8/2026 2:05pm"));
+    }
+
+    @Test
+    void parseToLocalDateTime_numericDateOnly_defaultsToMidnight() {
+        assertEquals(LocalDateTime.of(2026, 8, 6, 0, 0),
+                DatetimeValidator.parseToLocalDateTime("6/8/2026"));
+    }
+
+    @Test
     void parseToLocalDateTime_shortTextDate_parsesDate() {
         assertEquals(LocalDateTime.of(2026, 8, 6, 14, 0),
                 DatetimeValidator.parseToLocalDateTime("Aug 6 2026 14:00"));
@@ -73,6 +93,18 @@ class DatetimeValidatorTest {
     void parseToLocalDateTime_dayFirstLongTextDate_defaultsToMidnight() {
         assertEquals(LocalDateTime.of(2026, 8, 6, 0, 0),
                 DatetimeValidator.parseToLocalDateTime("6 August 2026"));
+    }
+
+    @Test
+    void parseToLocalDateTime_shortTextDateOnly_defaultsToMidnight() {
+        assertEquals(LocalDateTime.of(2026, 8, 6, 0, 0),
+                DatetimeValidator.parseToLocalDateTime("Aug 6 2026"));
+    }
+
+    @Test
+    void parseToLocalDateTime_dayFirstShortTextDate_parsesDate() {
+        assertEquals(LocalDateTime.of(2026, 8, 6, 14, 0),
+                DatetimeValidator.parseToLocalDateTime("6 Aug 2026 1400"));
     }
 
     @Test
@@ -98,10 +130,65 @@ class DatetimeValidatorTest {
     }
 
     @Test
+    void parseToLocalDateTime_textDateWithoutYearWithWhitespace_usesCurrentYear() {
+        int currentYear = LocalDate.now().getYear();
+
+        assertEquals(LocalDateTime.of(currentYear, 8, 6, 14, 0),
+                DatetimeValidator.parseToLocalDateTime("Aug 6 2 pm"));
+    }
+
+    @Test
     void parseToLocalDateTime_weekdayWithoutTime_usesNextOccurrenceAtMidnight() {
         LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
 
         assertEquals(nextMonday.atStartOfDay(), DatetimeValidator.parseToLocalDateTime("monday"));
+    }
+
+    @Test
+    void parseToLocalDateTime_weekdayAbbreviationWithTime_usesNextOccurrence() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        String weekdayAbbreviation = tomorrow.getDayOfWeek().name().substring(0, 3).toLowerCase();
+
+        assertEquals(tomorrow.atTime(18, 0),
+                DatetimeValidator.parseToLocalDateTime(weekdayAbbreviation + " 6pm"));
+    }
+
+    @Test
+    void parseToLocalDateTime_weekdayWithInvalidTime_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> DatetimeValidator.parseToLocalDateTime("monday 25:00"));
+    }
+
+    @Test
+    void hasExplicitTime_dateOnly_returnsFalse() {
+        assertFalse(DatetimeValidator.hasExplicitTime("2026-08-06"));
+    }
+
+    @Test
+    void hasExplicitTime_dateTime_returnsTrue() {
+        assertTrue(DatetimeValidator.hasExplicitTime("2026-08-06 1400"));
+    }
+
+    @Test
+    void hasExplicitTime_weekdayWithTime_returnsTrue() {
+        assertTrue(DatetimeValidator.hasExplicitTime("monday 6pm"));
+    }
+
+    @Test
+    void hasExplicitTime_weekdayWithoutTime_returnsFalse() {
+        assertFalse(DatetimeValidator.hasExplicitTime("monday"));
+    }
+
+    @Test
+    void format_customPattern_returnsFormattedValue() {
+        assertEquals("2026/08/06 14:05",
+                DatetimeValidator.format(LocalDateTime.of(2026, 8, 6, 14, 5), "uuuu/MM/dd HH:mm"));
+    }
+
+    @Test
+    void formatForUser_value_returnsDefaultUserFormat() {
+        assertEquals("06 Aug 26, 1405hrs",
+                DatetimeValidator.formatForUser(LocalDateTime.of(2026, 8, 6, 14, 5)));
     }
 
     @Test
