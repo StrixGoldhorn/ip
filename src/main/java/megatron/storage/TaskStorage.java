@@ -24,7 +24,7 @@ import megatron.task.Todo;
  * Stores and restores Megatron tasks in a CSV file.
  */
 public final class TaskStorage {
-    private final Path file;
+    private final Path storageFile;
 
     /**
      * Creates storage that reads and writes the given relative or absolute path.
@@ -32,7 +32,7 @@ public final class TaskStorage {
      * @param fileName The relative or absolute storage path.
      */
     public TaskStorage(String fileName) {
-        file = Paths.get(fileName);
+        storageFile = Paths.get(fileName);
     }
 
     /**
@@ -44,14 +44,14 @@ public final class TaskStorage {
     public TaskList load() throws StorageException {
         List<Task> tasks = new ArrayList<>();
         try {
-            if (!Files.exists(file)) {
-                if (Files.notExists(file)) {
+            if (!Files.exists(storageFile)) {
+                if (Files.notExists(storageFile)) {
                     return new TaskList(tasks);
                 }
                 throw new IOException("Unable to determine whether the data file exists.");
             }
 
-            try (BufferedReader reader = Files.newBufferedReader(file)) {
+            try (BufferedReader reader = Files.newBufferedReader(storageFile)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Task task = loadTask(line);
@@ -61,7 +61,7 @@ public final class TaskStorage {
                 }
             }
         } catch (IOException | SecurityException exception) {
-            throw StorageException.forLoad(exception);
+            throw StorageException.createForLoad(exception);
         }
         return new TaskList(tasks);
     }
@@ -98,7 +98,7 @@ public final class TaskStorage {
      * @throws StorageException If the tasks cannot be written to the data file.
      */
     public void save(TaskList tasks) throws StorageException {
-        Path absoluteFile = file.toAbsolutePath();
+        Path absoluteFile = storageFile.toAbsolutePath();
         Path temporaryFile = null;
         try {
             Path directory = absoluteFile.getParent();
@@ -124,8 +124,8 @@ public final class TaskStorage {
             writer.write("type,done,description,extra");
             writer.newLine();
             for (Task task : tasks) {
-                writer.write(csv(task.getTypeCode()) + "," + (task.isDone() ? "1" : "0") + ","
-                        + csv(task.getDescription()) + "," + csv(task.getExtra()));
+                writer.write(escapeCsvField(task.getTypeCode()) + "," + (task.isDone() ? "1" : "0") + ","
+                        + escapeCsvField(task.getDescription()) + "," + escapeCsvField(task.getExtra()));
                 writer.newLine();
             }
         }
@@ -220,7 +220,7 @@ public final class TaskStorage {
      * @param value The value to escape.
      * @return The escaped CSV field.
      */
-    private static String csv(String value) {
+    private static String escapeCsvField(String value) {
         return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
@@ -233,40 +233,40 @@ public final class TaskStorage {
     private static List<String> parseCsvLine(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
-        boolean quoted = false;
-        boolean fieldStarted = false;
-        boolean quoteClosed = false;
+        boolean isQuoted = false;
+        boolean hasFieldStarted = false;
+        boolean isQuoteClosed = false;
 
         for (int i = 0; i < line.length(); i++) {
             char character = line.charAt(i);
             if (character == '"') {
-                if (quoted && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                if (isQuoted && i + 1 < line.length() && line.charAt(i + 1) == '"') {
                     field.append('"');
                     i++;
-                } else if (quoted) {
-                    quoted = false;
-                    quoteClosed = true;
-                } else if (!fieldStarted) {
-                    quoted = true;
-                    fieldStarted = true;
+                } else if (isQuoted) {
+                    isQuoted = false;
+                    isQuoteClosed = true;
+                } else if (!hasFieldStarted) {
+                    isQuoted = true;
+                    hasFieldStarted = true;
                 } else {
                     return null;
                 }
-            } else if (character == ',' && !quoted) {
+            } else if (character == ',' && !isQuoted) {
                 fields.add(field.toString());
                 field.setLength(0);
-                fieldStarted = false;
-                quoteClosed = false;
+                hasFieldStarted = false;
+                isQuoteClosed = false;
             } else {
-                if (quoteClosed) {
+                if (isQuoteClosed) {
                     return null;
                 }
                 field.append(character);
-                fieldStarted = true;
+                hasFieldStarted = true;
             }
         }
 
-        if (quoted) {
+        if (isQuoted) {
             return null;
         }
 

@@ -6,46 +6,47 @@ import java.time.LocalDateTime;
  * A task with a specified start and end date or time.
  */
 public class Event extends Task {
-    private final LocalDateTime from;
-    private final LocalDateTime to;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
 
     /**
      * Creates an event by parsing supported user start and end date/time values.
      *
      * @param description The event description.
-     * @param from The supported event start input.
-     * @param to The supported event end input.
+     * @param startInput The supported event start input.
+     * @param endInput The supported event end input.
      */
-    public Event(String description, String from, String to) {
+    public Event(String description, String startInput, String endInput) {
         super(description, TaskType.EVENT);
-        this.from = DatetimeValidator.parseToLocalDateTime(from);
-        LocalDateTime parsedTo;
+        startDateTime = DatetimeValidator.parseToLocalDateTime(startInput);
+        LocalDateTime parsedEndDateTime;
         try {
-            parsedTo = DatetimeValidator.parseToLocalDateTime(to);
+            parsedEndDateTime = DatetimeValidator.parseToLocalDateTime(endInput);
         } catch (IllegalArgumentException exception) {
             // A time-only end value is interpreted on the start date.
-            parsedTo = DatetimeValidator.parseToLocalDateTime(this.from.toLocalDate() + " " + to);
+            parsedEndDateTime = DatetimeValidator.parseToLocalDateTime(
+                    startDateTime.toLocalDate() + " " + endInput);
         }
-        if (!parsedTo.isAfter(this.from)) {
+        if (!parsedEndDateTime.isAfter(startDateTime)) {
             throw new IllegalArgumentException("An event must end after its start.");
         }
-        this.to = parsedTo;
+        endDateTime = parsedEndDateTime;
     }
 
     /**
      * Recreates an event from its ISO local date/time storage values.
      *
      * @param description The event description.
-     * @param from The stored event start value.
-     * @param to The stored event end value.
+     * @param startDateTime The stored event start value.
+     * @param endDateTime The stored event end value.
      */
-    public Event(String description, LocalDateTime from, LocalDateTime to) {
+    public Event(String description, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         super(description, TaskType.EVENT);
-        if (!to.isAfter(from)) {
+        if (!endDateTime.isAfter(startDateTime)) {
             throw new IllegalArgumentException("An event must end after its start.");
         }
-        this.from = from;
-        this.to = to;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
     /**
@@ -53,7 +54,7 @@ public class Event extends Task {
      */
     @Override
     public String getExtra() {
-        return from + "|" + to;
+        return startDateTime + "|" + endDateTime;
     }
 
     /**
@@ -61,7 +62,7 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return super.toString() + " (from: " + DatetimeValidator.formatForUser(from)
-                + " to: " + DatetimeValidator.formatForUser(to) + ")";
+        return super.toString() + " (from: " + DatetimeValidator.formatForUser(startDateTime)
+                + " to: " + DatetimeValidator.formatForUser(endDateTime) + ")";
     }
 }

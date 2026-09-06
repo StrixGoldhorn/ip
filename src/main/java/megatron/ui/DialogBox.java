@@ -23,10 +23,10 @@ import javafx.util.Duration;
  * Displays one chat message with a simple avatar and message bubble.
  */
 public final class DialogBox extends HBox {
-    private static final String USER_AVATAR_PATH = "/images/user-avatar.png";
-    private static final String MEGATRON_AVATAR_PATH = "/images/megatron-avatar.png";
-    private static final double MIN_AVATAR_SIZE = 40;
-    private static final double MAX_AVATAR_SIZE = 160;
+    private static final String AVATAR_PATH_USER = "/images/user-avatar.png";
+    private static final String AVATAR_PATH_MEGATRON = "/images/megatron-avatar.png";
+    private static final double AVATAR_SIZE_MIN = 40;
+    private static final double AVATAR_SIZE_MAX = 160;
     private static final double AVATAR_WIDTH_RATIO = 0.1;
     private static final double MESSAGE_HORIZONTAL_SPACE = 24;
 
@@ -63,7 +63,7 @@ public final class DialogBox extends HBox {
         loadLayout();
 
         messageLabel.setText(message);
-        avatar.setImage(loadAvatar(isUserMessage ? USER_AVATAR_PATH : MEGATRON_AVATAR_PATH));
+        avatar.setImage(loadAvatar(isUserMessage ? AVATAR_PATH_USER : AVATAR_PATH_MEGATRON));
         avatar.setPreserveRatio(true);
         avatar.getStyleClass().add(isUserMessage ? "user-avatar" : "megatron-avatar");
         avatarContainer.getStyleClass().add(isUserMessage
@@ -167,8 +167,8 @@ public final class DialogBox extends HBox {
     private void updateResponsiveLayout(double dialogWidth) {
         double availableWidth = dialogWidth > 0 ? dialogWidth : 700;
         double avatarSize = Math.clamp(availableWidth * AVATAR_WIDTH_RATIO,
-                MIN_AVATAR_SIZE, MAX_AVATAR_SIZE);
-        double messageWidth = Math.max(MIN_AVATAR_SIZE,
+                AVATAR_SIZE_MIN, AVATAR_SIZE_MAX);
+        double messageWidth = Math.max(AVATAR_SIZE_MIN,
                 availableWidth - avatarSize - getSpacing() - MESSAGE_HORIZONTAL_SPACE);
 
         avatar.setFitWidth(avatarSize);

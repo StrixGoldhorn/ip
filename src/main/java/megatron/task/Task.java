@@ -26,7 +26,7 @@ public class Task {
     protected Task(String description, TaskType type) {
         this.description = description;
         this.type = type;
-        this.status = TaskStatus.NOT_DONE;
+        status = TaskStatus.NOT_DONE;
     }
 
     /**

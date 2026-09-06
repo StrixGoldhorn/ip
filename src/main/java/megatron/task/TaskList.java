@@ -20,7 +20,7 @@ public final class TaskList implements Iterable<Task> {
      * Creates an empty task list.
      */
     public TaskList() {
-        this.tasks = new ArrayList<>();
+        tasks = new ArrayList<>();
     }
 
     /**
@@ -29,8 +29,8 @@ public final class TaskList implements Iterable<Task> {
      * @param initialTasks The tasks to copy.
      */
     public TaskList(List<Task> initialTasks) {
-        this.tasks = new ArrayList<>(Objects.requireNonNull(initialTasks));
-        assert this.tasks.stream().noneMatch(Objects::isNull)
+        tasks = new ArrayList<>(Objects.requireNonNull(initialTasks));
+        assert tasks.stream().noneMatch(Objects::isNull)
                 : "A task list must not contain null tasks.";
     }
 
@@ -63,7 +63,7 @@ public final class TaskList implements Iterable<Task> {
      * @throws TaskNotFoundException If the task number is outside the list.
      */
     public Task getTask(int taskNumber) throws TaskNotFoundException {
-        return tasks.get(toIndex(taskNumber));
+        return tasks.get(convertToIndex(taskNumber));
     }
 
     /**
@@ -74,7 +74,7 @@ public final class TaskList implements Iterable<Task> {
      * @throws TaskNotFoundException If the task number is outside the list.
      */
     public Task removeTask(int taskNumber) throws TaskNotFoundException {
-        return tasks.remove(toIndex(taskNumber));
+        return tasks.remove(convertToIndex(taskNumber));
     }
 
     /**
@@ -134,7 +134,7 @@ public final class TaskList implements Iterable<Task> {
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             String description = task.getDescription().toLowerCase(Locale.ROOT);
-            if (matchesAllTerms(description, searchTerms)) {
+            if (doesMatchAllTerms(description, searchTerms)) {
                 matches.add(new TaskMatch(i + 1, task));
             }
         }
@@ -144,7 +144,7 @@ public final class TaskList implements Iterable<Task> {
     /**
      * Returns whether a description matches every search term.
      */
-    private static boolean matchesAllTerms(String description, String[] searchTerms) {
+    private static boolean doesMatchAllTerms(String description, String[] searchTerms) {
         String[] descriptionWords = description.split("\\s+");
         for (String searchTerm : searchTerms) {
             if (!description.contains(searchTerm) && !hasFuzzyWordMatch(searchTerm, descriptionWords)) {
@@ -222,7 +222,7 @@ public final class TaskList implements Iterable<Task> {
      * @return The zero-based index.
      * @throws TaskNotFoundException If the task number is outside the list.
      */
-    private int toIndex(int taskNumber) throws TaskNotFoundException {
+    private int convertToIndex(int taskNumber) throws TaskNotFoundException {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new TaskNotFoundException();
         }
