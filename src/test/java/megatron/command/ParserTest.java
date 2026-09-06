@@ -267,14 +267,14 @@ class ParserTest {
 
     @Test
     void createTask_eventWithInvalidEnd_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event review /from 2026-08-06 1400 /to invalid"));
+        assertThrows(InvalidTaskFormatException.class, (
+        ) -> parser.createTask("event review /from 2026-08-06 1400 /to invalid"));
     }
 
     @Test
     void createTask_eventWithInvalidRange_throwsInvalidTaskFormatException() {
-        assertThrows(InvalidTaskFormatException.class,
-                () -> parser.createTask("event review /from 2026-08-06 1600 /to 2026-08-06 1400"));
+        assertThrows(InvalidTaskFormatException.class, (
+        ) -> parser.createTask("event review /from 2026-08-06 1600 /to 2026-08-06 1400"));
     }
 
     @Test

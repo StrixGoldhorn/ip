@@ -14,7 +14,9 @@ import java.util.Scanner;
 import org.junit.jupiter.api.Test;
 
 import megatron.exception.EmptyCommandException;
+import megatron.exception.EmptyDescriptionException;
 import megatron.exception.InvalidTaskFormatException;
+import megatron.exception.StorageException;
 import megatron.exception.UnknownCommandException;
 import megatron.task.TaskList;
 import megatron.task.TaskMatch;
@@ -241,6 +243,29 @@ class UiTest {
         assertEquals("I need more details. My mind-reading module is still under construction."
                 + " Use: todo <description>." + System.lineSeparator(),
                 output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void showError_emptyDescription_usesMissingDetailsMessage() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Ui ui = createUi(output);
+
+        ui.showError(new EmptyDescriptionException());
+
+        assertEquals("I need more details. My mind-reading module is still under construction."
+                + " A todo description cannot be empty." + System.lineSeparator(),
+                output.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void showError_storageFailure_usesOopsMessage() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Ui ui = createUi(output);
+
+        ui.showError(new StorageException(new IllegalStateException("storage failure")));
+
+        assertEquals("OOPS! Megatron says: Could not save tasks. Check that the data file is writable."
+                + System.lineSeparator(), output.toString(StandardCharsets.UTF_8));
     }
 
     private static Ui createUi(ByteArrayOutputStream output) {

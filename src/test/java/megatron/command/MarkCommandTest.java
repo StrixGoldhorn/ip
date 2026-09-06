@@ -92,7 +92,7 @@ class MarkCommandTest {
     }
 
     @Test
-    void execute_saveFailure_onAlreadyDoneTask_keepsItDone() {
+    void execute_saveFailureAlreadyDone_keepsItDone() {
         Todo task = new Todo("already done");
         task.markAsDone();
         TaskList tasks = new TaskList(List.of(task));

@@ -155,8 +155,7 @@ class DatetimeValidatorTest {
 
     @Test
     void parseToLocalDateTime_weekdayWithInvalidTime_throwsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> DatetimeValidator.parseToLocalDateTime("monday 25:00"));
+        assertThrows(IllegalArgumentException.class, () -> DatetimeValidator.parseToLocalDateTime("monday 25:00"));
     }
 
     @Test

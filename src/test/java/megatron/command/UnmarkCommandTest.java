@@ -96,7 +96,7 @@ class UnmarkCommandTest {
     }
 
     @Test
-    void execute_saveFailure_onAlreadyNotDoneTask_keepsItNotDone() {
+    void execute_saveFailureAlreadyNotDone_keepsItNotDone() {
         Todo task = new Todo("already not done");
         TaskList tasks = new TaskList(List.of(task));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
