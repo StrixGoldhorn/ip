@@ -4,11 +4,7 @@ Megatron is a desktop chatbot that helps you manage todos, deadlines, and events
 the message box and press **Enter** or click **Send**. Megatron saves each change automatically, so
 your tasks are available the next time that you start the app.
 
-<p align="center">
-  <img src="img/start_example.png"
-       alt="Megatron desktop window"
-       width="50%">
-</p>
+![Megatron desktop window](img/start_example.png)
 
 ## Quick start
 
@@ -87,11 +83,7 @@ Outcome: Megatron adds the deadline and displays its date and time in a standard
 [D][ ] submit report (by: 20 Sep 26, 1800hrs)
 ```
 
-<p align="center">
-  <img src="img/task_example.png"
-       alt="Adding a deadline in Megatron"
-       width="50%">
-</p>
+![Megatron add deadline](img/task_example.png)
 
 ### Adding an event
 
@@ -180,11 +172,7 @@ Examples:
 
 Use the original task numbers with `mark`, `unmark`, and `delete`.
 
-<p align="center">
-  <img src="img/find_example.png"
-       alt="Megatron search results"
-       width="50%">
-</p>
+![Megatron search results](img/find_example.png)
 
 ### Marking a task as done
 
