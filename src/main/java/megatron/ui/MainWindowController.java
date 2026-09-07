@@ -31,7 +31,6 @@ import megatron.task.TaskList;
  * Controls the main Megatron window.
  */
 public class MainWindowController {
-    private static final String STORAGE_FILE_PATH = "data/megatron.csv";
     private static final String USER_MESSAGE_PREFIX = "";
     private static final String PORTRAIT_LAYOUT_STYLE_CLASS = "portrait-layout";
 
@@ -56,10 +55,12 @@ public class MainWindowController {
     private final StorageException storageLoadException;
 
     /**
-     * Creates a controller backed by Megatron's default task storage.
+     * Creates a controller backed by the specified task storage file.
+     *
+     * @param storageFilePath The path of the task storage file.
      */
-    public MainWindowController() {
-        storage = new TaskStorage(STORAGE_FILE_PATH);
+    public MainWindowController(String storageFilePath) {
+        storage = new TaskStorage(storageFilePath);
         TaskList loadedTasks;
         StorageException loadException;
         try {

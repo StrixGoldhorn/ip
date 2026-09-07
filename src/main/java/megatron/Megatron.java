@@ -44,7 +44,7 @@ public class Megatron {
      * Creates a Megatron application using the default data path.
      */
     public Megatron() {
-        this("data/megatron.csv");
+        this(ApplicationConfiguration.fromArguments(new String[0]).getStorageFilePath());
     }
 
     /**
@@ -82,7 +82,8 @@ public class Megatron {
      * @param args The command-line arguments.
      */
     public static void main(String[] args) {
-        new Megatron(args.length > 0 ? args[0] : "data/megatron.csv").run();
+        ApplicationConfiguration configuration = ApplicationConfiguration.fromArguments(args);
+        new Megatron(configuration.getStorageFilePath()).run();
     }
 
 }

@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import megatron.ui.MainWindowController;
 
 /**
  * Represents the main window of the Megatron JavaFX application.
@@ -23,7 +24,10 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        ApplicationConfiguration configuration = ApplicationConfiguration.fromArguments(
+                getParameters().getRaw());
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
+        loader.setController(new MainWindowController(configuration.getStorageFilePath()));
         Scene scene = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
         stage.setMinHeight(480);
