@@ -36,13 +36,11 @@ class ApplicationConfigurationTest {
 
     @Test
     void fromArguments_nullList_throwsNullPointerException() {
-        assertThrows(NullPointerException.class,
-                () -> ApplicationConfiguration.fromArguments((List<String>) null));
+        assertThrows(NullPointerException.class, () -> ApplicationConfiguration.fromArguments((List<String>) null));
     }
 
     @Test
     void fromArguments_nullArray_throwsNullPointerException() {
-        assertThrows(NullPointerException.class,
-                () -> ApplicationConfiguration.fromArguments((String[]) null));
+        assertThrows(NullPointerException.class, () -> ApplicationConfiguration.fromArguments((String[]) null));
     }
 }
