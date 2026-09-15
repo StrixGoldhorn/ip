@@ -30,12 +30,13 @@ public final class Parser {
     /**
      * Converts raw input into an executable command.
      *
-     * @param input The raw user input.
+     * @param rawInput The raw user input.
      * @return The executable command.
      * @throws MegatronException If the input is empty or has an invalid format or task number.
      */
-    public Command parse(String input) throws MegatronException {
-        Objects.requireNonNull(input);
+    public Command parse(String rawInput) throws MegatronException {
+        Objects.requireNonNull(rawInput);
+        String input = rawInput.strip();
         int firstSpace = input.indexOf(' ');
         String commandWord = firstSpace == -1 ? input : input.substring(0, firstSpace);
 
