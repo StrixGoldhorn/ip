@@ -6,7 +6,31 @@ your tasks are available the next time that you start the app.
 
 ![Megatron desktop window](img/start_example.png)
 
-## Quick start
+## Quick start (with .jar file)
+
+Megatron requires Java 25.
+
+1. Open a terminal in the folder with the jar file.
+
+2. Start the app:
+
+   ```powershell
+   java -jar build/libs/megatron.jar
+   ```
+
+   To use a different data file, give its path as the first argument:
+
+   ```powershell
+   java -jar build/libs/megatron.jar data/another-file.csv
+   ```
+
+3. Enter `todo read user guide` to add your first task.
+
+> **Note:** Commands are case-sensitive. Enter command words such as `todo` and `list` in
+> lowercase.
+> **Duplicate tasks are purposefully allowed:** This is to allow user to have "recurring" tasks (since recurring tasks are not implemented)
+
+## Quick start (without .jar file)
 
 Megatron requires Java 25.
 
