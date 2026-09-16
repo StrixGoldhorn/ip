@@ -53,8 +53,6 @@ Megatron requires Java 25.
    java -jar build/libs/megatron.jar data/another-file.csv
    ```
 
-4. Enter `todo read user guide` to add your first task.
-
 > **Note:** Commands are case-sensitive. Enter command words such as `todo` and `list` in
 > lowercase.
 
