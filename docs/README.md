@@ -24,8 +24,6 @@ Megatron requires Java 25.
    java -jar build/libs/megatron.jar data/another-file.csv
    ```
 
-3. Enter `todo read user guide` to add your first task.
-
 > **Note:** Commands are case-sensitive. Enter command words such as `todo` and `list` in
 > lowercase.
 > **Duplicate tasks are purposefully allowed:** This is to allow user to have "recurring" tasks (since recurring tasks are not implemented)
